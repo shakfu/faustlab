@@ -426,7 +426,7 @@ cdef class InterpreterDsp:
         return clone_interpreter_dsp_instance(self.ptr)
 
 ## ---------------------------------------------------------------------------
-## tests
+## interpreter tests
 ##
 
 def test_create_interpreter_dsp_factory_from_string():
@@ -442,6 +442,203 @@ def test_create_interpreter_dsp_factory_from_string():
     cdef fi.interpreter_dsp_factory* factory = fi.createCInterpreterDSPFactoryFromString(
         "score", code.encode('utf8'), 0, NULL, error_msg)
     assert factory is not NULL
+
+
+## ---------------------------------------------------------------------------
+## signal api
+##
+
+cdef char* print_box(fi.Box box, bint shared, int max_size):
+    """Print the box."""
+    return fi.CprintBox(box, shared, max_size)
+
+cdef char* print_signal(fi.Signal sig, bint shared, int max_size):
+    """Print the signal."""
+    return fi.CprintSignal(sig, shared, max_size)
+
+cdef void create_lib_context():
+    """Create global compilation context, has to be done first."""
+    fi.createLibContext()
+
+cdef void destroy_lib_context():
+    """Destroy global compilation context, has to be done last."""
+    fi.destroyLibContext()
+
+cdef bint is_nil(fi.Signal s):
+    """Check if a signal is nil."""
+    return fi.CisNil(s)
+
+cdef const char* tree2str(fi.Signal s):
+    """Convert a signal (such as the label of a UI) to a string."""
+    return fi.Ctree2str(s)
+
+cdef void* get_user_data(fi.Signal s):
+    """Return the xtended type of a signal."""
+    return fi.CgetUserData(s)
+
+cdef fi.Signal sig_int(int n):
+    """Constant integer : for all t, x(t) = n"""
+    return fi.CsigInt(n)
+
+cdef fi.Signal sig_real(double n):
+    """Constant real : for all t, x(t) = n"""
+    return fi.CsigReal(n)
+
+cdef fi.Signal sig_input(int idx):
+    """Create an input."""
+    return fi.CsigInput(idx)
+
+cdef fi.Signal sig_delay(fi.Signal s, fi.Signal delay):
+    """Create a delayed signal."""
+    return fi.CsigDelay(s, delay)
+
+cdef fi.Signal sig_delay1(fi.Signal s):
+    """Create a one sample delayed signal."""
+    return fi.CsigDelay1(s)
+
+cdef fi.Signal sig_int_cast(fi.Signal s):
+    """Create a casted signal."""
+    return fi.CsigIntCast(s)
+
+cdef fi.Signal sig_float_cast(fi.Signal s):
+    """Create a casted signal."""
+    return fi.CsigFloatCast(s)
+
+cdef fi.Signal sig_readonly_table(fi.Signal n, fi.Signal init, fi.Signal ridx):
+    """Create a read only table."""
+    return fi.CsigReadOnlyTable(n, init, ridx)
+
+cdef fi.Signal sig_writeread_Table(fi.Signal n, fi.Signal init, fi.Signal widx, fi.Signal wsig, fi.Signal ridx):
+    """Create a read/write table."""
+    return fi.CsigWriteReadTable(n, init, widx, wsig, ridx)
+
+cdef fi.Signal sig_waveform(fi.Signal* wf):
+    """Create a waveform."""
+    return fi.CsigWaveform(wf)
+
+cdef fi.Signal sig_soundfile(const char* label):
+    """Create a soundfile block."""
+    return fi.CsigSoundfile(label)
+
+# ----------------------------------------------------------------------------
+
+cdef fi.Signal sig_soundfile_length(fi.Signal sf, fi.Signal part):
+    """Create the length signal of a given soundfile in frames."""
+    return fi.CsigSoundfileLength(sf, part)
+
+cdef fi.Signal sig_soundfile_rate(fi.Signal sf, fi.Signal part):
+    """Create the rate signal of a given soundfile in Hz."""
+    return fi.CsigSoundfileRate(sf, part)
+
+cdef fi.Signal sig_soundfile_buffer(fi.Signal sf, fi.Signal chan, fi.Signal part, fi.Signal ridx):
+    """Create the buffer signal of a given soundfile."""
+    return fi.CsigSoundfileBuffer(sf, chan, part, ridx)
+
+cdef fi.Signal sig_select2(fi.Signal selector, fi.Signal s1, fi.Signal s2):
+    """Create a selector between two signals."""
+    return fi.CsigSelect2(selector, s1, s2)
+
+cdef fi.Signal sig_select3(fi.Signal selector, fi.Signal s1, fi.Signal s2, fi.Signal s3):
+    """Create a selector between three signals."""
+    return fi.CsigSelect3(selector, s1, s2, s3)
+
+# cdef fi.Signal sig_f_const(enum SType type, const char* name, const char* file):
+#     """Create a foreign constant signal."""
+#     return fi.CsigFConst(type, name, file)
+
+# cdef fi.Signal sig_f_var(enum SType type, const char* name, const char* file):
+#     """Create a foreign variable signal."""
+#     return fi.CsigFVar(type, name, file)
+
+# cdef fi.Signal sig_bin_op(enum SOperator op, fi.Signal x, fi.Signal y):
+#     """Generic binary mathematical functions."""
+#     return fi.CsigBinOp(op, x, y)
+
+cdef fi.Signal sig_add(fi.Signal x, fi.Signal y):
+    """Specific binary mathematical functions."""
+    return fi.CsigAdd(x, y)
+
+cdef fi.Signal sig_sub(fi.Signal x, fi.Signal y):
+    """Specific binary mathematical functions."""
+    return fi.CsigSub(x, y)
+
+cdef fi.Signal sig_mul(fi.Signal x, fi.Signal y):
+    """Specific binary mathematical functions."""
+    return fi.CsigMul(x, y)
+
+cdef fi.Signal sig_div(fi.Signal x, fi.Signal y):
+    """Specific binary mathematical functions."""
+    return fi.CsigDiv(x, y)
+
+cdef fi.Signal sig_rem(fi.Signal x, fi.Signal y):
+    """Specific binary mathematical functions."""
+    return fi.CsigRem(x, y)
+
+cdef fi.Signal sig_abs(fi.Signal x):
+    """Extended unary mathematical functions."""
+    return fi.CsigAbs(x)
+
+cdef fi.Signal sig_remainder(fi.Signal x, fi.Signal y):
+    """Extended binary mathematical functions."""
+    return fi.CsigRemainder(x, y)
+
+
+cdef fi.Signal sig_recursion(fi.Signal s):
+    """Create a recursive signal. Use CsigSelf() to refer to the"""
+    return fi.CsigRecursion(s)
+
+cdef fi.Signal sig_self_n(int id):
+    """Create a recursive signal inside the CsigRecursionN expression."""
+    return fi.CsigSelfN(id)
+
+cdef fi.Signal* sig_recursion_n(fi.Signal* rf):
+    """Create a recursive block of signals. Use CsigSelfN() to refer to the"""
+    return fi.CsigRecursionN(rf)
+
+cdef fi.Signal sig_button(const char* label):
+    """Create a button signal."""
+    return fi.CsigButton(label)
+
+cdef fi.Signal sig_checkbox(const char* label):
+    """Create a checkbox signal."""
+    return fi.CsigCheckbox(label)
+
+cdef fi.Signal sig_v_slider(const char* label, fi.Signal init, fi.Signal min, fi.Signal max, fi.Signal step):
+    """Create a vertical slider signal."""
+    return fi.CsigVSlider(label, init, min, max, step)
+
+cdef fi.Signal sig_h_slider(const char* label, fi.Signal init, fi.Signal min, fi.Signal max, fi.Signal step):
+    """Create an horizontal slider signal."""
+    return fi.CsigHSlider(label, init, min, max, step)
+
+cdef fi.Signal sig_num_entry(const char* label, fi.Signal init, fi.Signal min, fi.Signal max, fi.Signal step):
+    """Create a num entry signal."""
+    return fi.CsigNumEntry(label, init, min, max, step)
+
+cdef fi.Signal sig_v_bargraph(const char* label, fi.Signal min, fi.Signal max, fi.Signal s):
+    """Create a vertical bargraph signal."""
+    return fi.CsigVBargraph(label, min, max, s)
+
+cdef fi.Signal sig_h_bargraph(const char* label, fi.Signal min, fi.Signal max, fi.Signal s):
+    """Create an horizontal bargraph signal."""
+    return fi.CsigHBargraph(label, min, max, s)
+
+cdef fi.Signal sig_attach(fi.Signal s1, fi.Signal s2):
+    """Create an attach signal."""
+    return fi.CsigAttach(s1, s2)
+
+# cdef bint is_sig_int(fi.Signal t, int* i):
+#     """Test each signal and fill additional signal specific parameters."""
+#     return fi.CisSigInt(t, i)
+
+# cdef fi.Signal simplify_to_normal_form(fi.Signal s):
+#     """Simplify a signal to its normal form, where:"""
+#     return fi.CsimplifyToNormalForm(s)
+
+# cdef fi.Signal* simplify_to_normal_form2(fi.Signal* siglist):
+#     """Simplify a null terminated array of signals to its normal form, where:"""
+#     return fi.CsimplifyToNormalForm2(siglist)
+
 
 
 

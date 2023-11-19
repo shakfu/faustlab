@@ -4,6 +4,7 @@ bin/faustpath
 include/faust
 lib/libfaust.a
 share/faust
+projects/faustpy
 
 .DS_Store
 

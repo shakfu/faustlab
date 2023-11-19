@@ -29,4 +29,3 @@ setup(
         language_level="3str",
     ),
 )
-

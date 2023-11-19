@@ -6918,6 +6918,1392 @@ static PyObject *__pyx_pf_7cyfaust_2test_create_interpreter_dsp_factory_from_str
   return __pyx_r;
 }
 
+/* "cyfaust.pyx":451
+ * ##
+ * 
+ * cdef char* print_box(fi.Box box, bint shared, int max_size):             # <<<<<<<<<<<<<<
+ *     """Print the box."""
+ *     return fi.CprintBox(box, shared, max_size)
+ */
+
+static char *__pyx_f_7cyfaust_print_box(Box __pyx_v_box, int __pyx_v_shared, int __pyx_v_max_size) {
+  char *__pyx_r;
+
+  /* "cyfaust.pyx":453
+ * cdef char* print_box(fi.Box box, bint shared, int max_size):
+ *     """Print the box."""
+ *     return fi.CprintBox(box, shared, max_size)             # <<<<<<<<<<<<<<
+ * 
+ * cdef char* print_signal(fi.Signal sig, bint shared, int max_size):
+ */
+  __pyx_r = CprintBox(__pyx_v_box, __pyx_v_shared, __pyx_v_max_size);
+  goto __pyx_L0;
+
+  /* "cyfaust.pyx":451
+ * ##
+ * 
+ * cdef char* print_box(fi.Box box, bint shared, int max_size):             # <<<<<<<<<<<<<<
+ *     """Print the box."""
+ *     return fi.CprintBox(box, shared, max_size)
+ */
+
+  /* function exit code */
+  __pyx_L0:;
+  return __pyx_r;
+}
+
+/* "cyfaust.pyx":455
+ *     return fi.CprintBox(box, shared, max_size)
+ * 
+ * cdef char* print_signal(fi.Signal sig, bint shared, int max_size):             # <<<<<<<<<<<<<<
+ *     """Print the signal."""
+ *     return fi.CprintSignal(sig, shared, max_size)
+ */
+
+static char *__pyx_f_7cyfaust_print_signal(Signal __pyx_v_sig, int __pyx_v_shared, int __pyx_v_max_size) {
+  char *__pyx_r;
+
+  /* "cyfaust.pyx":457
+ * cdef char* print_signal(fi.Signal sig, bint shared, int max_size):
+ *     """Print the signal."""
+ *     return fi.CprintSignal(sig, shared, max_size)             # <<<<<<<<<<<<<<
+ * 
+ * cdef void create_lib_context():
+ */
+  __pyx_r = CprintSignal(__pyx_v_sig, __pyx_v_shared, __pyx_v_max_size);
+  goto __pyx_L0;
+
+  /* "cyfaust.pyx":455
+ *     return fi.CprintBox(box, shared, max_size)
+ * 
+ * cdef char* print_signal(fi.Signal sig, bint shared, int max_size):             # <<<<<<<<<<<<<<
+ *     """Print the signal."""
+ *     return fi.CprintSignal(sig, shared, max_size)
+ */
+
+  /* function exit code */
+  __pyx_L0:;
+  return __pyx_r;
+}
+
+/* "cyfaust.pyx":459
+ *     return fi.CprintSignal(sig, shared, max_size)
+ * 
+ * cdef void create_lib_context():             # <<<<<<<<<<<<<<
+ *     """Create global compilation context, has to be done first."""
+ *     fi.createLibContext()
+ */
+
+static void __pyx_f_7cyfaust_create_lib_context(void) {
+
+  /* "cyfaust.pyx":461
+ * cdef void create_lib_context():
+ *     """Create global compilation context, has to be done first."""
+ *     fi.createLibContext()             # <<<<<<<<<<<<<<
+ * 
+ * cdef void destroy_lib_context():
+ */
+  createLibContext();
+
+  /* "cyfaust.pyx":459
+ *     return fi.CprintSignal(sig, shared, max_size)
+ * 
+ * cdef void create_lib_context():             # <<<<<<<<<<<<<<
+ *     """Create global compilation context, has to be done first."""
+ *     fi.createLibContext()
+ */
+
+  /* function exit code */
+}
+
+/* "cyfaust.pyx":463
+ *     fi.createLibContext()
+ * 
+ * cdef void destroy_lib_context():             # <<<<<<<<<<<<<<
+ *     """Destroy global compilation context, has to be done last."""
+ *     fi.destroyLibContext()
+ */
+
+static void __pyx_f_7cyfaust_destroy_lib_context(void) {
+
+  /* "cyfaust.pyx":465
+ * cdef void destroy_lib_context():
+ *     """Destroy global compilation context, has to be done last."""
+ *     fi.destroyLibContext()             # <<<<<<<<<<<<<<
+ * 
+ * cdef bint is_nil(fi.Signal s):
+ */
+  destroyLibContext();
+
+  /* "cyfaust.pyx":463
+ *     fi.createLibContext()
+ * 
+ * cdef void destroy_lib_context():             # <<<<<<<<<<<<<<
+ *     """Destroy global compilation context, has to be done last."""
+ *     fi.destroyLibContext()
+ */
+
+  /* function exit code */
+}
+
+/* "cyfaust.pyx":467
+ *     fi.destroyLibContext()
+ * 
+ * cdef bint is_nil(fi.Signal s):             # <<<<<<<<<<<<<<
+ *     """Check if a signal is nil."""
+ *     return fi.CisNil(s)
+ */
+
+static int __pyx_f_7cyfaust_is_nil(Signal __pyx_v_s) {
+  int __pyx_r;
+
+  /* "cyfaust.pyx":469
+ * cdef bint is_nil(fi.Signal s):
+ *     """Check if a signal is nil."""
+ *     return fi.CisNil(s)             # <<<<<<<<<<<<<<
+ * 
+ * cdef const char* tree2str(fi.Signal s):
+ */
+  __pyx_r = CisNil(__pyx_v_s);
+  goto __pyx_L0;
+
+  /* "cyfaust.pyx":467
+ *     fi.destroyLibContext()
+ * 
+ * cdef bint is_nil(fi.Signal s):             # <<<<<<<<<<<<<<
+ *     """Check if a signal is nil."""
+ *     return fi.CisNil(s)
+ */
+
+  /* function exit code */
+  __pyx_L0:;
+  return __pyx_r;
+}
+
+/* "cyfaust.pyx":471
+ *     return fi.CisNil(s)
+ * 
+ * cdef const char* tree2str(fi.Signal s):             # <<<<<<<<<<<<<<
+ *     """Convert a signal (such as the label of a UI) to a string."""
+ *     return fi.Ctree2str(s)
+ */
+
+static char const *__pyx_f_7cyfaust_tree2str(Signal __pyx_v_s) {
+  char const *__pyx_r;
+
+  /* "cyfaust.pyx":473
+ * cdef const char* tree2str(fi.Signal s):
+ *     """Convert a signal (such as the label of a UI) to a string."""
+ *     return fi.Ctree2str(s)             # <<<<<<<<<<<<<<
+ * 
+ * cdef void* get_user_data(fi.Signal s):
+ */
+  __pyx_r = Ctree2str(__pyx_v_s);
+  goto __pyx_L0;
+
+  /* "cyfaust.pyx":471
+ *     return fi.CisNil(s)
+ * 
+ * cdef const char* tree2str(fi.Signal s):             # <<<<<<<<<<<<<<
+ *     """Convert a signal (such as the label of a UI) to a string."""
+ *     return fi.Ctree2str(s)
+ */
+
+  /* function exit code */
+  __pyx_L0:;
+  return __pyx_r;
+}
+
+/* "cyfaust.pyx":475
+ *     return fi.Ctree2str(s)
+ * 
+ * cdef void* get_user_data(fi.Signal s):             # <<<<<<<<<<<<<<
+ *     """Return the xtended type of a signal."""
+ *     return fi.CgetUserData(s)
+ */
+
+static void *__pyx_f_7cyfaust_get_user_data(Signal __pyx_v_s) {
+  void *__pyx_r;
+
+  /* "cyfaust.pyx":477
+ * cdef void* get_user_data(fi.Signal s):
+ *     """Return the xtended type of a signal."""
+ *     return fi.CgetUserData(s)             # <<<<<<<<<<<<<<
+ * 
+ * cdef fi.Signal sig_int(int n):
+ */
+  __pyx_r = CgetUserData(__pyx_v_s);
+  goto __pyx_L0;
+
+  /* "cyfaust.pyx":475
+ *     return fi.Ctree2str(s)
+ * 
+ * cdef void* get_user_data(fi.Signal s):             # <<<<<<<<<<<<<<
+ *     """Return the xtended type of a signal."""
+ *     return fi.CgetUserData(s)
+ */
+
+  /* function exit code */
+  __pyx_L0:;
+  return __pyx_r;
+}
+
+/* "cyfaust.pyx":479
+ *     return fi.CgetUserData(s)
+ * 
+ * cdef fi.Signal sig_int(int n):             # <<<<<<<<<<<<<<
+ *     """Constant integer : for all t, x(t) = n"""
+ *     return fi.CsigInt(n)
+ */
+
+static Signal __pyx_f_7cyfaust_sig_int(int __pyx_v_n) {
+  Signal __pyx_r;
+
+  /* "cyfaust.pyx":481
+ * cdef fi.Signal sig_int(int n):
+ *     """Constant integer : for all t, x(t) = n"""
+ *     return fi.CsigInt(n)             # <<<<<<<<<<<<<<
+ * 
+ * cdef fi.Signal sig_real(double n):
+ */
+  __pyx_r = CsigInt(__pyx_v_n);
+  goto __pyx_L0;
+
+  /* "cyfaust.pyx":479
+ *     return fi.CgetUserData(s)
+ * 
+ * cdef fi.Signal sig_int(int n):             # <<<<<<<<<<<<<<
+ *     """Constant integer : for all t, x(t) = n"""
+ *     return fi.CsigInt(n)
+ */
+
+  /* function exit code */
+  __pyx_L0:;
+  return __pyx_r;
+}
+
+/* "cyfaust.pyx":483
+ *     return fi.CsigInt(n)
+ * 
+ * cdef fi.Signal sig_real(double n):             # <<<<<<<<<<<<<<
+ *     """Constant real : for all t, x(t) = n"""
+ *     return fi.CsigReal(n)
+ */
+
+static Signal __pyx_f_7cyfaust_sig_real(double __pyx_v_n) {
+  Signal __pyx_r;
+
+  /* "cyfaust.pyx":485
+ * cdef fi.Signal sig_real(double n):
+ *     """Constant real : for all t, x(t) = n"""
+ *     return fi.CsigReal(n)             # <<<<<<<<<<<<<<
+ * 
+ * cdef fi.Signal sig_input(int idx):
+ */
+  __pyx_r = CsigReal(__pyx_v_n);
+  goto __pyx_L0;
+
+  /* "cyfaust.pyx":483
+ *     return fi.CsigInt(n)
+ * 
+ * cdef fi.Signal sig_real(double n):             # <<<<<<<<<<<<<<
+ *     """Constant real : for all t, x(t) = n"""
+ *     return fi.CsigReal(n)
+ */
+
+  /* function exit code */
+  __pyx_L0:;
+  return __pyx_r;
+}
+
+/* "cyfaust.pyx":487
+ *     return fi.CsigReal(n)
+ * 
+ * cdef fi.Signal sig_input(int idx):             # <<<<<<<<<<<<<<
+ *     """Create an input."""
+ *     return fi.CsigInput(idx)
+ */
+
+static Signal __pyx_f_7cyfaust_sig_input(int __pyx_v_idx) {
+  Signal __pyx_r;
+
+  /* "cyfaust.pyx":489
+ * cdef fi.Signal sig_input(int idx):
+ *     """Create an input."""
+ *     return fi.CsigInput(idx)             # <<<<<<<<<<<<<<
+ * 
+ * cdef fi.Signal sig_delay(fi.Signal s, fi.Signal delay):
+ */
+  __pyx_r = CsigInput(__pyx_v_idx);
+  goto __pyx_L0;
+
+  /* "cyfaust.pyx":487
+ *     return fi.CsigReal(n)
+ * 
+ * cdef fi.Signal sig_input(int idx):             # <<<<<<<<<<<<<<
+ *     """Create an input."""
+ *     return fi.CsigInput(idx)
+ */
+
+  /* function exit code */
+  __pyx_L0:;
+  return __pyx_r;
+}
+
+/* "cyfaust.pyx":491
+ *     return fi.CsigInput(idx)
+ * 
+ * cdef fi.Signal sig_delay(fi.Signal s, fi.Signal delay):             # <<<<<<<<<<<<<<
+ *     """Create a delayed signal."""
+ *     return fi.CsigDelay(s, delay)
+ */
+
+static Signal __pyx_f_7cyfaust_sig_delay(Signal __pyx_v_s, Signal __pyx_v_delay) {
+  Signal __pyx_r;
+
+  /* "cyfaust.pyx":493
+ * cdef fi.Signal sig_delay(fi.Signal s, fi.Signal delay):
+ *     """Create a delayed signal."""
+ *     return fi.CsigDelay(s, delay)             # <<<<<<<<<<<<<<
+ * 
+ * cdef fi.Signal sig_delay1(fi.Signal s):
+ */
+  __pyx_r = CsigDelay(__pyx_v_s, __pyx_v_delay);
+  goto __pyx_L0;
+
+  /* "cyfaust.pyx":491
+ *     return fi.CsigInput(idx)
+ * 
+ * cdef fi.Signal sig_delay(fi.Signal s, fi.Signal delay):             # <<<<<<<<<<<<<<
+ *     """Create a delayed signal."""
+ *     return fi.CsigDelay(s, delay)
+ */
+
+  /* function exit code */
+  __pyx_L0:;
+  return __pyx_r;
+}
+
+/* "cyfaust.pyx":495
+ *     return fi.CsigDelay(s, delay)
+ * 
+ * cdef fi.Signal sig_delay1(fi.Signal s):             # <<<<<<<<<<<<<<
+ *     """Create a one sample delayed signal."""
+ *     return fi.CsigDelay1(s)
+ */
+
+static Signal __pyx_f_7cyfaust_sig_delay1(Signal __pyx_v_s) {
+  Signal __pyx_r;
+
+  /* "cyfaust.pyx":497
+ * cdef fi.Signal sig_delay1(fi.Signal s):
+ *     """Create a one sample delayed signal."""
+ *     return fi.CsigDelay1(s)             # <<<<<<<<<<<<<<
+ * 
+ * cdef fi.Signal sig_int_cast(fi.Signal s):
+ */
+  __pyx_r = CsigDelay1(__pyx_v_s);
+  goto __pyx_L0;
+
+  /* "cyfaust.pyx":495
+ *     return fi.CsigDelay(s, delay)
+ * 
+ * cdef fi.Signal sig_delay1(fi.Signal s):             # <<<<<<<<<<<<<<
+ *     """Create a one sample delayed signal."""
+ *     return fi.CsigDelay1(s)
+ */
+
+  /* function exit code */
+  __pyx_L0:;
+  return __pyx_r;
+}
+
+/* "cyfaust.pyx":499
+ *     return fi.CsigDelay1(s)
+ * 
+ * cdef fi.Signal sig_int_cast(fi.Signal s):             # <<<<<<<<<<<<<<
+ *     """Create a casted signal."""
+ *     return fi.CsigIntCast(s)
+ */
+
+static Signal __pyx_f_7cyfaust_sig_int_cast(Signal __pyx_v_s) {
+  Signal __pyx_r;
+
+  /* "cyfaust.pyx":501
+ * cdef fi.Signal sig_int_cast(fi.Signal s):
+ *     """Create a casted signal."""
+ *     return fi.CsigIntCast(s)             # <<<<<<<<<<<<<<
+ * 
+ * cdef fi.Signal sig_float_cast(fi.Signal s):
+ */
+  __pyx_r = CsigIntCast(__pyx_v_s);
+  goto __pyx_L0;
+
+  /* "cyfaust.pyx":499
+ *     return fi.CsigDelay1(s)
+ * 
+ * cdef fi.Signal sig_int_cast(fi.Signal s):             # <<<<<<<<<<<<<<
+ *     """Create a casted signal."""
+ *     return fi.CsigIntCast(s)
+ */
+
+  /* function exit code */
+  __pyx_L0:;
+  return __pyx_r;
+}
+
+/* "cyfaust.pyx":503
+ *     return fi.CsigIntCast(s)
+ * 
+ * cdef fi.Signal sig_float_cast(fi.Signal s):             # <<<<<<<<<<<<<<
+ *     """Create a casted signal."""
+ *     return fi.CsigFloatCast(s)
+ */
+
+static Signal __pyx_f_7cyfaust_sig_float_cast(Signal __pyx_v_s) {
+  Signal __pyx_r;
+
+  /* "cyfaust.pyx":505
+ * cdef fi.Signal sig_float_cast(fi.Signal s):
+ *     """Create a casted signal."""
+ *     return fi.CsigFloatCast(s)             # <<<<<<<<<<<<<<
+ * 
+ * cdef fi.Signal sig_readonly_table(fi.Signal n, fi.Signal init, fi.Signal ridx):
+ */
+  __pyx_r = CsigFloatCast(__pyx_v_s);
+  goto __pyx_L0;
+
+  /* "cyfaust.pyx":503
+ *     return fi.CsigIntCast(s)
+ * 
+ * cdef fi.Signal sig_float_cast(fi.Signal s):             # <<<<<<<<<<<<<<
+ *     """Create a casted signal."""
+ *     return fi.CsigFloatCast(s)
+ */
+
+  /* function exit code */
+  __pyx_L0:;
+  return __pyx_r;
+}
+
+/* "cyfaust.pyx":507
+ *     return fi.CsigFloatCast(s)
+ * 
+ * cdef fi.Signal sig_readonly_table(fi.Signal n, fi.Signal init, fi.Signal ridx):             # <<<<<<<<<<<<<<
+ *     """Create a read only table."""
+ *     return fi.CsigReadOnlyTable(n, init, ridx)
+ */
+
+static Signal __pyx_f_7cyfaust_sig_readonly_table(Signal __pyx_v_n, Signal __pyx_v_init, Signal __pyx_v_ridx) {
+  Signal __pyx_r;
+
+  /* "cyfaust.pyx":509
+ * cdef fi.Signal sig_readonly_table(fi.Signal n, fi.Signal init, fi.Signal ridx):
+ *     """Create a read only table."""
+ *     return fi.CsigReadOnlyTable(n, init, ridx)             # <<<<<<<<<<<<<<
+ * 
+ * cdef fi.Signal sig_writeread_Table(fi.Signal n, fi.Signal init, fi.Signal widx, fi.Signal wsig, fi.Signal ridx):
+ */
+  __pyx_r = CsigReadOnlyTable(__pyx_v_n, __pyx_v_init, __pyx_v_ridx);
+  goto __pyx_L0;
+
+  /* "cyfaust.pyx":507
+ *     return fi.CsigFloatCast(s)
+ * 
+ * cdef fi.Signal sig_readonly_table(fi.Signal n, fi.Signal init, fi.Signal ridx):             # <<<<<<<<<<<<<<
+ *     """Create a read only table."""
+ *     return fi.CsigReadOnlyTable(n, init, ridx)
+ */
+
+  /* function exit code */
+  __pyx_L0:;
+  return __pyx_r;
+}
+
+/* "cyfaust.pyx":511
+ *     return fi.CsigReadOnlyTable(n, init, ridx)
+ * 
+ * cdef fi.Signal sig_writeread_Table(fi.Signal n, fi.Signal init, fi.Signal widx, fi.Signal wsig, fi.Signal ridx):             # <<<<<<<<<<<<<<
+ *     """Create a read/write table."""
+ *     return fi.CsigWriteReadTable(n, init, widx, wsig, ridx)
+ */
+
+static Signal __pyx_f_7cyfaust_sig_writeread_Table(Signal __pyx_v_n, Signal __pyx_v_init, Signal __pyx_v_widx, Signal __pyx_v_wsig, Signal __pyx_v_ridx) {
+  Signal __pyx_r;
+
+  /* "cyfaust.pyx":513
+ * cdef fi.Signal sig_writeread_Table(fi.Signal n, fi.Signal init, fi.Signal widx, fi.Signal wsig, fi.Signal ridx):
+ *     """Create a read/write table."""
+ *     return fi.CsigWriteReadTable(n, init, widx, wsig, ridx)             # <<<<<<<<<<<<<<
+ * 
+ * cdef fi.Signal sig_waveform(fi.Signal* wf):
+ */
+  __pyx_r = CsigWriteReadTable(__pyx_v_n, __pyx_v_init, __pyx_v_widx, __pyx_v_wsig, __pyx_v_ridx);
+  goto __pyx_L0;
+
+  /* "cyfaust.pyx":511
+ *     return fi.CsigReadOnlyTable(n, init, ridx)
+ * 
+ * cdef fi.Signal sig_writeread_Table(fi.Signal n, fi.Signal init, fi.Signal widx, fi.Signal wsig, fi.Signal ridx):             # <<<<<<<<<<<<<<
+ *     """Create a read/write table."""
+ *     return fi.CsigWriteReadTable(n, init, widx, wsig, ridx)
+ */
+
+  /* function exit code */
+  __pyx_L0:;
+  return __pyx_r;
+}
+
+/* "cyfaust.pyx":515
+ *     return fi.CsigWriteReadTable(n, init, widx, wsig, ridx)
+ * 
+ * cdef fi.Signal sig_waveform(fi.Signal* wf):             # <<<<<<<<<<<<<<
+ *     """Create a waveform."""
+ *     return fi.CsigWaveform(wf)
+ */
+
+static Signal __pyx_f_7cyfaust_sig_waveform(Signal *__pyx_v_wf) {
+  Signal __pyx_r;
+
+  /* "cyfaust.pyx":517
+ * cdef fi.Signal sig_waveform(fi.Signal* wf):
+ *     """Create a waveform."""
+ *     return fi.CsigWaveform(wf)             # <<<<<<<<<<<<<<
+ * 
+ * cdef fi.Signal sig_soundfile(const char* label):
+ */
+  __pyx_r = CsigWaveform(__pyx_v_wf);
+  goto __pyx_L0;
+
+  /* "cyfaust.pyx":515
+ *     return fi.CsigWriteReadTable(n, init, widx, wsig, ridx)
+ * 
+ * cdef fi.Signal sig_waveform(fi.Signal* wf):             # <<<<<<<<<<<<<<
+ *     """Create a waveform."""
+ *     return fi.CsigWaveform(wf)
+ */
+
+  /* function exit code */
+  __pyx_L0:;
+  return __pyx_r;
+}
+
+/* "cyfaust.pyx":519
+ *     return fi.CsigWaveform(wf)
+ * 
+ * cdef fi.Signal sig_soundfile(const char* label):             # <<<<<<<<<<<<<<
+ *     """Create a soundfile block."""
+ *     return fi.CsigSoundfile(label)
+ */
+
+static Signal __pyx_f_7cyfaust_sig_soundfile(char const *__pyx_v_label) {
+  Signal __pyx_r;
+
+  /* "cyfaust.pyx":521
+ * cdef fi.Signal sig_soundfile(const char* label):
+ *     """Create a soundfile block."""
+ *     return fi.CsigSoundfile(label)             # <<<<<<<<<<<<<<
+ * 
+ * # ----------------------------------------------------------------------------
+ */
+  __pyx_r = CsigSoundfile(__pyx_v_label);
+  goto __pyx_L0;
+
+  /* "cyfaust.pyx":519
+ *     return fi.CsigWaveform(wf)
+ * 
+ * cdef fi.Signal sig_soundfile(const char* label):             # <<<<<<<<<<<<<<
+ *     """Create a soundfile block."""
+ *     return fi.CsigSoundfile(label)
+ */
+
+  /* function exit code */
+  __pyx_L0:;
+  return __pyx_r;
+}
+
+/* "cyfaust.pyx":525
+ * # ----------------------------------------------------------------------------
+ * 
+ * cdef fi.Signal sig_soundfile_length(fi.Signal sf, fi.Signal part):             # <<<<<<<<<<<<<<
+ *     """Create the length signal of a given soundfile in frames."""
+ *     return fi.CsigSoundfileLength(sf, part)
+ */
+
+static Signal __pyx_f_7cyfaust_sig_soundfile_length(Signal __pyx_v_sf, Signal __pyx_v_part) {
+  Signal __pyx_r;
+
+  /* "cyfaust.pyx":527
+ * cdef fi.Signal sig_soundfile_length(fi.Signal sf, fi.Signal part):
+ *     """Create the length signal of a given soundfile in frames."""
+ *     return fi.CsigSoundfileLength(sf, part)             # <<<<<<<<<<<<<<
+ * 
+ * cdef fi.Signal sig_soundfile_rate(fi.Signal sf, fi.Signal part):
+ */
+  __pyx_r = CsigSoundfileLength(__pyx_v_sf, __pyx_v_part);
+  goto __pyx_L0;
+
+  /* "cyfaust.pyx":525
+ * # ----------------------------------------------------------------------------
+ * 
+ * cdef fi.Signal sig_soundfile_length(fi.Signal sf, fi.Signal part):             # <<<<<<<<<<<<<<
+ *     """Create the length signal of a given soundfile in frames."""
+ *     return fi.CsigSoundfileLength(sf, part)
+ */
+
+  /* function exit code */
+  __pyx_L0:;
+  return __pyx_r;
+}
+
+/* "cyfaust.pyx":529
+ *     return fi.CsigSoundfileLength(sf, part)
+ * 
+ * cdef fi.Signal sig_soundfile_rate(fi.Signal sf, fi.Signal part):             # <<<<<<<<<<<<<<
+ *     """Create the rate signal of a given soundfile in Hz."""
+ *     return fi.CsigSoundfileRate(sf, part)
+ */
+
+static Signal __pyx_f_7cyfaust_sig_soundfile_rate(Signal __pyx_v_sf, Signal __pyx_v_part) {
+  Signal __pyx_r;
+
+  /* "cyfaust.pyx":531
+ * cdef fi.Signal sig_soundfile_rate(fi.Signal sf, fi.Signal part):
+ *     """Create the rate signal of a given soundfile in Hz."""
+ *     return fi.CsigSoundfileRate(sf, part)             # <<<<<<<<<<<<<<
+ * 
+ * cdef fi.Signal sig_soundfile_buffer(fi.Signal sf, fi.Signal chan, fi.Signal part, fi.Signal ridx):
+ */
+  __pyx_r = CsigSoundfileRate(__pyx_v_sf, __pyx_v_part);
+  goto __pyx_L0;
+
+  /* "cyfaust.pyx":529
+ *     return fi.CsigSoundfileLength(sf, part)
+ * 
+ * cdef fi.Signal sig_soundfile_rate(fi.Signal sf, fi.Signal part):             # <<<<<<<<<<<<<<
+ *     """Create the rate signal of a given soundfile in Hz."""
+ *     return fi.CsigSoundfileRate(sf, part)
+ */
+
+  /* function exit code */
+  __pyx_L0:;
+  return __pyx_r;
+}
+
+/* "cyfaust.pyx":533
+ *     return fi.CsigSoundfileRate(sf, part)
+ * 
+ * cdef fi.Signal sig_soundfile_buffer(fi.Signal sf, fi.Signal chan, fi.Signal part, fi.Signal ridx):             # <<<<<<<<<<<<<<
+ *     """Create the buffer signal of a given soundfile."""
+ *     return fi.CsigSoundfileBuffer(sf, chan, part, ridx)
+ */
+
+static Signal __pyx_f_7cyfaust_sig_soundfile_buffer(Signal __pyx_v_sf, Signal __pyx_v_chan, Signal __pyx_v_part, Signal __pyx_v_ridx) {
+  Signal __pyx_r;
+
+  /* "cyfaust.pyx":535
+ * cdef fi.Signal sig_soundfile_buffer(fi.Signal sf, fi.Signal chan, fi.Signal part, fi.Signal ridx):
+ *     """Create the buffer signal of a given soundfile."""
+ *     return fi.CsigSoundfileBuffer(sf, chan, part, ridx)             # <<<<<<<<<<<<<<
+ * 
+ * cdef fi.Signal sig_select2(fi.Signal selector, fi.Signal s1, fi.Signal s2):
+ */
+  __pyx_r = CsigSoundfileBuffer(__pyx_v_sf, __pyx_v_chan, __pyx_v_part, __pyx_v_ridx);
+  goto __pyx_L0;
+
+  /* "cyfaust.pyx":533
+ *     return fi.CsigSoundfileRate(sf, part)
+ * 
+ * cdef fi.Signal sig_soundfile_buffer(fi.Signal sf, fi.Signal chan, fi.Signal part, fi.Signal ridx):             # <<<<<<<<<<<<<<
+ *     """Create the buffer signal of a given soundfile."""
+ *     return fi.CsigSoundfileBuffer(sf, chan, part, ridx)
+ */
+
+  /* function exit code */
+  __pyx_L0:;
+  return __pyx_r;
+}
+
+/* "cyfaust.pyx":537
+ *     return fi.CsigSoundfileBuffer(sf, chan, part, ridx)
+ * 
+ * cdef fi.Signal sig_select2(fi.Signal selector, fi.Signal s1, fi.Signal s2):             # <<<<<<<<<<<<<<
+ *     """Create a selector between two signals."""
+ *     return fi.CsigSelect2(selector, s1, s2)
+ */
+
+static Signal __pyx_f_7cyfaust_sig_select2(Signal __pyx_v_selector, Signal __pyx_v_s1, Signal __pyx_v_s2) {
+  Signal __pyx_r;
+
+  /* "cyfaust.pyx":539
+ * cdef fi.Signal sig_select2(fi.Signal selector, fi.Signal s1, fi.Signal s2):
+ *     """Create a selector between two signals."""
+ *     return fi.CsigSelect2(selector, s1, s2)             # <<<<<<<<<<<<<<
+ * 
+ * cdef fi.Signal sig_select3(fi.Signal selector, fi.Signal s1, fi.Signal s2, fi.Signal s3):
+ */
+  __pyx_r = CsigSelect2(__pyx_v_selector, __pyx_v_s1, __pyx_v_s2);
+  goto __pyx_L0;
+
+  /* "cyfaust.pyx":537
+ *     return fi.CsigSoundfileBuffer(sf, chan, part, ridx)
+ * 
+ * cdef fi.Signal sig_select2(fi.Signal selector, fi.Signal s1, fi.Signal s2):             # <<<<<<<<<<<<<<
+ *     """Create a selector between two signals."""
+ *     return fi.CsigSelect2(selector, s1, s2)
+ */
+
+  /* function exit code */
+  __pyx_L0:;
+  return __pyx_r;
+}
+
+/* "cyfaust.pyx":541
+ *     return fi.CsigSelect2(selector, s1, s2)
+ * 
+ * cdef fi.Signal sig_select3(fi.Signal selector, fi.Signal s1, fi.Signal s2, fi.Signal s3):             # <<<<<<<<<<<<<<
+ *     """Create a selector between three signals."""
+ *     return fi.CsigSelect3(selector, s1, s2, s3)
+ */
+
+static Signal __pyx_f_7cyfaust_sig_select3(Signal __pyx_v_selector, Signal __pyx_v_s1, Signal __pyx_v_s2, Signal __pyx_v_s3) {
+  Signal __pyx_r;
+
+  /* "cyfaust.pyx":543
+ * cdef fi.Signal sig_select3(fi.Signal selector, fi.Signal s1, fi.Signal s2, fi.Signal s3):
+ *     """Create a selector between three signals."""
+ *     return fi.CsigSelect3(selector, s1, s2, s3)             # <<<<<<<<<<<<<<
+ * 
+ * # cdef fi.Signal sig_f_const(enum SType type, const char* name, const char* file):
+ */
+  __pyx_r = CsigSelect3(__pyx_v_selector, __pyx_v_s1, __pyx_v_s2, __pyx_v_s3);
+  goto __pyx_L0;
+
+  /* "cyfaust.pyx":541
+ *     return fi.CsigSelect2(selector, s1, s2)
+ * 
+ * cdef fi.Signal sig_select3(fi.Signal selector, fi.Signal s1, fi.Signal s2, fi.Signal s3):             # <<<<<<<<<<<<<<
+ *     """Create a selector between three signals."""
+ *     return fi.CsigSelect3(selector, s1, s2, s3)
+ */
+
+  /* function exit code */
+  __pyx_L0:;
+  return __pyx_r;
+}
+
+/* "cyfaust.pyx":557
+ * #     return fi.CsigBinOp(op, x, y)
+ * 
+ * cdef fi.Signal sig_add(fi.Signal x, fi.Signal y):             # <<<<<<<<<<<<<<
+ *     """Specific binary mathematical functions."""
+ *     return fi.CsigAdd(x, y)
+ */
+
+static Signal __pyx_f_7cyfaust_sig_add(Signal __pyx_v_x, Signal __pyx_v_y) {
+  Signal __pyx_r;
+
+  /* "cyfaust.pyx":559
+ * cdef fi.Signal sig_add(fi.Signal x, fi.Signal y):
+ *     """Specific binary mathematical functions."""
+ *     return fi.CsigAdd(x, y)             # <<<<<<<<<<<<<<
+ * 
+ * cdef fi.Signal sig_sub(fi.Signal x, fi.Signal y):
+ */
+  __pyx_r = CsigAdd(__pyx_v_x, __pyx_v_y);
+  goto __pyx_L0;
+
+  /* "cyfaust.pyx":557
+ * #     return fi.CsigBinOp(op, x, y)
+ * 
+ * cdef fi.Signal sig_add(fi.Signal x, fi.Signal y):             # <<<<<<<<<<<<<<
+ *     """Specific binary mathematical functions."""
+ *     return fi.CsigAdd(x, y)
+ */
+
+  /* function exit code */
+  __pyx_L0:;
+  return __pyx_r;
+}
+
+/* "cyfaust.pyx":561
+ *     return fi.CsigAdd(x, y)
+ * 
+ * cdef fi.Signal sig_sub(fi.Signal x, fi.Signal y):             # <<<<<<<<<<<<<<
+ *     """Specific binary mathematical functions."""
+ *     return fi.CsigSub(x, y)
+ */
+
+static Signal __pyx_f_7cyfaust_sig_sub(Signal __pyx_v_x, Signal __pyx_v_y) {
+  Signal __pyx_r;
+
+  /* "cyfaust.pyx":563
+ * cdef fi.Signal sig_sub(fi.Signal x, fi.Signal y):
+ *     """Specific binary mathematical functions."""
+ *     return fi.CsigSub(x, y)             # <<<<<<<<<<<<<<
+ * 
+ * cdef fi.Signal sig_mul(fi.Signal x, fi.Signal y):
+ */
+  __pyx_r = CsigSub(__pyx_v_x, __pyx_v_y);
+  goto __pyx_L0;
+
+  /* "cyfaust.pyx":561
+ *     return fi.CsigAdd(x, y)
+ * 
+ * cdef fi.Signal sig_sub(fi.Signal x, fi.Signal y):             # <<<<<<<<<<<<<<
+ *     """Specific binary mathematical functions."""
+ *     return fi.CsigSub(x, y)
+ */
+
+  /* function exit code */
+  __pyx_L0:;
+  return __pyx_r;
+}
+
+/* "cyfaust.pyx":565
+ *     return fi.CsigSub(x, y)
+ * 
+ * cdef fi.Signal sig_mul(fi.Signal x, fi.Signal y):             # <<<<<<<<<<<<<<
+ *     """Specific binary mathematical functions."""
+ *     return fi.CsigMul(x, y)
+ */
+
+static Signal __pyx_f_7cyfaust_sig_mul(Signal __pyx_v_x, Signal __pyx_v_y) {
+  Signal __pyx_r;
+
+  /* "cyfaust.pyx":567
+ * cdef fi.Signal sig_mul(fi.Signal x, fi.Signal y):
+ *     """Specific binary mathematical functions."""
+ *     return fi.CsigMul(x, y)             # <<<<<<<<<<<<<<
+ * 
+ * cdef fi.Signal sig_div(fi.Signal x, fi.Signal y):
+ */
+  __pyx_r = CsigMul(__pyx_v_x, __pyx_v_y);
+  goto __pyx_L0;
+
+  /* "cyfaust.pyx":565
+ *     return fi.CsigSub(x, y)
+ * 
+ * cdef fi.Signal sig_mul(fi.Signal x, fi.Signal y):             # <<<<<<<<<<<<<<
+ *     """Specific binary mathematical functions."""
+ *     return fi.CsigMul(x, y)
+ */
+
+  /* function exit code */
+  __pyx_L0:;
+  return __pyx_r;
+}
+
+/* "cyfaust.pyx":569
+ *     return fi.CsigMul(x, y)
+ * 
+ * cdef fi.Signal sig_div(fi.Signal x, fi.Signal y):             # <<<<<<<<<<<<<<
+ *     """Specific binary mathematical functions."""
+ *     return fi.CsigDiv(x, y)
+ */
+
+static Signal __pyx_f_7cyfaust_sig_div(Signal __pyx_v_x, Signal __pyx_v_y) {
+  Signal __pyx_r;
+
+  /* "cyfaust.pyx":571
+ * cdef fi.Signal sig_div(fi.Signal x, fi.Signal y):
+ *     """Specific binary mathematical functions."""
+ *     return fi.CsigDiv(x, y)             # <<<<<<<<<<<<<<
+ * 
+ * cdef fi.Signal sig_rem(fi.Signal x, fi.Signal y):
+ */
+  __pyx_r = CsigDiv(__pyx_v_x, __pyx_v_y);
+  goto __pyx_L0;
+
+  /* "cyfaust.pyx":569
+ *     return fi.CsigMul(x, y)
+ * 
+ * cdef fi.Signal sig_div(fi.Signal x, fi.Signal y):             # <<<<<<<<<<<<<<
+ *     """Specific binary mathematical functions."""
+ *     return fi.CsigDiv(x, y)
+ */
+
+  /* function exit code */
+  __pyx_L0:;
+  return __pyx_r;
+}
+
+/* "cyfaust.pyx":573
+ *     return fi.CsigDiv(x, y)
+ * 
+ * cdef fi.Signal sig_rem(fi.Signal x, fi.Signal y):             # <<<<<<<<<<<<<<
+ *     """Specific binary mathematical functions."""
+ *     return fi.CsigRem(x, y)
+ */
+
+static Signal __pyx_f_7cyfaust_sig_rem(Signal __pyx_v_x, Signal __pyx_v_y) {
+  Signal __pyx_r;
+
+  /* "cyfaust.pyx":575
+ * cdef fi.Signal sig_rem(fi.Signal x, fi.Signal y):
+ *     """Specific binary mathematical functions."""
+ *     return fi.CsigRem(x, y)             # <<<<<<<<<<<<<<
+ * 
+ * cdef fi.Signal sig_abs(fi.Signal x):
+ */
+  __pyx_r = CsigRem(__pyx_v_x, __pyx_v_y);
+  goto __pyx_L0;
+
+  /* "cyfaust.pyx":573
+ *     return fi.CsigDiv(x, y)
+ * 
+ * cdef fi.Signal sig_rem(fi.Signal x, fi.Signal y):             # <<<<<<<<<<<<<<
+ *     """Specific binary mathematical functions."""
+ *     return fi.CsigRem(x, y)
+ */
+
+  /* function exit code */
+  __pyx_L0:;
+  return __pyx_r;
+}
+
+/* "cyfaust.pyx":577
+ *     return fi.CsigRem(x, y)
+ * 
+ * cdef fi.Signal sig_abs(fi.Signal x):             # <<<<<<<<<<<<<<
+ *     """Extended unary mathematical functions."""
+ *     return fi.CsigAbs(x)
+ */
+
+static Signal __pyx_f_7cyfaust_sig_abs(Signal __pyx_v_x) {
+  Signal __pyx_r;
+
+  /* "cyfaust.pyx":579
+ * cdef fi.Signal sig_abs(fi.Signal x):
+ *     """Extended unary mathematical functions."""
+ *     return fi.CsigAbs(x)             # <<<<<<<<<<<<<<
+ * 
+ * cdef fi.Signal sig_remainder(fi.Signal x, fi.Signal y):
+ */
+  __pyx_r = CsigAbs(__pyx_v_x);
+  goto __pyx_L0;
+
+  /* "cyfaust.pyx":577
+ *     return fi.CsigRem(x, y)
+ * 
+ * cdef fi.Signal sig_abs(fi.Signal x):             # <<<<<<<<<<<<<<
+ *     """Extended unary mathematical functions."""
+ *     return fi.CsigAbs(x)
+ */
+
+  /* function exit code */
+  __pyx_L0:;
+  return __pyx_r;
+}
+
+/* "cyfaust.pyx":581
+ *     return fi.CsigAbs(x)
+ * 
+ * cdef fi.Signal sig_remainder(fi.Signal x, fi.Signal y):             # <<<<<<<<<<<<<<
+ *     """Extended binary mathematical functions."""
+ *     return fi.CsigRemainder(x, y)
+ */
+
+static Signal __pyx_f_7cyfaust_sig_remainder(Signal __pyx_v_x, Signal __pyx_v_y) {
+  Signal __pyx_r;
+
+  /* "cyfaust.pyx":583
+ * cdef fi.Signal sig_remainder(fi.Signal x, fi.Signal y):
+ *     """Extended binary mathematical functions."""
+ *     return fi.CsigRemainder(x, y)             # <<<<<<<<<<<<<<
+ * 
+ * 
+ */
+  __pyx_r = CsigRemainder(__pyx_v_x, __pyx_v_y);
+  goto __pyx_L0;
+
+  /* "cyfaust.pyx":581
+ *     return fi.CsigAbs(x)
+ * 
+ * cdef fi.Signal sig_remainder(fi.Signal x, fi.Signal y):             # <<<<<<<<<<<<<<
+ *     """Extended binary mathematical functions."""
+ *     return fi.CsigRemainder(x, y)
+ */
+
+  /* function exit code */
+  __pyx_L0:;
+  return __pyx_r;
+}
+
+/* "cyfaust.pyx":586
+ * 
+ * 
+ * cdef fi.Signal sig_recursion(fi.Signal s):             # <<<<<<<<<<<<<<
+ *     """Create a recursive signal. Use CsigSelf() to refer to the"""
+ *     return fi.CsigRecursion(s)
+ */
+
+static Signal __pyx_f_7cyfaust_sig_recursion(Signal __pyx_v_s) {
+  Signal __pyx_r;
+
+  /* "cyfaust.pyx":588
+ * cdef fi.Signal sig_recursion(fi.Signal s):
+ *     """Create a recursive signal. Use CsigSelf() to refer to the"""
+ *     return fi.CsigRecursion(s)             # <<<<<<<<<<<<<<
+ * 
+ * cdef fi.Signal sig_self_n(int id):
+ */
+  __pyx_r = CsigRecursion(__pyx_v_s);
+  goto __pyx_L0;
+
+  /* "cyfaust.pyx":586
+ * 
+ * 
+ * cdef fi.Signal sig_recursion(fi.Signal s):             # <<<<<<<<<<<<<<
+ *     """Create a recursive signal. Use CsigSelf() to refer to the"""
+ *     return fi.CsigRecursion(s)
+ */
+
+  /* function exit code */
+  __pyx_L0:;
+  return __pyx_r;
+}
+
+/* "cyfaust.pyx":590
+ *     return fi.CsigRecursion(s)
+ * 
+ * cdef fi.Signal sig_self_n(int id):             # <<<<<<<<<<<<<<
+ *     """Create a recursive signal inside the CsigRecursionN expression."""
+ *     return fi.CsigSelfN(id)
+ */
+
+static Signal __pyx_f_7cyfaust_sig_self_n(int __pyx_v_id) {
+  Signal __pyx_r;
+
+  /* "cyfaust.pyx":592
+ * cdef fi.Signal sig_self_n(int id):
+ *     """Create a recursive signal inside the CsigRecursionN expression."""
+ *     return fi.CsigSelfN(id)             # <<<<<<<<<<<<<<
+ * 
+ * cdef fi.Signal* sig_recursion_n(fi.Signal* rf):
+ */
+  __pyx_r = CsigSelfN(__pyx_v_id);
+  goto __pyx_L0;
+
+  /* "cyfaust.pyx":590
+ *     return fi.CsigRecursion(s)
+ * 
+ * cdef fi.Signal sig_self_n(int id):             # <<<<<<<<<<<<<<
+ *     """Create a recursive signal inside the CsigRecursionN expression."""
+ *     return fi.CsigSelfN(id)
+ */
+
+  /* function exit code */
+  __pyx_L0:;
+  return __pyx_r;
+}
+
+/* "cyfaust.pyx":594
+ *     return fi.CsigSelfN(id)
+ * 
+ * cdef fi.Signal* sig_recursion_n(fi.Signal* rf):             # <<<<<<<<<<<<<<
+ *     """Create a recursive block of signals. Use CsigSelfN() to refer to the"""
+ *     return fi.CsigRecursionN(rf)
+ */
+
+static Signal *__pyx_f_7cyfaust_sig_recursion_n(Signal *__pyx_v_rf) {
+  Signal *__pyx_r;
+
+  /* "cyfaust.pyx":596
+ * cdef fi.Signal* sig_recursion_n(fi.Signal* rf):
+ *     """Create a recursive block of signals. Use CsigSelfN() to refer to the"""
+ *     return fi.CsigRecursionN(rf)             # <<<<<<<<<<<<<<
+ * 
+ * cdef fi.Signal sig_button(const char* label):
+ */
+  __pyx_r = CsigRecursionN(__pyx_v_rf);
+  goto __pyx_L0;
+
+  /* "cyfaust.pyx":594
+ *     return fi.CsigSelfN(id)
+ * 
+ * cdef fi.Signal* sig_recursion_n(fi.Signal* rf):             # <<<<<<<<<<<<<<
+ *     """Create a recursive block of signals. Use CsigSelfN() to refer to the"""
+ *     return fi.CsigRecursionN(rf)
+ */
+
+  /* function exit code */
+  __pyx_L0:;
+  return __pyx_r;
+}
+
+/* "cyfaust.pyx":598
+ *     return fi.CsigRecursionN(rf)
+ * 
+ * cdef fi.Signal sig_button(const char* label):             # <<<<<<<<<<<<<<
+ *     """Create a button signal."""
+ *     return fi.CsigButton(label)
+ */
+
+static Signal __pyx_f_7cyfaust_sig_button(char const *__pyx_v_label) {
+  Signal __pyx_r;
+
+  /* "cyfaust.pyx":600
+ * cdef fi.Signal sig_button(const char* label):
+ *     """Create a button signal."""
+ *     return fi.CsigButton(label)             # <<<<<<<<<<<<<<
+ * 
+ * cdef fi.Signal sig_checkbox(const char* label):
+ */
+  __pyx_r = CsigButton(__pyx_v_label);
+  goto __pyx_L0;
+
+  /* "cyfaust.pyx":598
+ *     return fi.CsigRecursionN(rf)
+ * 
+ * cdef fi.Signal sig_button(const char* label):             # <<<<<<<<<<<<<<
+ *     """Create a button signal."""
+ *     return fi.CsigButton(label)
+ */
+
+  /* function exit code */
+  __pyx_L0:;
+  return __pyx_r;
+}
+
+/* "cyfaust.pyx":602
+ *     return fi.CsigButton(label)
+ * 
+ * cdef fi.Signal sig_checkbox(const char* label):             # <<<<<<<<<<<<<<
+ *     """Create a checkbox signal."""
+ *     return fi.CsigCheckbox(label)
+ */
+
+static Signal __pyx_f_7cyfaust_sig_checkbox(char const *__pyx_v_label) {
+  Signal __pyx_r;
+
+  /* "cyfaust.pyx":604
+ * cdef fi.Signal sig_checkbox(const char* label):
+ *     """Create a checkbox signal."""
+ *     return fi.CsigCheckbox(label)             # <<<<<<<<<<<<<<
+ * 
+ * cdef fi.Signal sig_v_slider(const char* label, fi.Signal init, fi.Signal min, fi.Signal max, fi.Signal step):
+ */
+  __pyx_r = CsigCheckbox(__pyx_v_label);
+  goto __pyx_L0;
+
+  /* "cyfaust.pyx":602
+ *     return fi.CsigButton(label)
+ * 
+ * cdef fi.Signal sig_checkbox(const char* label):             # <<<<<<<<<<<<<<
+ *     """Create a checkbox signal."""
+ *     return fi.CsigCheckbox(label)
+ */
+
+  /* function exit code */
+  __pyx_L0:;
+  return __pyx_r;
+}
+
+/* "cyfaust.pyx":606
+ *     return fi.CsigCheckbox(label)
+ * 
+ * cdef fi.Signal sig_v_slider(const char* label, fi.Signal init, fi.Signal min, fi.Signal max, fi.Signal step):             # <<<<<<<<<<<<<<
+ *     """Create a vertical slider signal."""
+ *     return fi.CsigVSlider(label, init, min, max, step)
+ */
+
+static Signal __pyx_f_7cyfaust_sig_v_slider(char const *__pyx_v_label, Signal __pyx_v_init, Signal __pyx_v_min, Signal __pyx_v_max, Signal __pyx_v_step) {
+  Signal __pyx_r;
+
+  /* "cyfaust.pyx":608
+ * cdef fi.Signal sig_v_slider(const char* label, fi.Signal init, fi.Signal min, fi.Signal max, fi.Signal step):
+ *     """Create a vertical slider signal."""
+ *     return fi.CsigVSlider(label, init, min, max, step)             # <<<<<<<<<<<<<<
+ * 
+ * cdef fi.Signal sig_h_slider(const char* label, fi.Signal init, fi.Signal min, fi.Signal max, fi.Signal step):
+ */
+  __pyx_r = CsigVSlider(__pyx_v_label, __pyx_v_init, __pyx_v_min, __pyx_v_max, __pyx_v_step);
+  goto __pyx_L0;
+
+  /* "cyfaust.pyx":606
+ *     return fi.CsigCheckbox(label)
+ * 
+ * cdef fi.Signal sig_v_slider(const char* label, fi.Signal init, fi.Signal min, fi.Signal max, fi.Signal step):             # <<<<<<<<<<<<<<
+ *     """Create a vertical slider signal."""
+ *     return fi.CsigVSlider(label, init, min, max, step)
+ */
+
+  /* function exit code */
+  __pyx_L0:;
+  return __pyx_r;
+}
+
+/* "cyfaust.pyx":610
+ *     return fi.CsigVSlider(label, init, min, max, step)
+ * 
+ * cdef fi.Signal sig_h_slider(const char* label, fi.Signal init, fi.Signal min, fi.Signal max, fi.Signal step):             # <<<<<<<<<<<<<<
+ *     """Create an horizontal slider signal."""
+ *     return fi.CsigHSlider(label, init, min, max, step)
+ */
+
+static Signal __pyx_f_7cyfaust_sig_h_slider(char const *__pyx_v_label, Signal __pyx_v_init, Signal __pyx_v_min, Signal __pyx_v_max, Signal __pyx_v_step) {
+  Signal __pyx_r;
+
+  /* "cyfaust.pyx":612
+ * cdef fi.Signal sig_h_slider(const char* label, fi.Signal init, fi.Signal min, fi.Signal max, fi.Signal step):
+ *     """Create an horizontal slider signal."""
+ *     return fi.CsigHSlider(label, init, min, max, step)             # <<<<<<<<<<<<<<
+ * 
+ * cdef fi.Signal sig_num_entry(const char* label, fi.Signal init, fi.Signal min, fi.Signal max, fi.Signal step):
+ */
+  __pyx_r = CsigHSlider(__pyx_v_label, __pyx_v_init, __pyx_v_min, __pyx_v_max, __pyx_v_step);
+  goto __pyx_L0;
+
+  /* "cyfaust.pyx":610
+ *     return fi.CsigVSlider(label, init, min, max, step)
+ * 
+ * cdef fi.Signal sig_h_slider(const char* label, fi.Signal init, fi.Signal min, fi.Signal max, fi.Signal step):             # <<<<<<<<<<<<<<
+ *     """Create an horizontal slider signal."""
+ *     return fi.CsigHSlider(label, init, min, max, step)
+ */
+
+  /* function exit code */
+  __pyx_L0:;
+  return __pyx_r;
+}
+
+/* "cyfaust.pyx":614
+ *     return fi.CsigHSlider(label, init, min, max, step)
+ * 
+ * cdef fi.Signal sig_num_entry(const char* label, fi.Signal init, fi.Signal min, fi.Signal max, fi.Signal step):             # <<<<<<<<<<<<<<
+ *     """Create a num entry signal."""
+ *     return fi.CsigNumEntry(label, init, min, max, step)
+ */
+
+static Signal __pyx_f_7cyfaust_sig_num_entry(char const *__pyx_v_label, Signal __pyx_v_init, Signal __pyx_v_min, Signal __pyx_v_max, Signal __pyx_v_step) {
+  Signal __pyx_r;
+
+  /* "cyfaust.pyx":616
+ * cdef fi.Signal sig_num_entry(const char* label, fi.Signal init, fi.Signal min, fi.Signal max, fi.Signal step):
+ *     """Create a num entry signal."""
+ *     return fi.CsigNumEntry(label, init, min, max, step)             # <<<<<<<<<<<<<<
+ * 
+ * cdef fi.Signal sig_v_bargraph(const char* label, fi.Signal min, fi.Signal max, fi.Signal s):
+ */
+  __pyx_r = CsigNumEntry(__pyx_v_label, __pyx_v_init, __pyx_v_min, __pyx_v_max, __pyx_v_step);
+  goto __pyx_L0;
+
+  /* "cyfaust.pyx":614
+ *     return fi.CsigHSlider(label, init, min, max, step)
+ * 
+ * cdef fi.Signal sig_num_entry(const char* label, fi.Signal init, fi.Signal min, fi.Signal max, fi.Signal step):             # <<<<<<<<<<<<<<
+ *     """Create a num entry signal."""
+ *     return fi.CsigNumEntry(label, init, min, max, step)
+ */
+
+  /* function exit code */
+  __pyx_L0:;
+  return __pyx_r;
+}
+
+/* "cyfaust.pyx":618
+ *     return fi.CsigNumEntry(label, init, min, max, step)
+ * 
+ * cdef fi.Signal sig_v_bargraph(const char* label, fi.Signal min, fi.Signal max, fi.Signal s):             # <<<<<<<<<<<<<<
+ *     """Create a vertical bargraph signal."""
+ *     return fi.CsigVBargraph(label, min, max, s)
+ */
+
+static Signal __pyx_f_7cyfaust_sig_v_bargraph(char const *__pyx_v_label, Signal __pyx_v_min, Signal __pyx_v_max, Signal __pyx_v_s) {
+  Signal __pyx_r;
+
+  /* "cyfaust.pyx":620
+ * cdef fi.Signal sig_v_bargraph(const char* label, fi.Signal min, fi.Signal max, fi.Signal s):
+ *     """Create a vertical bargraph signal."""
+ *     return fi.CsigVBargraph(label, min, max, s)             # <<<<<<<<<<<<<<
+ * 
+ * cdef fi.Signal sig_h_bargraph(const char* label, fi.Signal min, fi.Signal max, fi.Signal s):
+ */
+  __pyx_r = CsigVBargraph(__pyx_v_label, __pyx_v_min, __pyx_v_max, __pyx_v_s);
+  goto __pyx_L0;
+
+  /* "cyfaust.pyx":618
+ *     return fi.CsigNumEntry(label, init, min, max, step)
+ * 
+ * cdef fi.Signal sig_v_bargraph(const char* label, fi.Signal min, fi.Signal max, fi.Signal s):             # <<<<<<<<<<<<<<
+ *     """Create a vertical bargraph signal."""
+ *     return fi.CsigVBargraph(label, min, max, s)
+ */
+
+  /* function exit code */
+  __pyx_L0:;
+  return __pyx_r;
+}
+
+/* "cyfaust.pyx":622
+ *     return fi.CsigVBargraph(label, min, max, s)
+ * 
+ * cdef fi.Signal sig_h_bargraph(const char* label, fi.Signal min, fi.Signal max, fi.Signal s):             # <<<<<<<<<<<<<<
+ *     """Create an horizontal bargraph signal."""
+ *     return fi.CsigHBargraph(label, min, max, s)
+ */
+
+static Signal __pyx_f_7cyfaust_sig_h_bargraph(char const *__pyx_v_label, Signal __pyx_v_min, Signal __pyx_v_max, Signal __pyx_v_s) {
+  Signal __pyx_r;
+
+  /* "cyfaust.pyx":624
+ * cdef fi.Signal sig_h_bargraph(const char* label, fi.Signal min, fi.Signal max, fi.Signal s):
+ *     """Create an horizontal bargraph signal."""
+ *     return fi.CsigHBargraph(label, min, max, s)             # <<<<<<<<<<<<<<
+ * 
+ * cdef fi.Signal sig_attach(fi.Signal s1, fi.Signal s2):
+ */
+  __pyx_r = CsigHBargraph(__pyx_v_label, __pyx_v_min, __pyx_v_max, __pyx_v_s);
+  goto __pyx_L0;
+
+  /* "cyfaust.pyx":622
+ *     return fi.CsigVBargraph(label, min, max, s)
+ * 
+ * cdef fi.Signal sig_h_bargraph(const char* label, fi.Signal min, fi.Signal max, fi.Signal s):             # <<<<<<<<<<<<<<
+ *     """Create an horizontal bargraph signal."""
+ *     return fi.CsigHBargraph(label, min, max, s)
+ */
+
+  /* function exit code */
+  __pyx_L0:;
+  return __pyx_r;
+}
+
+/* "cyfaust.pyx":626
+ *     return fi.CsigHBargraph(label, min, max, s)
+ * 
+ * cdef fi.Signal sig_attach(fi.Signal s1, fi.Signal s2):             # <<<<<<<<<<<<<<
+ *     """Create an attach signal."""
+ *     return fi.CsigAttach(s1, s2)
+ */
+
+static Signal __pyx_f_7cyfaust_sig_attach(Signal __pyx_v_s1, Signal __pyx_v_s2) {
+  Signal __pyx_r;
+
+  /* "cyfaust.pyx":628
+ * cdef fi.Signal sig_attach(fi.Signal s1, fi.Signal s2):
+ *     """Create an attach signal."""
+ *     return fi.CsigAttach(s1, s2)             # <<<<<<<<<<<<<<
+ * 
+ * # cdef bint is_sig_int(fi.Signal t, int* i):
+ */
+  __pyx_r = CsigAttach(__pyx_v_s1, __pyx_v_s2);
+  goto __pyx_L0;
+
+  /* "cyfaust.pyx":626
+ *     return fi.CsigHBargraph(label, min, max, s)
+ * 
+ * cdef fi.Signal sig_attach(fi.Signal s1, fi.Signal s2):             # <<<<<<<<<<<<<<
+ *     """Create an attach signal."""
+ *     return fi.CsigAttach(s1, s2)
+ */
+
+  /* function exit code */
+  __pyx_L0:;
+  return __pyx_r;
+}
+
 static PyObject *__pyx_tp_new_7cyfaust_ParamArray(PyTypeObject *t, PyObject *a, PyObject *k) {
   PyObject *o;
   #if CYTHON_COMPILING_IN_LIMITED_API
