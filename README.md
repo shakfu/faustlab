@@ -1,11 +1,11 @@
 # faustlab
 
-A clean code attempt to wrap the Faust *interpreter* for use by python via
+A clean code attempt to wrap the Faust *interpreter* for use by python via the following wrapping frameworks
 
 - [x] cython
 - [x] pybind11
 - [x] nanobind
-- [ ] cffi
+
 
 ## Usage
 
@@ -18,9 +18,5 @@ A clean code attempt to wrap the Faust *interpreter* for use by python via
 
 2. `make`
 	
-	- will build all variants {cython, pybind11, nanobindm ..}
-
-
-
-
+	- will build all variants {cython, pybind11, nanobind}
 

@@ -9,69 +9,88 @@
 
 namespace py = pybind11;
 
+class CTree {};
 
-
-
+// PYBIND11_MAKE_OPAQUE(CTree);
 
 PYBIND11_MODULE(pyfaust, m)
 {
     m.doc() = "pyfaust: a pybind11 wrapper around the faust interpreter.";
     m.attr("__version__") = "0.0.1";
 
+
+    // -----------------------------------------------------------------------
+    // libfaust-signal
+    py::class_<CTree>(m, "CTree")
+        .def(py::init<>());
+    // py::class_<Signal>(m, "Signal");
+    //     .def(py::init());
+
+    // -----------------------------------------------------------------------
     // libfaust
     m.def("generate_sha1", &generateSHA1, "Generate SHA1 key from a string.");
-    m.def("expand_dsp_from_file", [](const std::string& filename, std::vector<std::string> params, std::string& sha_key, std::string& error_msg) {
-        std::vector<const char *> cstrs;
-        cstrs.reserve(params.size());
-        for (auto &p : params) cstrs.push_back(const_cast<char *>(p.c_str()));
-        return expandDSPFromFile(filename, cstrs.size(), cstrs.data(), sha_key, error_msg);
+    m.def("expand_dsp_from_file", [](const std::string& filename, std::vector<std::string> args, std::string& sha_key, std::string& error_msg) {
+        std::vector<const char *> argv;
+        argv.reserve(args.size());
+        for (auto &i : args) argv.push_back(const_cast<char *>(i.c_str()));
+        return expandDSPFromFile(filename, argv.size(), argv.data(), sha_key, error_msg);
     }, "Expand DSP source code from a file into a self-contained DSP string.");
 
-    m.def("expand_dsp_from_string", [](const std::string& name_app, const std::string& dsp_content, std::vector<std::string> params, std::string& sha_key, std::string& error_msg) {
-        std::vector<const char *> cstrs;
-        cstrs.reserve(params.size());
-        for (auto &p : params) cstrs.push_back(const_cast<char *>(p.c_str()));
-        return expandDSPFromString(name_app, dsp_content, cstrs.size(), cstrs.data(), sha_key, error_msg);
+    m.def("expand_dsp_from_string", [](const std::string& name_app, const std::string& dsp_content, std::vector<std::string> args, std::string& sha_key, std::string& error_msg) {
+        std::vector<const char *> argv;
+        argv.reserve(args.size());
+        for (auto &i : args) argv.push_back(const_cast<char *>(i.c_str()));
+        return expandDSPFromString(name_app, dsp_content, argv.size(), argv.data(), sha_key, error_msg);
     }, "Expand DSP source code from a file into a self-contained DSP string.");
 
-    m.def("generate_aux_files_from_file", [](const std::string& filename, std::vector<std::string> params, std::string& error_msg) {
-        std::vector<const char *> cstrs;
-        cstrs.reserve(params.size());
-        for (auto &p : params) cstrs.push_back(const_cast<char *>(p.c_str()));
-        return generateAuxFilesFromFile(filename, cstrs.size(), cstrs.data(), error_msg);
+    m.def("generate_aux_files_from_file", [](const std::string& filename, std::vector<std::string> args, std::string& error_msg) {
+        std::vector<const char *> argv;
+        argv.reserve(args.size());
+        for (auto &i : args) argv.push_back(const_cast<char *>(i.c_str()));
+        return generateAuxFilesFromFile(filename, argv.size(), argv.data(), error_msg);
     }, "Generate additional file (other backends, SVG, XML, JSON...) starting from a filename.");
 
-    m.def("generate_aux_files_from_string", [](const std::string& name_app, const std::string& dsp_content, std::vector<std::string> params, std::string& error_msg) {
-        std::vector<const char *> cstrs;
-        cstrs.reserve(params.size());
-        for (auto &p : params) cstrs.push_back(const_cast<char *>(p.c_str()));
-        return generateAuxFilesFromString(name_app, dsp_content, cstrs.size(), cstrs.data(), error_msg);
+    m.def("generate_aux_files_from_string", [](const std::string& name_app, const std::string& dsp_content, std::vector<std::string> args, std::string& error_msg) {
+        std::vector<const char *> argv;
+        argv.reserve(args.size());
+        for (auto &i : args) argv.push_back(const_cast<char *>(i.c_str()));
+        return generateAuxFilesFromString(name_app, dsp_content, argv.size(), argv.data(), error_msg);
     }, "Expand DSP source code from a file into a self-contained DSP string.");
 
-
+    // -----------------------------------------------------------------------
     // interpreter-dsp
 
     m.def("get_version", &getCLibFaustVersion, "Retrieve the libfaust version.");
     m.def("get_interpreter_dsp_factory_from_sha_key", &getInterpreterDSPFactoryFromSHAKey, "Get the Faust DSP factory associated with a given SHA key.");
 
-    // see: https://stackoverflow.com/questions/49195418/pybind11-binding-a-function-that-uses-double-pointers
-
-    m.def("create_interpreter_dsp_factory_from_file", [](const std::string& filename, std::vector<std::string> params, std::string& error_msg) {
-        std::vector<const char *> cstrs;
-        cstrs.reserve(params.size());
-        for (auto &p : params) cstrs.push_back(const_cast<char *>(p.c_str()));
-        return createInterpreterDSPFactoryFromFile(filename, cstrs.size(), cstrs.data(), error_msg);
+    m.def("create_interpreter_dsp_factory_from_file", [](const std::string& filename, std::vector<std::string> args, std::string& error_msg) {
+        std::vector<const char *> argv;
+        argv.reserve(args.size());
+        for (auto &i : args) argv.push_back(const_cast<char *>(i.c_str()));
+        return createInterpreterDSPFactoryFromFile(filename, argv.size(), argv.data(), error_msg);
     }, "Create a Faust DSP factory from a DSP source code as a file.");
 
-    m.def("create_interpreter_dsp_factory_from_string", [](const std::string& name_app, const std::string& dsp_content, std::vector<std::string> params, std::string& error_msg) {
-        std::vector<const char *> cstrs;
-        cstrs.reserve(params.size());
-        for (auto &p : params) cstrs.push_back(const_cast<char *>(p.c_str()));
-        return createInterpreterDSPFactoryFromString(name_app, dsp_content, cstrs.size(), cstrs.data(), error_msg);
+    m.def("create_interpreter_dsp_factory_from_string", [](const std::string& name_app, const std::string& dsp_content, std::vector<std::string> args, std::string& error_msg) {
+        std::vector<const char *> argv;
+        argv.reserve(args.size());
+        for (auto &i : args) argv.push_back(const_cast<char *>(i.c_str()));
+        return createInterpreterDSPFactoryFromString(name_app, dsp_content, argv.size(), argv.data(), error_msg);
     }, "Create a Faust DSP factory from a DSP source code as a string.");
 
-    // m.def("create_interpreter_dsp_factory_from_signals", &createInterpreterDSPFactoryFromSignals, "Create a Faust DSP factory from a vector of output signals.");
-    // m.def("create_interpreter_dsp_factory_from_boxes", &createInterpreterDSPFactoryFromBoxes, "Create a Faust DSP factory from a box expression.");
+    m.def("create_interpreter_dsp_factory_from_signals", [](const std::string& name_app, tvec signals, std::vector<std::string> args, std::string& error_msg) {
+        std::vector<const char *> argv;
+        argv.reserve(args.size());
+        for (auto &i : args) argv.push_back(const_cast<char *>(i.c_str()));    
+        return createInterpreterDSPFactoryFromSignals(name_app, signals, argv.size(), argv.data(), error_msg);
+    }, "Create a Faust DSP factory from a vector of output signals.");
+
+    m.def("create_interpreter_dsp_factory_from_boxes", [](const std::string& name_app, Box box, std::vector<std::string> args, std::string& error_msg) {
+        std::vector<const char *> argv;
+        argv.reserve(args.size());
+        for (auto &i : args) argv.push_back(const_cast<char *>(i.c_str()));    
+        return createInterpreterDSPFactoryFromBoxes(name_app, box, argv.size(), argv.data(), error_msg);
+    }, "Create a Faust DSP factory from a box expression.");
+
     m.def("delete_interpreter_dsp_factory", &deleteInterpreterDSPFactory, "Delete a Faust DSP factory,");
     m.def("delete_all_interpreter_dsp_factories", &deleteAllInterpreterDSPFactories, "Delete all Faust DSP factories kept in the library cache.");
     m.def("get_all_interpreter_dsp_factories", &getAllInterpreterDSPFactories, "Return Faust DSP factories of the library cache as a vector of their SHA keys.");
