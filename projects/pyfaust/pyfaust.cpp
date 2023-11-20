@@ -46,7 +46,7 @@ PYBIND11_MODULE(pyfaust, m)
         cstrs.reserve(params.size());
         for (auto &p : params) cstrs.push_back(const_cast<char *>(p.c_str()));
         return generateAuxFilesFromString(name_app, dsp_content, cstrs.size(), cstrs.data(), error_msg);
-    }, "Generate additional file (other backends, SVG, XML, JSON...) starting from a string.");
+    }, "Expand DSP source code from a file into a self-contained DSP string.");
 
 
     // interpreter-dsp
