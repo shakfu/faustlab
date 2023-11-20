@@ -5,7 +5,7 @@ set(PYFAUST_INCLUDE ${CMAKE_SOURCE_DIR}/include)
 find_package(pybind11 REQUIRED)
 
 
-pybind11_add_module(pyfaust pyfaust.pybind11.cpp)
+pybind11_add_module(pyfaust pyfaust.cpp)
 
 
 target_include_directories(pyfaust

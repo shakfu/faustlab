@@ -2,14 +2,54 @@
 #include <pybind11/stl.h>
 
 // faust
+#include "faust/dsp/libfaust.h"
+#include "faust/dsp/libfaust-signal.h"
+#include "faust/dsp/libfaust-box.h"
 #include "faust/dsp/interpreter-dsp.h"
 
 namespace py = pybind11;
+
+
+
+
 
 PYBIND11_MODULE(pyfaust, m)
 {
     m.doc() = "pyfaust: a pybind11 wrapper around the faust interpreter.";
     m.attr("__version__") = "0.0.1";
+
+    // libfaust
+    m.def("generate_sha1", &generateSHA1, "Generate SHA1 key from a string.");
+    m.def("expand_dsp_from_file", [](const std::string& filename, std::vector<std::string> params, std::string& sha_key, std::string& error_msg) {
+        std::vector<const char *> cstrs;
+        cstrs.reserve(params.size());
+        for (auto &p : params) cstrs.push_back(const_cast<char *>(p.c_str()));
+        return expandDSPFromFile(filename, cstrs.size(), cstrs.data(), sha_key, error_msg);
+    }, "Expand DSP source code from a file into a self-contained DSP string.");
+
+    m.def("expand_dsp_from_string", [](const std::string& name_app, const std::string& dsp_content, std::vector<std::string> params, std::string& sha_key, std::string& error_msg) {
+        std::vector<const char *> cstrs;
+        cstrs.reserve(params.size());
+        for (auto &p : params) cstrs.push_back(const_cast<char *>(p.c_str()));
+        return expandDSPFromString(name_app, dsp_content, cstrs.size(), cstrs.data(), sha_key, error_msg);
+    }, "Expand DSP source code from a file into a self-contained DSP string.");
+
+    m.def("generate_aux_files_from_file", [](const std::string& filename, std::vector<std::string> params, std::string& error_msg) {
+        std::vector<const char *> cstrs;
+        cstrs.reserve(params.size());
+        for (auto &p : params) cstrs.push_back(const_cast<char *>(p.c_str()));
+        return generateAuxFilesFromFile(filename, cstrs.size(), cstrs.data(), error_msg);
+    }, "Generate additional file (other backends, SVG, XML, JSON...) starting from a filename.");
+
+    m.def("generate_aux_files_from_string", [](const std::string& name_app, const std::string& dsp_content, std::vector<std::string> params, std::string& error_msg) {
+        std::vector<const char *> cstrs;
+        cstrs.reserve(params.size());
+        for (auto &p : params) cstrs.push_back(const_cast<char *>(p.c_str()));
+        return generateAuxFilesFromString(name_app, dsp_content, cstrs.size(), cstrs.data(), error_msg);
+    }, "Generate additional file (other backends, SVG, XML, JSON...) starting from a string.");
+
+
+    // interpreter-dsp
 
     m.def("get_version", &getCLibFaustVersion, "Retrieve the libfaust version.");
     m.def("get_interpreter_dsp_factory_from_sha_key", &getInterpreterDSPFactoryFromSHAKey, "Get the Faust DSP factory associated with a given SHA key.");
@@ -29,8 +69,6 @@ PYBIND11_MODULE(pyfaust, m)
         for (auto &p : params) cstrs.push_back(const_cast<char *>(p.c_str()));
         return createInterpreterDSPFactoryFromString(name_app, dsp_content, cstrs.size(), cstrs.data(), error_msg);
     }, "Create a Faust DSP factory from a DSP source code as a string.");
-
-
 
     // m.def("create_interpreter_dsp_factory_from_signals", &createInterpreterDSPFactoryFromSignals, "Create a Faust DSP factory from a vector of output signals.");
     // m.def("create_interpreter_dsp_factory_from_boxes", &createInterpreterDSPFactoryFromBoxes, "Create a Faust DSP factory from a box expression.");
