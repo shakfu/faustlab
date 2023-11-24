@@ -6,6 +6,7 @@
 #include "faust/dsp/libfaust-signal.h"
 #include "faust/dsp/libfaust-box.h"
 #include "faust/dsp/interpreter-dsp.h"
+// #include "faust/compiler/tlib/tree.hh" // for CTree
 
 namespace py = pybind11;
 
@@ -23,8 +24,8 @@ PYBIND11_MODULE(pyfaust, m)
     // libfaust-signal
     py::class_<CTree>(m, "CTree")
         .def(py::init<>());
-    // py::class_<Signal>(m, "Signal");
-    //     .def(py::init());
+    py::class_<Signal>(m, "Signal")
+        .def(py::init<>());
 
     // -----------------------------------------------------------------------
     // libfaust

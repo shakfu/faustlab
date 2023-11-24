@@ -1894,37 +1894,6 @@ static CYTHON_INLINE PyObject* __Pyx_PyObject_CallOneArg(PyObject *func, PyObjec
 /* RaiseUnexpectedTypeError.proto */
 static int __Pyx_RaiseUnexpectedTypeError(const char *expected, PyObject *obj);
 
-/* AssertionsEnabled.proto */
-#if CYTHON_COMPILING_IN_PYPY && PY_VERSION_HEX < 0x02070600 && !defined(Py_OptimizeFlag)
-  #define __Pyx_init_assertions_enabled()  (0)
-  #define __pyx_assertions_enabled()  (1)
-#elif CYTHON_COMPILING_IN_LIMITED_API  ||  (CYTHON_COMPILING_IN_CPYTHON && PY_VERSION_HEX >= 0x030C0000)
-  static int __pyx_assertions_enabled_flag;
-  #define __pyx_assertions_enabled() (__pyx_assertions_enabled_flag)
-  static int __Pyx_init_assertions_enabled(void) {
-    PyObject *builtins, *debug, *debug_str;
-    int flag;
-    builtins = PyEval_GetBuiltins();
-    if (!builtins) goto bad;
-    debug_str = PyUnicode_FromStringAndSize("__debug__", 9);
-    if (!debug_str) goto bad;
-    debug = PyObject_GetItem(builtins, debug_str);
-    Py_DECREF(debug_str);
-    if (!debug) goto bad;
-    flag = PyObject_IsTrue(debug);
-    Py_DECREF(debug);
-    if (flag == -1) goto bad;
-    __pyx_assertions_enabled_flag = flag;
-    return 0;
-  bad:
-    __pyx_assertions_enabled_flag = 1;
-    return -1;
-  }
-#else
-  #define __Pyx_init_assertions_enabled()  (0)
-  #define __pyx_assertions_enabled()  (!Py_OptimizeFlag)
-#endif
-
 /* IncludeStructmemberH.proto */
 #include <structmember.h>
 
@@ -2290,10 +2259,9 @@ static PyObject *__pyx_builtin_staticmethod;
 static PyObject *__pyx_builtin_range;
 static PyObject *__pyx_builtin_TypeError;
 static PyObject *__pyx_builtin_print;
-static PyObject *__pyx_builtin_AssertionError;
 /* #### Code section: string_decls ### */
 static const char __pyx_k_gc[] = "gc";
-static const char __pyx_k__26[] = "?";
+static const char __pyx_k__27[] = "?";
 static const char __pyx_k_int[] = "int";
 static const char __pyx_k_args[] = "args";
 static const char __pyx_k_code[] = "code";
@@ -2339,7 +2307,6 @@ static const char __pyx_k_staticmethod[] = "staticmethod";
 static const char __pyx_k_stringsource[] = "<stringsource>";
 static const char __pyx_k_get_numinputs[] = "get_numinputs";
 static const char __pyx_k_reduce_cython[] = "__reduce_cython__";
-static const char __pyx_k_AssertionError[] = "AssertionError";
 static const char __pyx_k_InterpreterDsp[] = "InterpreterDsp";
 static const char __pyx_k_get_numoutputs[] = "get_numoutputs";
 static const char __pyx_k_get_samplerate[] = "get_samplerate";
@@ -2364,6 +2331,7 @@ static const char __pyx_k_InterpreterDspFactory___reduce_c[] = "InterpreterDspFa
 static const char __pyx_k_InterpreterDspFactory___setstate[] = "InterpreterDspFactory.__setstate_cython__";
 static const char __pyx_k_InterpreterDspFactory_from_strin[] = "InterpreterDspFactory.from_string";
 static const char __pyx_k_InterpreterDsp___setstate_cython[] = "InterpreterDsp.__setstate_cython__";
+static const char __pyx_k_OK_test_create_interpreter_dsp_f[] = "OK: test_create_interpreter_dsp_factory_from_string";
 static const char __pyx_k_no_default___reduce___due_to_non[] = "no default __reduce__ due to non-trivial __cinit__";
 static const char __pyx_k_test_create_interpreter_dsp_fact[] = "test_create_interpreter_dsp_factory_from_string";
 /* #### Code section: decls ### */
@@ -2435,7 +2403,6 @@ typedef struct {
   PyTypeObject *__pyx_ptype_7cyfaust_ParamArray;
   PyTypeObject *__pyx_ptype_7cyfaust_InterpreterDspFactory;
   PyTypeObject *__pyx_ptype_7cyfaust_InterpreterDsp;
-  PyObject *__pyx_n_s_AssertionError;
   PyObject *__pyx_n_s_InterpreterDsp;
   PyObject *__pyx_n_s_InterpreterDspFactory;
   PyObject *__pyx_n_s_InterpreterDspFactory___reduce_c;
@@ -2452,11 +2419,12 @@ typedef struct {
   PyObject *__pyx_n_s_InterpreterDsp_get_samplerate;
   PyObject *__pyx_n_s_InterpreterDsp_init;
   PyObject *__pyx_n_s_InterpreterDsp_reset;
+  PyObject *__pyx_kp_u_OK_test_create_interpreter_dsp_f;
   PyObject *__pyx_n_s_ParamArray;
   PyObject *__pyx_n_s_ParamArray___reduce_cython;
   PyObject *__pyx_n_s_ParamArray___setstate_cython;
   PyObject *__pyx_n_s_TypeError;
-  PyObject *__pyx_n_s__26;
+  PyObject *__pyx_n_s__27;
   PyObject *__pyx_n_s_args;
   PyObject *__pyx_n_s_asyncio_coroutines;
   PyObject *__pyx_n_s_clear;
@@ -2509,31 +2477,32 @@ typedef struct {
   PyObject *__pyx_kp_s_stringsource;
   PyObject *__pyx_n_s_test;
   PyObject *__pyx_n_s_test_create_interpreter_dsp_fact;
-  PyObject *__pyx_codeobj_;
-  PyObject *__pyx_tuple__2;
-  PyObject *__pyx_tuple__4;
-  PyObject *__pyx_tuple__6;
-  PyObject *__pyx_tuple__8;
-  PyObject *__pyx_tuple__10;
-  PyObject *__pyx_tuple__17;
-  PyObject *__pyx_tuple__24;
-  PyObject *__pyx_codeobj__3;
-  PyObject *__pyx_codeobj__5;
-  PyObject *__pyx_codeobj__7;
-  PyObject *__pyx_codeobj__9;
-  PyObject *__pyx_codeobj__11;
+  PyObject *__pyx_tuple_;
+  PyObject *__pyx_tuple__3;
+  PyObject *__pyx_tuple__5;
+  PyObject *__pyx_tuple__7;
+  PyObject *__pyx_tuple__9;
+  PyObject *__pyx_tuple__11;
+  PyObject *__pyx_tuple__18;
+  PyObject *__pyx_tuple__25;
+  PyObject *__pyx_codeobj__2;
+  PyObject *__pyx_codeobj__4;
+  PyObject *__pyx_codeobj__6;
+  PyObject *__pyx_codeobj__8;
+  PyObject *__pyx_codeobj__10;
   PyObject *__pyx_codeobj__12;
   PyObject *__pyx_codeobj__13;
   PyObject *__pyx_codeobj__14;
   PyObject *__pyx_codeobj__15;
   PyObject *__pyx_codeobj__16;
-  PyObject *__pyx_codeobj__18;
+  PyObject *__pyx_codeobj__17;
   PyObject *__pyx_codeobj__19;
   PyObject *__pyx_codeobj__20;
   PyObject *__pyx_codeobj__21;
   PyObject *__pyx_codeobj__22;
   PyObject *__pyx_codeobj__23;
-  PyObject *__pyx_codeobj__25;
+  PyObject *__pyx_codeobj__24;
+  PyObject *__pyx_codeobj__26;
 } __pyx_mstate;
 
 #if CYTHON_USE_MODULE_STATE
@@ -2582,7 +2551,6 @@ static int __pyx_m_clear(PyObject *m) {
   Py_CLEAR(clear_module_state->__pyx_type_7cyfaust_InterpreterDspFactory);
   Py_CLEAR(clear_module_state->__pyx_ptype_7cyfaust_InterpreterDsp);
   Py_CLEAR(clear_module_state->__pyx_type_7cyfaust_InterpreterDsp);
-  Py_CLEAR(clear_module_state->__pyx_n_s_AssertionError);
   Py_CLEAR(clear_module_state->__pyx_n_s_InterpreterDsp);
   Py_CLEAR(clear_module_state->__pyx_n_s_InterpreterDspFactory);
   Py_CLEAR(clear_module_state->__pyx_n_s_InterpreterDspFactory___reduce_c);
@@ -2599,11 +2567,12 @@ static int __pyx_m_clear(PyObject *m) {
   Py_CLEAR(clear_module_state->__pyx_n_s_InterpreterDsp_get_samplerate);
   Py_CLEAR(clear_module_state->__pyx_n_s_InterpreterDsp_init);
   Py_CLEAR(clear_module_state->__pyx_n_s_InterpreterDsp_reset);
+  Py_CLEAR(clear_module_state->__pyx_kp_u_OK_test_create_interpreter_dsp_f);
   Py_CLEAR(clear_module_state->__pyx_n_s_ParamArray);
   Py_CLEAR(clear_module_state->__pyx_n_s_ParamArray___reduce_cython);
   Py_CLEAR(clear_module_state->__pyx_n_s_ParamArray___setstate_cython);
   Py_CLEAR(clear_module_state->__pyx_n_s_TypeError);
-  Py_CLEAR(clear_module_state->__pyx_n_s__26);
+  Py_CLEAR(clear_module_state->__pyx_n_s__27);
   Py_CLEAR(clear_module_state->__pyx_n_s_args);
   Py_CLEAR(clear_module_state->__pyx_n_s_asyncio_coroutines);
   Py_CLEAR(clear_module_state->__pyx_n_s_clear);
@@ -2656,31 +2625,32 @@ static int __pyx_m_clear(PyObject *m) {
   Py_CLEAR(clear_module_state->__pyx_kp_s_stringsource);
   Py_CLEAR(clear_module_state->__pyx_n_s_test);
   Py_CLEAR(clear_module_state->__pyx_n_s_test_create_interpreter_dsp_fact);
-  Py_CLEAR(clear_module_state->__pyx_codeobj_);
-  Py_CLEAR(clear_module_state->__pyx_tuple__2);
-  Py_CLEAR(clear_module_state->__pyx_tuple__4);
-  Py_CLEAR(clear_module_state->__pyx_tuple__6);
-  Py_CLEAR(clear_module_state->__pyx_tuple__8);
-  Py_CLEAR(clear_module_state->__pyx_tuple__10);
-  Py_CLEAR(clear_module_state->__pyx_tuple__17);
-  Py_CLEAR(clear_module_state->__pyx_tuple__24);
-  Py_CLEAR(clear_module_state->__pyx_codeobj__3);
-  Py_CLEAR(clear_module_state->__pyx_codeobj__5);
-  Py_CLEAR(clear_module_state->__pyx_codeobj__7);
-  Py_CLEAR(clear_module_state->__pyx_codeobj__9);
-  Py_CLEAR(clear_module_state->__pyx_codeobj__11);
+  Py_CLEAR(clear_module_state->__pyx_tuple_);
+  Py_CLEAR(clear_module_state->__pyx_tuple__3);
+  Py_CLEAR(clear_module_state->__pyx_tuple__5);
+  Py_CLEAR(clear_module_state->__pyx_tuple__7);
+  Py_CLEAR(clear_module_state->__pyx_tuple__9);
+  Py_CLEAR(clear_module_state->__pyx_tuple__11);
+  Py_CLEAR(clear_module_state->__pyx_tuple__18);
+  Py_CLEAR(clear_module_state->__pyx_tuple__25);
+  Py_CLEAR(clear_module_state->__pyx_codeobj__2);
+  Py_CLEAR(clear_module_state->__pyx_codeobj__4);
+  Py_CLEAR(clear_module_state->__pyx_codeobj__6);
+  Py_CLEAR(clear_module_state->__pyx_codeobj__8);
+  Py_CLEAR(clear_module_state->__pyx_codeobj__10);
   Py_CLEAR(clear_module_state->__pyx_codeobj__12);
   Py_CLEAR(clear_module_state->__pyx_codeobj__13);
   Py_CLEAR(clear_module_state->__pyx_codeobj__14);
   Py_CLEAR(clear_module_state->__pyx_codeobj__15);
   Py_CLEAR(clear_module_state->__pyx_codeobj__16);
-  Py_CLEAR(clear_module_state->__pyx_codeobj__18);
+  Py_CLEAR(clear_module_state->__pyx_codeobj__17);
   Py_CLEAR(clear_module_state->__pyx_codeobj__19);
   Py_CLEAR(clear_module_state->__pyx_codeobj__20);
   Py_CLEAR(clear_module_state->__pyx_codeobj__21);
   Py_CLEAR(clear_module_state->__pyx_codeobj__22);
   Py_CLEAR(clear_module_state->__pyx_codeobj__23);
-  Py_CLEAR(clear_module_state->__pyx_codeobj__25);
+  Py_CLEAR(clear_module_state->__pyx_codeobj__24);
+  Py_CLEAR(clear_module_state->__pyx_codeobj__26);
   return 0;
 }
 #endif
@@ -2707,7 +2677,6 @@ static int __pyx_m_traverse(PyObject *m, visitproc visit, void *arg) {
   Py_VISIT(traverse_module_state->__pyx_type_7cyfaust_InterpreterDspFactory);
   Py_VISIT(traverse_module_state->__pyx_ptype_7cyfaust_InterpreterDsp);
   Py_VISIT(traverse_module_state->__pyx_type_7cyfaust_InterpreterDsp);
-  Py_VISIT(traverse_module_state->__pyx_n_s_AssertionError);
   Py_VISIT(traverse_module_state->__pyx_n_s_InterpreterDsp);
   Py_VISIT(traverse_module_state->__pyx_n_s_InterpreterDspFactory);
   Py_VISIT(traverse_module_state->__pyx_n_s_InterpreterDspFactory___reduce_c);
@@ -2724,11 +2693,12 @@ static int __pyx_m_traverse(PyObject *m, visitproc visit, void *arg) {
   Py_VISIT(traverse_module_state->__pyx_n_s_InterpreterDsp_get_samplerate);
   Py_VISIT(traverse_module_state->__pyx_n_s_InterpreterDsp_init);
   Py_VISIT(traverse_module_state->__pyx_n_s_InterpreterDsp_reset);
+  Py_VISIT(traverse_module_state->__pyx_kp_u_OK_test_create_interpreter_dsp_f);
   Py_VISIT(traverse_module_state->__pyx_n_s_ParamArray);
   Py_VISIT(traverse_module_state->__pyx_n_s_ParamArray___reduce_cython);
   Py_VISIT(traverse_module_state->__pyx_n_s_ParamArray___setstate_cython);
   Py_VISIT(traverse_module_state->__pyx_n_s_TypeError);
-  Py_VISIT(traverse_module_state->__pyx_n_s__26);
+  Py_VISIT(traverse_module_state->__pyx_n_s__27);
   Py_VISIT(traverse_module_state->__pyx_n_s_args);
   Py_VISIT(traverse_module_state->__pyx_n_s_asyncio_coroutines);
   Py_VISIT(traverse_module_state->__pyx_n_s_clear);
@@ -2781,31 +2751,32 @@ static int __pyx_m_traverse(PyObject *m, visitproc visit, void *arg) {
   Py_VISIT(traverse_module_state->__pyx_kp_s_stringsource);
   Py_VISIT(traverse_module_state->__pyx_n_s_test);
   Py_VISIT(traverse_module_state->__pyx_n_s_test_create_interpreter_dsp_fact);
-  Py_VISIT(traverse_module_state->__pyx_codeobj_);
-  Py_VISIT(traverse_module_state->__pyx_tuple__2);
-  Py_VISIT(traverse_module_state->__pyx_tuple__4);
-  Py_VISIT(traverse_module_state->__pyx_tuple__6);
-  Py_VISIT(traverse_module_state->__pyx_tuple__8);
-  Py_VISIT(traverse_module_state->__pyx_tuple__10);
-  Py_VISIT(traverse_module_state->__pyx_tuple__17);
-  Py_VISIT(traverse_module_state->__pyx_tuple__24);
-  Py_VISIT(traverse_module_state->__pyx_codeobj__3);
-  Py_VISIT(traverse_module_state->__pyx_codeobj__5);
-  Py_VISIT(traverse_module_state->__pyx_codeobj__7);
-  Py_VISIT(traverse_module_state->__pyx_codeobj__9);
-  Py_VISIT(traverse_module_state->__pyx_codeobj__11);
+  Py_VISIT(traverse_module_state->__pyx_tuple_);
+  Py_VISIT(traverse_module_state->__pyx_tuple__3);
+  Py_VISIT(traverse_module_state->__pyx_tuple__5);
+  Py_VISIT(traverse_module_state->__pyx_tuple__7);
+  Py_VISIT(traverse_module_state->__pyx_tuple__9);
+  Py_VISIT(traverse_module_state->__pyx_tuple__11);
+  Py_VISIT(traverse_module_state->__pyx_tuple__18);
+  Py_VISIT(traverse_module_state->__pyx_tuple__25);
+  Py_VISIT(traverse_module_state->__pyx_codeobj__2);
+  Py_VISIT(traverse_module_state->__pyx_codeobj__4);
+  Py_VISIT(traverse_module_state->__pyx_codeobj__6);
+  Py_VISIT(traverse_module_state->__pyx_codeobj__8);
+  Py_VISIT(traverse_module_state->__pyx_codeobj__10);
   Py_VISIT(traverse_module_state->__pyx_codeobj__12);
   Py_VISIT(traverse_module_state->__pyx_codeobj__13);
   Py_VISIT(traverse_module_state->__pyx_codeobj__14);
   Py_VISIT(traverse_module_state->__pyx_codeobj__15);
   Py_VISIT(traverse_module_state->__pyx_codeobj__16);
-  Py_VISIT(traverse_module_state->__pyx_codeobj__18);
+  Py_VISIT(traverse_module_state->__pyx_codeobj__17);
   Py_VISIT(traverse_module_state->__pyx_codeobj__19);
   Py_VISIT(traverse_module_state->__pyx_codeobj__20);
   Py_VISIT(traverse_module_state->__pyx_codeobj__21);
   Py_VISIT(traverse_module_state->__pyx_codeobj__22);
   Py_VISIT(traverse_module_state->__pyx_codeobj__23);
-  Py_VISIT(traverse_module_state->__pyx_codeobj__25);
+  Py_VISIT(traverse_module_state->__pyx_codeobj__24);
+  Py_VISIT(traverse_module_state->__pyx_codeobj__26);
   return 0;
 }
 #endif
@@ -2848,7 +2819,6 @@ static int __pyx_m_traverse(PyObject *m, visitproc visit, void *arg) {
 #define __pyx_ptype_7cyfaust_ParamArray __pyx_mstate_global->__pyx_ptype_7cyfaust_ParamArray
 #define __pyx_ptype_7cyfaust_InterpreterDspFactory __pyx_mstate_global->__pyx_ptype_7cyfaust_InterpreterDspFactory
 #define __pyx_ptype_7cyfaust_InterpreterDsp __pyx_mstate_global->__pyx_ptype_7cyfaust_InterpreterDsp
-#define __pyx_n_s_AssertionError __pyx_mstate_global->__pyx_n_s_AssertionError
 #define __pyx_n_s_InterpreterDsp __pyx_mstate_global->__pyx_n_s_InterpreterDsp
 #define __pyx_n_s_InterpreterDspFactory __pyx_mstate_global->__pyx_n_s_InterpreterDspFactory
 #define __pyx_n_s_InterpreterDspFactory___reduce_c __pyx_mstate_global->__pyx_n_s_InterpreterDspFactory___reduce_c
@@ -2865,11 +2835,12 @@ static int __pyx_m_traverse(PyObject *m, visitproc visit, void *arg) {
 #define __pyx_n_s_InterpreterDsp_get_samplerate __pyx_mstate_global->__pyx_n_s_InterpreterDsp_get_samplerate
 #define __pyx_n_s_InterpreterDsp_init __pyx_mstate_global->__pyx_n_s_InterpreterDsp_init
 #define __pyx_n_s_InterpreterDsp_reset __pyx_mstate_global->__pyx_n_s_InterpreterDsp_reset
+#define __pyx_kp_u_OK_test_create_interpreter_dsp_f __pyx_mstate_global->__pyx_kp_u_OK_test_create_interpreter_dsp_f
 #define __pyx_n_s_ParamArray __pyx_mstate_global->__pyx_n_s_ParamArray
 #define __pyx_n_s_ParamArray___reduce_cython __pyx_mstate_global->__pyx_n_s_ParamArray___reduce_cython
 #define __pyx_n_s_ParamArray___setstate_cython __pyx_mstate_global->__pyx_n_s_ParamArray___setstate_cython
 #define __pyx_n_s_TypeError __pyx_mstate_global->__pyx_n_s_TypeError
-#define __pyx_n_s__26 __pyx_mstate_global->__pyx_n_s__26
+#define __pyx_n_s__27 __pyx_mstate_global->__pyx_n_s__27
 #define __pyx_n_s_args __pyx_mstate_global->__pyx_n_s_args
 #define __pyx_n_s_asyncio_coroutines __pyx_mstate_global->__pyx_n_s_asyncio_coroutines
 #define __pyx_n_s_clear __pyx_mstate_global->__pyx_n_s_clear
@@ -2922,31 +2893,32 @@ static int __pyx_m_traverse(PyObject *m, visitproc visit, void *arg) {
 #define __pyx_kp_s_stringsource __pyx_mstate_global->__pyx_kp_s_stringsource
 #define __pyx_n_s_test __pyx_mstate_global->__pyx_n_s_test
 #define __pyx_n_s_test_create_interpreter_dsp_fact __pyx_mstate_global->__pyx_n_s_test_create_interpreter_dsp_fact
-#define __pyx_codeobj_ __pyx_mstate_global->__pyx_codeobj_
-#define __pyx_tuple__2 __pyx_mstate_global->__pyx_tuple__2
-#define __pyx_tuple__4 __pyx_mstate_global->__pyx_tuple__4
-#define __pyx_tuple__6 __pyx_mstate_global->__pyx_tuple__6
-#define __pyx_tuple__8 __pyx_mstate_global->__pyx_tuple__8
-#define __pyx_tuple__10 __pyx_mstate_global->__pyx_tuple__10
-#define __pyx_tuple__17 __pyx_mstate_global->__pyx_tuple__17
-#define __pyx_tuple__24 __pyx_mstate_global->__pyx_tuple__24
-#define __pyx_codeobj__3 __pyx_mstate_global->__pyx_codeobj__3
-#define __pyx_codeobj__5 __pyx_mstate_global->__pyx_codeobj__5
-#define __pyx_codeobj__7 __pyx_mstate_global->__pyx_codeobj__7
-#define __pyx_codeobj__9 __pyx_mstate_global->__pyx_codeobj__9
-#define __pyx_codeobj__11 __pyx_mstate_global->__pyx_codeobj__11
+#define __pyx_tuple_ __pyx_mstate_global->__pyx_tuple_
+#define __pyx_tuple__3 __pyx_mstate_global->__pyx_tuple__3
+#define __pyx_tuple__5 __pyx_mstate_global->__pyx_tuple__5
+#define __pyx_tuple__7 __pyx_mstate_global->__pyx_tuple__7
+#define __pyx_tuple__9 __pyx_mstate_global->__pyx_tuple__9
+#define __pyx_tuple__11 __pyx_mstate_global->__pyx_tuple__11
+#define __pyx_tuple__18 __pyx_mstate_global->__pyx_tuple__18
+#define __pyx_tuple__25 __pyx_mstate_global->__pyx_tuple__25
+#define __pyx_codeobj__2 __pyx_mstate_global->__pyx_codeobj__2
+#define __pyx_codeobj__4 __pyx_mstate_global->__pyx_codeobj__4
+#define __pyx_codeobj__6 __pyx_mstate_global->__pyx_codeobj__6
+#define __pyx_codeobj__8 __pyx_mstate_global->__pyx_codeobj__8
+#define __pyx_codeobj__10 __pyx_mstate_global->__pyx_codeobj__10
 #define __pyx_codeobj__12 __pyx_mstate_global->__pyx_codeobj__12
 #define __pyx_codeobj__13 __pyx_mstate_global->__pyx_codeobj__13
 #define __pyx_codeobj__14 __pyx_mstate_global->__pyx_codeobj__14
 #define __pyx_codeobj__15 __pyx_mstate_global->__pyx_codeobj__15
 #define __pyx_codeobj__16 __pyx_mstate_global->__pyx_codeobj__16
-#define __pyx_codeobj__18 __pyx_mstate_global->__pyx_codeobj__18
+#define __pyx_codeobj__17 __pyx_mstate_global->__pyx_codeobj__17
 #define __pyx_codeobj__19 __pyx_mstate_global->__pyx_codeobj__19
 #define __pyx_codeobj__20 __pyx_mstate_global->__pyx_codeobj__20
 #define __pyx_codeobj__21 __pyx_mstate_global->__pyx_codeobj__21
 #define __pyx_codeobj__22 __pyx_mstate_global->__pyx_codeobj__22
 #define __pyx_codeobj__23 __pyx_mstate_global->__pyx_codeobj__23
-#define __pyx_codeobj__25 __pyx_mstate_global->__pyx_codeobj__25
+#define __pyx_codeobj__24 __pyx_mstate_global->__pyx_codeobj__24
+#define __pyx_codeobj__26 __pyx_mstate_global->__pyx_codeobj__26
 /* #### Code section: module_code ### */
 
 /* "cyfaust.pyx":27
@@ -6841,6 +6813,8 @@ static PyObject *__pyx_pf_7cyfaust_2test_create_interpreter_dsp_factory_from_str
   PyObject *__pyx_t_1 = NULL;
   char const *__pyx_t_2;
   int __pyx_t_3;
+  Py_ssize_t __pyx_t_4;
+  PyObject *__pyx_t_5 = NULL;
   int __pyx_lineno = 0;
   const char *__pyx_filename = NULL;
   int __pyx_clineno = 0;
@@ -6860,8 +6834,8 @@ static PyObject *__pyx_pf_7cyfaust_2test_create_interpreter_dsp_factory_from_str
  *     """
  *     cdef fi.interpreter_dsp_factory* factory = fi.createCInterpreterDSPFactoryFromString(
  *         "score", code.encode('utf8'), 0, NULL, error_msg)             # <<<<<<<<<<<<<<
- *     assert factory is not NULL
  * 
+ *     if factory is NULL:
  */
   __pyx_t_1 = PyUnicode_AsUTF8String(__pyx_v_code); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 443, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
@@ -6872,29 +6846,59 @@ static PyObject *__pyx_pf_7cyfaust_2test_create_interpreter_dsp_factory_from_str
  *     """
  *     cdef fi.interpreter_dsp_factory* factory = fi.createCInterpreterDSPFactoryFromString(             # <<<<<<<<<<<<<<
  *         "score", code.encode('utf8'), 0, NULL, error_msg)
- *     assert factory is not NULL
+ * 
  */
   __pyx_v_factory = createCInterpreterDSPFactoryFromString(((char const *)"score"), __pyx_t_2, 0, NULL, __pyx_v_error_msg);
   __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
 
-  /* "cyfaust.pyx":444
- *     cdef fi.interpreter_dsp_factory* factory = fi.createCInterpreterDSPFactoryFromString(
+  /* "cyfaust.pyx":445
  *         "score", code.encode('utf8'), 0, NULL, error_msg)
- *     assert factory is not NULL             # <<<<<<<<<<<<<<
+ * 
+ *     if factory is NULL:             # <<<<<<<<<<<<<<
+ *         print(error_msg.decode())
+ *     else:
+ */
+  __pyx_t_3 = (__pyx_v_factory == NULL);
+  if (__pyx_t_3) {
+
+    /* "cyfaust.pyx":446
+ * 
+ *     if factory is NULL:
+ *         print(error_msg.decode())             # <<<<<<<<<<<<<<
+ *     else:
+ *         print("OK: test_create_interpreter_dsp_factory_from_string")
+ */
+    __pyx_t_4 = __Pyx_ssize_strlen(__pyx_v_error_msg); if (unlikely(__pyx_t_4 == ((Py_ssize_t)-1))) __PYX_ERR(0, 446, __pyx_L1_error)
+    __pyx_t_1 = __Pyx_decode_c_string(__pyx_v_error_msg, 0, __pyx_t_4, NULL, NULL, NULL); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 446, __pyx_L1_error)
+    __Pyx_GOTREF(__pyx_t_1);
+    __pyx_t_5 = __Pyx_PyObject_CallOneArg(__pyx_builtin_print, __pyx_t_1); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 446, __pyx_L1_error)
+    __Pyx_GOTREF(__pyx_t_5);
+    __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
+    __Pyx_DECREF(__pyx_t_5); __pyx_t_5 = 0;
+
+    /* "cyfaust.pyx":445
+ *         "score", code.encode('utf8'), 0, NULL, error_msg)
+ * 
+ *     if factory is NULL:             # <<<<<<<<<<<<<<
+ *         print(error_msg.decode())
+ *     else:
+ */
+    goto __pyx_L3;
+  }
+
+  /* "cyfaust.pyx":448
+ *         print(error_msg.decode())
+ *     else:
+ *         print("OK: test_create_interpreter_dsp_factory_from_string")             # <<<<<<<<<<<<<<
  * 
  * 
  */
-  #ifndef CYTHON_WITHOUT_ASSERTIONS
-  if (unlikely(__pyx_assertions_enabled())) {
-    __pyx_t_3 = (__pyx_v_factory != NULL);
-    if (unlikely(!__pyx_t_3)) {
-      __Pyx_Raise(__pyx_builtin_AssertionError, 0, 0, 0);
-      __PYX_ERR(0, 444, __pyx_L1_error)
-    }
+  /*else*/ {
+    __pyx_t_5 = __Pyx_PyObject_Call(__pyx_builtin_print, __pyx_tuple_, NULL); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 448, __pyx_L1_error)
+    __Pyx_GOTREF(__pyx_t_5);
+    __Pyx_DECREF(__pyx_t_5); __pyx_t_5 = 0;
   }
-  #else
-  if ((1)); else __PYX_ERR(0, 444, __pyx_L1_error)
-  #endif
+  __pyx_L3:;
 
   /* "cyfaust.pyx":432
  * ##
@@ -6909,6 +6913,7 @@ static PyObject *__pyx_pf_7cyfaust_2test_create_interpreter_dsp_factory_from_str
   goto __pyx_L0;
   __pyx_L1_error:;
   __Pyx_XDECREF(__pyx_t_1);
+  __Pyx_XDECREF(__pyx_t_5);
   __Pyx_AddTraceback("cyfaust.test_create_interpreter_dsp_factory_from_string", __pyx_clineno, __pyx_lineno, __pyx_filename);
   __pyx_r = NULL;
   __pyx_L0:;
@@ -6918,7 +6923,7 @@ static PyObject *__pyx_pf_7cyfaust_2test_create_interpreter_dsp_factory_from_str
   return __pyx_r;
 }
 
-/* "cyfaust.pyx":451
+/* "cyfaust.pyx":455
  * ##
  * 
  * cdef char* print_box(fi.Box box, bint shared, int max_size):             # <<<<<<<<<<<<<<
@@ -6929,7 +6934,7 @@ static PyObject *__pyx_pf_7cyfaust_2test_create_interpreter_dsp_factory_from_str
 static char *__pyx_f_7cyfaust_print_box(Box __pyx_v_box, int __pyx_v_shared, int __pyx_v_max_size) {
   char *__pyx_r;
 
-  /* "cyfaust.pyx":453
+  /* "cyfaust.pyx":457
  * cdef char* print_box(fi.Box box, bint shared, int max_size):
  *     """Print the box."""
  *     return fi.CprintBox(box, shared, max_size)             # <<<<<<<<<<<<<<
@@ -6939,7 +6944,7 @@ static char *__pyx_f_7cyfaust_print_box(Box __pyx_v_box, int __pyx_v_shared, int
   __pyx_r = CprintBox(__pyx_v_box, __pyx_v_shared, __pyx_v_max_size);
   goto __pyx_L0;
 
-  /* "cyfaust.pyx":451
+  /* "cyfaust.pyx":455
  * ##
  * 
  * cdef char* print_box(fi.Box box, bint shared, int max_size):             # <<<<<<<<<<<<<<
@@ -6952,7 +6957,7 @@ static char *__pyx_f_7cyfaust_print_box(Box __pyx_v_box, int __pyx_v_shared, int
   return __pyx_r;
 }
 
-/* "cyfaust.pyx":455
+/* "cyfaust.pyx":459
  *     return fi.CprintBox(box, shared, max_size)
  * 
  * cdef char* print_signal(fi.Signal sig, bint shared, int max_size):             # <<<<<<<<<<<<<<
@@ -6963,7 +6968,7 @@ static char *__pyx_f_7cyfaust_print_box(Box __pyx_v_box, int __pyx_v_shared, int
 static char *__pyx_f_7cyfaust_print_signal(Signal __pyx_v_sig, int __pyx_v_shared, int __pyx_v_max_size) {
   char *__pyx_r;
 
-  /* "cyfaust.pyx":457
+  /* "cyfaust.pyx":461
  * cdef char* print_signal(fi.Signal sig, bint shared, int max_size):
  *     """Print the signal."""
  *     return fi.CprintSignal(sig, shared, max_size)             # <<<<<<<<<<<<<<
@@ -6973,7 +6978,7 @@ static char *__pyx_f_7cyfaust_print_signal(Signal __pyx_v_sig, int __pyx_v_share
   __pyx_r = CprintSignal(__pyx_v_sig, __pyx_v_shared, __pyx_v_max_size);
   goto __pyx_L0;
 
-  /* "cyfaust.pyx":455
+  /* "cyfaust.pyx":459
  *     return fi.CprintBox(box, shared, max_size)
  * 
  * cdef char* print_signal(fi.Signal sig, bint shared, int max_size):             # <<<<<<<<<<<<<<
@@ -6986,7 +6991,7 @@ static char *__pyx_f_7cyfaust_print_signal(Signal __pyx_v_sig, int __pyx_v_share
   return __pyx_r;
 }
 
-/* "cyfaust.pyx":459
+/* "cyfaust.pyx":463
  *     return fi.CprintSignal(sig, shared, max_size)
  * 
  * cdef void create_lib_context():             # <<<<<<<<<<<<<<
@@ -6996,7 +7001,7 @@ static char *__pyx_f_7cyfaust_print_signal(Signal __pyx_v_sig, int __pyx_v_share
 
 static void __pyx_f_7cyfaust_create_lib_context(void) {
 
-  /* "cyfaust.pyx":461
+  /* "cyfaust.pyx":465
  * cdef void create_lib_context():
  *     """Create global compilation context, has to be done first."""
  *     fi.createLibContext()             # <<<<<<<<<<<<<<
@@ -7005,7 +7010,7 @@ static void __pyx_f_7cyfaust_create_lib_context(void) {
  */
   createLibContext();
 
-  /* "cyfaust.pyx":459
+  /* "cyfaust.pyx":463
  *     return fi.CprintSignal(sig, shared, max_size)
  * 
  * cdef void create_lib_context():             # <<<<<<<<<<<<<<
@@ -7016,7 +7021,7 @@ static void __pyx_f_7cyfaust_create_lib_context(void) {
   /* function exit code */
 }
 
-/* "cyfaust.pyx":463
+/* "cyfaust.pyx":467
  *     fi.createLibContext()
  * 
  * cdef void destroy_lib_context():             # <<<<<<<<<<<<<<
@@ -7026,7 +7031,7 @@ static void __pyx_f_7cyfaust_create_lib_context(void) {
 
 static void __pyx_f_7cyfaust_destroy_lib_context(void) {
 
-  /* "cyfaust.pyx":465
+  /* "cyfaust.pyx":469
  * cdef void destroy_lib_context():
  *     """Destroy global compilation context, has to be done last."""
  *     fi.destroyLibContext()             # <<<<<<<<<<<<<<
@@ -7035,7 +7040,7 @@ static void __pyx_f_7cyfaust_destroy_lib_context(void) {
  */
   destroyLibContext();
 
-  /* "cyfaust.pyx":463
+  /* "cyfaust.pyx":467
  *     fi.createLibContext()
  * 
  * cdef void destroy_lib_context():             # <<<<<<<<<<<<<<
@@ -7046,7 +7051,7 @@ static void __pyx_f_7cyfaust_destroy_lib_context(void) {
   /* function exit code */
 }
 
-/* "cyfaust.pyx":467
+/* "cyfaust.pyx":471
  *     fi.destroyLibContext()
  * 
  * cdef bint is_nil(fi.Signal s):             # <<<<<<<<<<<<<<
@@ -7057,7 +7062,7 @@ static void __pyx_f_7cyfaust_destroy_lib_context(void) {
 static int __pyx_f_7cyfaust_is_nil(Signal __pyx_v_s) {
   int __pyx_r;
 
-  /* "cyfaust.pyx":469
+  /* "cyfaust.pyx":473
  * cdef bint is_nil(fi.Signal s):
  *     """Check if a signal is nil."""
  *     return fi.CisNil(s)             # <<<<<<<<<<<<<<
@@ -7067,7 +7072,7 @@ static int __pyx_f_7cyfaust_is_nil(Signal __pyx_v_s) {
   __pyx_r = CisNil(__pyx_v_s);
   goto __pyx_L0;
 
-  /* "cyfaust.pyx":467
+  /* "cyfaust.pyx":471
  *     fi.destroyLibContext()
  * 
  * cdef bint is_nil(fi.Signal s):             # <<<<<<<<<<<<<<
@@ -7080,7 +7085,7 @@ static int __pyx_f_7cyfaust_is_nil(Signal __pyx_v_s) {
   return __pyx_r;
 }
 
-/* "cyfaust.pyx":471
+/* "cyfaust.pyx":475
  *     return fi.CisNil(s)
  * 
  * cdef const char* tree2str(fi.Signal s):             # <<<<<<<<<<<<<<
@@ -7091,7 +7096,7 @@ static int __pyx_f_7cyfaust_is_nil(Signal __pyx_v_s) {
 static char const *__pyx_f_7cyfaust_tree2str(Signal __pyx_v_s) {
   char const *__pyx_r;
 
-  /* "cyfaust.pyx":473
+  /* "cyfaust.pyx":477
  * cdef const char* tree2str(fi.Signal s):
  *     """Convert a signal (such as the label of a UI) to a string."""
  *     return fi.Ctree2str(s)             # <<<<<<<<<<<<<<
@@ -7101,7 +7106,7 @@ static char const *__pyx_f_7cyfaust_tree2str(Signal __pyx_v_s) {
   __pyx_r = Ctree2str(__pyx_v_s);
   goto __pyx_L0;
 
-  /* "cyfaust.pyx":471
+  /* "cyfaust.pyx":475
  *     return fi.CisNil(s)
  * 
  * cdef const char* tree2str(fi.Signal s):             # <<<<<<<<<<<<<<
@@ -7114,7 +7119,7 @@ static char const *__pyx_f_7cyfaust_tree2str(Signal __pyx_v_s) {
   return __pyx_r;
 }
 
-/* "cyfaust.pyx":475
+/* "cyfaust.pyx":479
  *     return fi.Ctree2str(s)
  * 
  * cdef void* get_user_data(fi.Signal s):             # <<<<<<<<<<<<<<
@@ -7125,7 +7130,7 @@ static char const *__pyx_f_7cyfaust_tree2str(Signal __pyx_v_s) {
 static void *__pyx_f_7cyfaust_get_user_data(Signal __pyx_v_s) {
   void *__pyx_r;
 
-  /* "cyfaust.pyx":477
+  /* "cyfaust.pyx":481
  * cdef void* get_user_data(fi.Signal s):
  *     """Return the xtended type of a signal."""
  *     return fi.CgetUserData(s)             # <<<<<<<<<<<<<<
@@ -7135,7 +7140,7 @@ static void *__pyx_f_7cyfaust_get_user_data(Signal __pyx_v_s) {
   __pyx_r = CgetUserData(__pyx_v_s);
   goto __pyx_L0;
 
-  /* "cyfaust.pyx":475
+  /* "cyfaust.pyx":479
  *     return fi.Ctree2str(s)
  * 
  * cdef void* get_user_data(fi.Signal s):             # <<<<<<<<<<<<<<
@@ -7148,7 +7153,7 @@ static void *__pyx_f_7cyfaust_get_user_data(Signal __pyx_v_s) {
   return __pyx_r;
 }
 
-/* "cyfaust.pyx":479
+/* "cyfaust.pyx":483
  *     return fi.CgetUserData(s)
  * 
  * cdef fi.Signal sig_int(int n):             # <<<<<<<<<<<<<<
@@ -7159,7 +7164,7 @@ static void *__pyx_f_7cyfaust_get_user_data(Signal __pyx_v_s) {
 static Signal __pyx_f_7cyfaust_sig_int(int __pyx_v_n) {
   Signal __pyx_r;
 
-  /* "cyfaust.pyx":481
+  /* "cyfaust.pyx":485
  * cdef fi.Signal sig_int(int n):
  *     """Constant integer : for all t, x(t) = n"""
  *     return fi.CsigInt(n)             # <<<<<<<<<<<<<<
@@ -7169,7 +7174,7 @@ static Signal __pyx_f_7cyfaust_sig_int(int __pyx_v_n) {
   __pyx_r = CsigInt(__pyx_v_n);
   goto __pyx_L0;
 
-  /* "cyfaust.pyx":479
+  /* "cyfaust.pyx":483
  *     return fi.CgetUserData(s)
  * 
  * cdef fi.Signal sig_int(int n):             # <<<<<<<<<<<<<<
@@ -7182,7 +7187,7 @@ static Signal __pyx_f_7cyfaust_sig_int(int __pyx_v_n) {
   return __pyx_r;
 }
 
-/* "cyfaust.pyx":483
+/* "cyfaust.pyx":487
  *     return fi.CsigInt(n)
  * 
  * cdef fi.Signal sig_real(double n):             # <<<<<<<<<<<<<<
@@ -7193,7 +7198,7 @@ static Signal __pyx_f_7cyfaust_sig_int(int __pyx_v_n) {
 static Signal __pyx_f_7cyfaust_sig_real(double __pyx_v_n) {
   Signal __pyx_r;
 
-  /* "cyfaust.pyx":485
+  /* "cyfaust.pyx":489
  * cdef fi.Signal sig_real(double n):
  *     """Constant real : for all t, x(t) = n"""
  *     return fi.CsigReal(n)             # <<<<<<<<<<<<<<
@@ -7203,7 +7208,7 @@ static Signal __pyx_f_7cyfaust_sig_real(double __pyx_v_n) {
   __pyx_r = CsigReal(__pyx_v_n);
   goto __pyx_L0;
 
-  /* "cyfaust.pyx":483
+  /* "cyfaust.pyx":487
  *     return fi.CsigInt(n)
  * 
  * cdef fi.Signal sig_real(double n):             # <<<<<<<<<<<<<<
@@ -7216,7 +7221,7 @@ static Signal __pyx_f_7cyfaust_sig_real(double __pyx_v_n) {
   return __pyx_r;
 }
 
-/* "cyfaust.pyx":487
+/* "cyfaust.pyx":491
  *     return fi.CsigReal(n)
  * 
  * cdef fi.Signal sig_input(int idx):             # <<<<<<<<<<<<<<
@@ -7227,7 +7232,7 @@ static Signal __pyx_f_7cyfaust_sig_real(double __pyx_v_n) {
 static Signal __pyx_f_7cyfaust_sig_input(int __pyx_v_idx) {
   Signal __pyx_r;
 
-  /* "cyfaust.pyx":489
+  /* "cyfaust.pyx":493
  * cdef fi.Signal sig_input(int idx):
  *     """Create an input."""
  *     return fi.CsigInput(idx)             # <<<<<<<<<<<<<<
@@ -7237,7 +7242,7 @@ static Signal __pyx_f_7cyfaust_sig_input(int __pyx_v_idx) {
   __pyx_r = CsigInput(__pyx_v_idx);
   goto __pyx_L0;
 
-  /* "cyfaust.pyx":487
+  /* "cyfaust.pyx":491
  *     return fi.CsigReal(n)
  * 
  * cdef fi.Signal sig_input(int idx):             # <<<<<<<<<<<<<<
@@ -7250,7 +7255,7 @@ static Signal __pyx_f_7cyfaust_sig_input(int __pyx_v_idx) {
   return __pyx_r;
 }
 
-/* "cyfaust.pyx":491
+/* "cyfaust.pyx":495
  *     return fi.CsigInput(idx)
  * 
  * cdef fi.Signal sig_delay(fi.Signal s, fi.Signal delay):             # <<<<<<<<<<<<<<
@@ -7261,7 +7266,7 @@ static Signal __pyx_f_7cyfaust_sig_input(int __pyx_v_idx) {
 static Signal __pyx_f_7cyfaust_sig_delay(Signal __pyx_v_s, Signal __pyx_v_delay) {
   Signal __pyx_r;
 
-  /* "cyfaust.pyx":493
+  /* "cyfaust.pyx":497
  * cdef fi.Signal sig_delay(fi.Signal s, fi.Signal delay):
  *     """Create a delayed signal."""
  *     return fi.CsigDelay(s, delay)             # <<<<<<<<<<<<<<
@@ -7271,7 +7276,7 @@ static Signal __pyx_f_7cyfaust_sig_delay(Signal __pyx_v_s, Signal __pyx_v_delay)
   __pyx_r = CsigDelay(__pyx_v_s, __pyx_v_delay);
   goto __pyx_L0;
 
-  /* "cyfaust.pyx":491
+  /* "cyfaust.pyx":495
  *     return fi.CsigInput(idx)
  * 
  * cdef fi.Signal sig_delay(fi.Signal s, fi.Signal delay):             # <<<<<<<<<<<<<<
@@ -7284,7 +7289,7 @@ static Signal __pyx_f_7cyfaust_sig_delay(Signal __pyx_v_s, Signal __pyx_v_delay)
   return __pyx_r;
 }
 
-/* "cyfaust.pyx":495
+/* "cyfaust.pyx":499
  *     return fi.CsigDelay(s, delay)
  * 
  * cdef fi.Signal sig_delay1(fi.Signal s):             # <<<<<<<<<<<<<<
@@ -7295,7 +7300,7 @@ static Signal __pyx_f_7cyfaust_sig_delay(Signal __pyx_v_s, Signal __pyx_v_delay)
 static Signal __pyx_f_7cyfaust_sig_delay1(Signal __pyx_v_s) {
   Signal __pyx_r;
 
-  /* "cyfaust.pyx":497
+  /* "cyfaust.pyx":501
  * cdef fi.Signal sig_delay1(fi.Signal s):
  *     """Create a one sample delayed signal."""
  *     return fi.CsigDelay1(s)             # <<<<<<<<<<<<<<
@@ -7305,7 +7310,7 @@ static Signal __pyx_f_7cyfaust_sig_delay1(Signal __pyx_v_s) {
   __pyx_r = CsigDelay1(__pyx_v_s);
   goto __pyx_L0;
 
-  /* "cyfaust.pyx":495
+  /* "cyfaust.pyx":499
  *     return fi.CsigDelay(s, delay)
  * 
  * cdef fi.Signal sig_delay1(fi.Signal s):             # <<<<<<<<<<<<<<
@@ -7318,7 +7323,7 @@ static Signal __pyx_f_7cyfaust_sig_delay1(Signal __pyx_v_s) {
   return __pyx_r;
 }
 
-/* "cyfaust.pyx":499
+/* "cyfaust.pyx":503
  *     return fi.CsigDelay1(s)
  * 
  * cdef fi.Signal sig_int_cast(fi.Signal s):             # <<<<<<<<<<<<<<
@@ -7329,7 +7334,7 @@ static Signal __pyx_f_7cyfaust_sig_delay1(Signal __pyx_v_s) {
 static Signal __pyx_f_7cyfaust_sig_int_cast(Signal __pyx_v_s) {
   Signal __pyx_r;
 
-  /* "cyfaust.pyx":501
+  /* "cyfaust.pyx":505
  * cdef fi.Signal sig_int_cast(fi.Signal s):
  *     """Create a casted signal."""
  *     return fi.CsigIntCast(s)             # <<<<<<<<<<<<<<
@@ -7339,7 +7344,7 @@ static Signal __pyx_f_7cyfaust_sig_int_cast(Signal __pyx_v_s) {
   __pyx_r = CsigIntCast(__pyx_v_s);
   goto __pyx_L0;
 
-  /* "cyfaust.pyx":499
+  /* "cyfaust.pyx":503
  *     return fi.CsigDelay1(s)
  * 
  * cdef fi.Signal sig_int_cast(fi.Signal s):             # <<<<<<<<<<<<<<
@@ -7352,7 +7357,7 @@ static Signal __pyx_f_7cyfaust_sig_int_cast(Signal __pyx_v_s) {
   return __pyx_r;
 }
 
-/* "cyfaust.pyx":503
+/* "cyfaust.pyx":507
  *     return fi.CsigIntCast(s)
  * 
  * cdef fi.Signal sig_float_cast(fi.Signal s):             # <<<<<<<<<<<<<<
@@ -7363,7 +7368,7 @@ static Signal __pyx_f_7cyfaust_sig_int_cast(Signal __pyx_v_s) {
 static Signal __pyx_f_7cyfaust_sig_float_cast(Signal __pyx_v_s) {
   Signal __pyx_r;
 
-  /* "cyfaust.pyx":505
+  /* "cyfaust.pyx":509
  * cdef fi.Signal sig_float_cast(fi.Signal s):
  *     """Create a casted signal."""
  *     return fi.CsigFloatCast(s)             # <<<<<<<<<<<<<<
@@ -7373,7 +7378,7 @@ static Signal __pyx_f_7cyfaust_sig_float_cast(Signal __pyx_v_s) {
   __pyx_r = CsigFloatCast(__pyx_v_s);
   goto __pyx_L0;
 
-  /* "cyfaust.pyx":503
+  /* "cyfaust.pyx":507
  *     return fi.CsigIntCast(s)
  * 
  * cdef fi.Signal sig_float_cast(fi.Signal s):             # <<<<<<<<<<<<<<
@@ -7386,7 +7391,7 @@ static Signal __pyx_f_7cyfaust_sig_float_cast(Signal __pyx_v_s) {
   return __pyx_r;
 }
 
-/* "cyfaust.pyx":507
+/* "cyfaust.pyx":511
  *     return fi.CsigFloatCast(s)
  * 
  * cdef fi.Signal sig_readonly_table(fi.Signal n, fi.Signal init, fi.Signal ridx):             # <<<<<<<<<<<<<<
@@ -7397,7 +7402,7 @@ static Signal __pyx_f_7cyfaust_sig_float_cast(Signal __pyx_v_s) {
 static Signal __pyx_f_7cyfaust_sig_readonly_table(Signal __pyx_v_n, Signal __pyx_v_init, Signal __pyx_v_ridx) {
   Signal __pyx_r;
 
-  /* "cyfaust.pyx":509
+  /* "cyfaust.pyx":513
  * cdef fi.Signal sig_readonly_table(fi.Signal n, fi.Signal init, fi.Signal ridx):
  *     """Create a read only table."""
  *     return fi.CsigReadOnlyTable(n, init, ridx)             # <<<<<<<<<<<<<<
@@ -7407,7 +7412,7 @@ static Signal __pyx_f_7cyfaust_sig_readonly_table(Signal __pyx_v_n, Signal __pyx
   __pyx_r = CsigReadOnlyTable(__pyx_v_n, __pyx_v_init, __pyx_v_ridx);
   goto __pyx_L0;
 
-  /* "cyfaust.pyx":507
+  /* "cyfaust.pyx":511
  *     return fi.CsigFloatCast(s)
  * 
  * cdef fi.Signal sig_readonly_table(fi.Signal n, fi.Signal init, fi.Signal ridx):             # <<<<<<<<<<<<<<
@@ -7420,7 +7425,7 @@ static Signal __pyx_f_7cyfaust_sig_readonly_table(Signal __pyx_v_n, Signal __pyx
   return __pyx_r;
 }
 
-/* "cyfaust.pyx":511
+/* "cyfaust.pyx":515
  *     return fi.CsigReadOnlyTable(n, init, ridx)
  * 
  * cdef fi.Signal sig_writeread_Table(fi.Signal n, fi.Signal init, fi.Signal widx, fi.Signal wsig, fi.Signal ridx):             # <<<<<<<<<<<<<<
@@ -7431,7 +7436,7 @@ static Signal __pyx_f_7cyfaust_sig_readonly_table(Signal __pyx_v_n, Signal __pyx
 static Signal __pyx_f_7cyfaust_sig_writeread_Table(Signal __pyx_v_n, Signal __pyx_v_init, Signal __pyx_v_widx, Signal __pyx_v_wsig, Signal __pyx_v_ridx) {
   Signal __pyx_r;
 
-  /* "cyfaust.pyx":513
+  /* "cyfaust.pyx":517
  * cdef fi.Signal sig_writeread_Table(fi.Signal n, fi.Signal init, fi.Signal widx, fi.Signal wsig, fi.Signal ridx):
  *     """Create a read/write table."""
  *     return fi.CsigWriteReadTable(n, init, widx, wsig, ridx)             # <<<<<<<<<<<<<<
@@ -7441,7 +7446,7 @@ static Signal __pyx_f_7cyfaust_sig_writeread_Table(Signal __pyx_v_n, Signal __py
   __pyx_r = CsigWriteReadTable(__pyx_v_n, __pyx_v_init, __pyx_v_widx, __pyx_v_wsig, __pyx_v_ridx);
   goto __pyx_L0;
 
-  /* "cyfaust.pyx":511
+  /* "cyfaust.pyx":515
  *     return fi.CsigReadOnlyTable(n, init, ridx)
  * 
  * cdef fi.Signal sig_writeread_Table(fi.Signal n, fi.Signal init, fi.Signal widx, fi.Signal wsig, fi.Signal ridx):             # <<<<<<<<<<<<<<
@@ -7454,7 +7459,7 @@ static Signal __pyx_f_7cyfaust_sig_writeread_Table(Signal __pyx_v_n, Signal __py
   return __pyx_r;
 }
 
-/* "cyfaust.pyx":515
+/* "cyfaust.pyx":519
  *     return fi.CsigWriteReadTable(n, init, widx, wsig, ridx)
  * 
  * cdef fi.Signal sig_waveform(fi.Signal* wf):             # <<<<<<<<<<<<<<
@@ -7465,7 +7470,7 @@ static Signal __pyx_f_7cyfaust_sig_writeread_Table(Signal __pyx_v_n, Signal __py
 static Signal __pyx_f_7cyfaust_sig_waveform(Signal *__pyx_v_wf) {
   Signal __pyx_r;
 
-  /* "cyfaust.pyx":517
+  /* "cyfaust.pyx":521
  * cdef fi.Signal sig_waveform(fi.Signal* wf):
  *     """Create a waveform."""
  *     return fi.CsigWaveform(wf)             # <<<<<<<<<<<<<<
@@ -7475,7 +7480,7 @@ static Signal __pyx_f_7cyfaust_sig_waveform(Signal *__pyx_v_wf) {
   __pyx_r = CsigWaveform(__pyx_v_wf);
   goto __pyx_L0;
 
-  /* "cyfaust.pyx":515
+  /* "cyfaust.pyx":519
  *     return fi.CsigWriteReadTable(n, init, widx, wsig, ridx)
  * 
  * cdef fi.Signal sig_waveform(fi.Signal* wf):             # <<<<<<<<<<<<<<
@@ -7488,7 +7493,7 @@ static Signal __pyx_f_7cyfaust_sig_waveform(Signal *__pyx_v_wf) {
   return __pyx_r;
 }
 
-/* "cyfaust.pyx":519
+/* "cyfaust.pyx":523
  *     return fi.CsigWaveform(wf)
  * 
  * cdef fi.Signal sig_soundfile(const char* label):             # <<<<<<<<<<<<<<
@@ -7499,7 +7504,7 @@ static Signal __pyx_f_7cyfaust_sig_waveform(Signal *__pyx_v_wf) {
 static Signal __pyx_f_7cyfaust_sig_soundfile(char const *__pyx_v_label) {
   Signal __pyx_r;
 
-  /* "cyfaust.pyx":521
+  /* "cyfaust.pyx":525
  * cdef fi.Signal sig_soundfile(const char* label):
  *     """Create a soundfile block."""
  *     return fi.CsigSoundfile(label)             # <<<<<<<<<<<<<<
@@ -7509,7 +7514,7 @@ static Signal __pyx_f_7cyfaust_sig_soundfile(char const *__pyx_v_label) {
   __pyx_r = CsigSoundfile(__pyx_v_label);
   goto __pyx_L0;
 
-  /* "cyfaust.pyx":519
+  /* "cyfaust.pyx":523
  *     return fi.CsigWaveform(wf)
  * 
  * cdef fi.Signal sig_soundfile(const char* label):             # <<<<<<<<<<<<<<
@@ -7522,7 +7527,7 @@ static Signal __pyx_f_7cyfaust_sig_soundfile(char const *__pyx_v_label) {
   return __pyx_r;
 }
 
-/* "cyfaust.pyx":525
+/* "cyfaust.pyx":529
  * # ----------------------------------------------------------------------------
  * 
  * cdef fi.Signal sig_soundfile_length(fi.Signal sf, fi.Signal part):             # <<<<<<<<<<<<<<
@@ -7533,7 +7538,7 @@ static Signal __pyx_f_7cyfaust_sig_soundfile(char const *__pyx_v_label) {
 static Signal __pyx_f_7cyfaust_sig_soundfile_length(Signal __pyx_v_sf, Signal __pyx_v_part) {
   Signal __pyx_r;
 
-  /* "cyfaust.pyx":527
+  /* "cyfaust.pyx":531
  * cdef fi.Signal sig_soundfile_length(fi.Signal sf, fi.Signal part):
  *     """Create the length signal of a given soundfile in frames."""
  *     return fi.CsigSoundfileLength(sf, part)             # <<<<<<<<<<<<<<
@@ -7543,7 +7548,7 @@ static Signal __pyx_f_7cyfaust_sig_soundfile_length(Signal __pyx_v_sf, Signal __
   __pyx_r = CsigSoundfileLength(__pyx_v_sf, __pyx_v_part);
   goto __pyx_L0;
 
-  /* "cyfaust.pyx":525
+  /* "cyfaust.pyx":529
  * # ----------------------------------------------------------------------------
  * 
  * cdef fi.Signal sig_soundfile_length(fi.Signal sf, fi.Signal part):             # <<<<<<<<<<<<<<
@@ -7556,7 +7561,7 @@ static Signal __pyx_f_7cyfaust_sig_soundfile_length(Signal __pyx_v_sf, Signal __
   return __pyx_r;
 }
 
-/* "cyfaust.pyx":529
+/* "cyfaust.pyx":533
  *     return fi.CsigSoundfileLength(sf, part)
  * 
  * cdef fi.Signal sig_soundfile_rate(fi.Signal sf, fi.Signal part):             # <<<<<<<<<<<<<<
@@ -7567,7 +7572,7 @@ static Signal __pyx_f_7cyfaust_sig_soundfile_length(Signal __pyx_v_sf, Signal __
 static Signal __pyx_f_7cyfaust_sig_soundfile_rate(Signal __pyx_v_sf, Signal __pyx_v_part) {
   Signal __pyx_r;
 
-  /* "cyfaust.pyx":531
+  /* "cyfaust.pyx":535
  * cdef fi.Signal sig_soundfile_rate(fi.Signal sf, fi.Signal part):
  *     """Create the rate signal of a given soundfile in Hz."""
  *     return fi.CsigSoundfileRate(sf, part)             # <<<<<<<<<<<<<<
@@ -7577,7 +7582,7 @@ static Signal __pyx_f_7cyfaust_sig_soundfile_rate(Signal __pyx_v_sf, Signal __py
   __pyx_r = CsigSoundfileRate(__pyx_v_sf, __pyx_v_part);
   goto __pyx_L0;
 
-  /* "cyfaust.pyx":529
+  /* "cyfaust.pyx":533
  *     return fi.CsigSoundfileLength(sf, part)
  * 
  * cdef fi.Signal sig_soundfile_rate(fi.Signal sf, fi.Signal part):             # <<<<<<<<<<<<<<
@@ -7590,7 +7595,7 @@ static Signal __pyx_f_7cyfaust_sig_soundfile_rate(Signal __pyx_v_sf, Signal __py
   return __pyx_r;
 }
 
-/* "cyfaust.pyx":533
+/* "cyfaust.pyx":537
  *     return fi.CsigSoundfileRate(sf, part)
  * 
  * cdef fi.Signal sig_soundfile_buffer(fi.Signal sf, fi.Signal chan, fi.Signal part, fi.Signal ridx):             # <<<<<<<<<<<<<<
@@ -7601,7 +7606,7 @@ static Signal __pyx_f_7cyfaust_sig_soundfile_rate(Signal __pyx_v_sf, Signal __py
 static Signal __pyx_f_7cyfaust_sig_soundfile_buffer(Signal __pyx_v_sf, Signal __pyx_v_chan, Signal __pyx_v_part, Signal __pyx_v_ridx) {
   Signal __pyx_r;
 
-  /* "cyfaust.pyx":535
+  /* "cyfaust.pyx":539
  * cdef fi.Signal sig_soundfile_buffer(fi.Signal sf, fi.Signal chan, fi.Signal part, fi.Signal ridx):
  *     """Create the buffer signal of a given soundfile."""
  *     return fi.CsigSoundfileBuffer(sf, chan, part, ridx)             # <<<<<<<<<<<<<<
@@ -7611,7 +7616,7 @@ static Signal __pyx_f_7cyfaust_sig_soundfile_buffer(Signal __pyx_v_sf, Signal __
   __pyx_r = CsigSoundfileBuffer(__pyx_v_sf, __pyx_v_chan, __pyx_v_part, __pyx_v_ridx);
   goto __pyx_L0;
 
-  /* "cyfaust.pyx":533
+  /* "cyfaust.pyx":537
  *     return fi.CsigSoundfileRate(sf, part)
  * 
  * cdef fi.Signal sig_soundfile_buffer(fi.Signal sf, fi.Signal chan, fi.Signal part, fi.Signal ridx):             # <<<<<<<<<<<<<<
@@ -7624,7 +7629,7 @@ static Signal __pyx_f_7cyfaust_sig_soundfile_buffer(Signal __pyx_v_sf, Signal __
   return __pyx_r;
 }
 
-/* "cyfaust.pyx":537
+/* "cyfaust.pyx":541
  *     return fi.CsigSoundfileBuffer(sf, chan, part, ridx)
  * 
  * cdef fi.Signal sig_select2(fi.Signal selector, fi.Signal s1, fi.Signal s2):             # <<<<<<<<<<<<<<
@@ -7635,7 +7640,7 @@ static Signal __pyx_f_7cyfaust_sig_soundfile_buffer(Signal __pyx_v_sf, Signal __
 static Signal __pyx_f_7cyfaust_sig_select2(Signal __pyx_v_selector, Signal __pyx_v_s1, Signal __pyx_v_s2) {
   Signal __pyx_r;
 
-  /* "cyfaust.pyx":539
+  /* "cyfaust.pyx":543
  * cdef fi.Signal sig_select2(fi.Signal selector, fi.Signal s1, fi.Signal s2):
  *     """Create a selector between two signals."""
  *     return fi.CsigSelect2(selector, s1, s2)             # <<<<<<<<<<<<<<
@@ -7645,7 +7650,7 @@ static Signal __pyx_f_7cyfaust_sig_select2(Signal __pyx_v_selector, Signal __pyx
   __pyx_r = CsigSelect2(__pyx_v_selector, __pyx_v_s1, __pyx_v_s2);
   goto __pyx_L0;
 
-  /* "cyfaust.pyx":537
+  /* "cyfaust.pyx":541
  *     return fi.CsigSoundfileBuffer(sf, chan, part, ridx)
  * 
  * cdef fi.Signal sig_select2(fi.Signal selector, fi.Signal s1, fi.Signal s2):             # <<<<<<<<<<<<<<
@@ -7658,7 +7663,7 @@ static Signal __pyx_f_7cyfaust_sig_select2(Signal __pyx_v_selector, Signal __pyx
   return __pyx_r;
 }
 
-/* "cyfaust.pyx":541
+/* "cyfaust.pyx":545
  *     return fi.CsigSelect2(selector, s1, s2)
  * 
  * cdef fi.Signal sig_select3(fi.Signal selector, fi.Signal s1, fi.Signal s2, fi.Signal s3):             # <<<<<<<<<<<<<<
@@ -7669,7 +7674,7 @@ static Signal __pyx_f_7cyfaust_sig_select2(Signal __pyx_v_selector, Signal __pyx
 static Signal __pyx_f_7cyfaust_sig_select3(Signal __pyx_v_selector, Signal __pyx_v_s1, Signal __pyx_v_s2, Signal __pyx_v_s3) {
   Signal __pyx_r;
 
-  /* "cyfaust.pyx":543
+  /* "cyfaust.pyx":547
  * cdef fi.Signal sig_select3(fi.Signal selector, fi.Signal s1, fi.Signal s2, fi.Signal s3):
  *     """Create a selector between three signals."""
  *     return fi.CsigSelect3(selector, s1, s2, s3)             # <<<<<<<<<<<<<<
@@ -7679,7 +7684,7 @@ static Signal __pyx_f_7cyfaust_sig_select3(Signal __pyx_v_selector, Signal __pyx
   __pyx_r = CsigSelect3(__pyx_v_selector, __pyx_v_s1, __pyx_v_s2, __pyx_v_s3);
   goto __pyx_L0;
 
-  /* "cyfaust.pyx":541
+  /* "cyfaust.pyx":545
  *     return fi.CsigSelect2(selector, s1, s2)
  * 
  * cdef fi.Signal sig_select3(fi.Signal selector, fi.Signal s1, fi.Signal s2, fi.Signal s3):             # <<<<<<<<<<<<<<
@@ -7692,7 +7697,7 @@ static Signal __pyx_f_7cyfaust_sig_select3(Signal __pyx_v_selector, Signal __pyx
   return __pyx_r;
 }
 
-/* "cyfaust.pyx":557
+/* "cyfaust.pyx":561
  * #     return fi.CsigBinOp(op, x, y)
  * 
  * cdef fi.Signal sig_add(fi.Signal x, fi.Signal y):             # <<<<<<<<<<<<<<
@@ -7703,7 +7708,7 @@ static Signal __pyx_f_7cyfaust_sig_select3(Signal __pyx_v_selector, Signal __pyx
 static Signal __pyx_f_7cyfaust_sig_add(Signal __pyx_v_x, Signal __pyx_v_y) {
   Signal __pyx_r;
 
-  /* "cyfaust.pyx":559
+  /* "cyfaust.pyx":563
  * cdef fi.Signal sig_add(fi.Signal x, fi.Signal y):
  *     """Specific binary mathematical functions."""
  *     return fi.CsigAdd(x, y)             # <<<<<<<<<<<<<<
@@ -7713,7 +7718,7 @@ static Signal __pyx_f_7cyfaust_sig_add(Signal __pyx_v_x, Signal __pyx_v_y) {
   __pyx_r = CsigAdd(__pyx_v_x, __pyx_v_y);
   goto __pyx_L0;
 
-  /* "cyfaust.pyx":557
+  /* "cyfaust.pyx":561
  * #     return fi.CsigBinOp(op, x, y)
  * 
  * cdef fi.Signal sig_add(fi.Signal x, fi.Signal y):             # <<<<<<<<<<<<<<
@@ -7726,7 +7731,7 @@ static Signal __pyx_f_7cyfaust_sig_add(Signal __pyx_v_x, Signal __pyx_v_y) {
   return __pyx_r;
 }
 
-/* "cyfaust.pyx":561
+/* "cyfaust.pyx":565
  *     return fi.CsigAdd(x, y)
  * 
  * cdef fi.Signal sig_sub(fi.Signal x, fi.Signal y):             # <<<<<<<<<<<<<<
@@ -7737,7 +7742,7 @@ static Signal __pyx_f_7cyfaust_sig_add(Signal __pyx_v_x, Signal __pyx_v_y) {
 static Signal __pyx_f_7cyfaust_sig_sub(Signal __pyx_v_x, Signal __pyx_v_y) {
   Signal __pyx_r;
 
-  /* "cyfaust.pyx":563
+  /* "cyfaust.pyx":567
  * cdef fi.Signal sig_sub(fi.Signal x, fi.Signal y):
  *     """Specific binary mathematical functions."""
  *     return fi.CsigSub(x, y)             # <<<<<<<<<<<<<<
@@ -7747,7 +7752,7 @@ static Signal __pyx_f_7cyfaust_sig_sub(Signal __pyx_v_x, Signal __pyx_v_y) {
   __pyx_r = CsigSub(__pyx_v_x, __pyx_v_y);
   goto __pyx_L0;
 
-  /* "cyfaust.pyx":561
+  /* "cyfaust.pyx":565
  *     return fi.CsigAdd(x, y)
  * 
  * cdef fi.Signal sig_sub(fi.Signal x, fi.Signal y):             # <<<<<<<<<<<<<<
@@ -7760,7 +7765,7 @@ static Signal __pyx_f_7cyfaust_sig_sub(Signal __pyx_v_x, Signal __pyx_v_y) {
   return __pyx_r;
 }
 
-/* "cyfaust.pyx":565
+/* "cyfaust.pyx":569
  *     return fi.CsigSub(x, y)
  * 
  * cdef fi.Signal sig_mul(fi.Signal x, fi.Signal y):             # <<<<<<<<<<<<<<
@@ -7771,7 +7776,7 @@ static Signal __pyx_f_7cyfaust_sig_sub(Signal __pyx_v_x, Signal __pyx_v_y) {
 static Signal __pyx_f_7cyfaust_sig_mul(Signal __pyx_v_x, Signal __pyx_v_y) {
   Signal __pyx_r;
 
-  /* "cyfaust.pyx":567
+  /* "cyfaust.pyx":571
  * cdef fi.Signal sig_mul(fi.Signal x, fi.Signal y):
  *     """Specific binary mathematical functions."""
  *     return fi.CsigMul(x, y)             # <<<<<<<<<<<<<<
@@ -7781,7 +7786,7 @@ static Signal __pyx_f_7cyfaust_sig_mul(Signal __pyx_v_x, Signal __pyx_v_y) {
   __pyx_r = CsigMul(__pyx_v_x, __pyx_v_y);
   goto __pyx_L0;
 
-  /* "cyfaust.pyx":565
+  /* "cyfaust.pyx":569
  *     return fi.CsigSub(x, y)
  * 
  * cdef fi.Signal sig_mul(fi.Signal x, fi.Signal y):             # <<<<<<<<<<<<<<
@@ -7794,7 +7799,7 @@ static Signal __pyx_f_7cyfaust_sig_mul(Signal __pyx_v_x, Signal __pyx_v_y) {
   return __pyx_r;
 }
 
-/* "cyfaust.pyx":569
+/* "cyfaust.pyx":573
  *     return fi.CsigMul(x, y)
  * 
  * cdef fi.Signal sig_div(fi.Signal x, fi.Signal y):             # <<<<<<<<<<<<<<
@@ -7805,7 +7810,7 @@ static Signal __pyx_f_7cyfaust_sig_mul(Signal __pyx_v_x, Signal __pyx_v_y) {
 static Signal __pyx_f_7cyfaust_sig_div(Signal __pyx_v_x, Signal __pyx_v_y) {
   Signal __pyx_r;
 
-  /* "cyfaust.pyx":571
+  /* "cyfaust.pyx":575
  * cdef fi.Signal sig_div(fi.Signal x, fi.Signal y):
  *     """Specific binary mathematical functions."""
  *     return fi.CsigDiv(x, y)             # <<<<<<<<<<<<<<
@@ -7815,7 +7820,7 @@ static Signal __pyx_f_7cyfaust_sig_div(Signal __pyx_v_x, Signal __pyx_v_y) {
   __pyx_r = CsigDiv(__pyx_v_x, __pyx_v_y);
   goto __pyx_L0;
 
-  /* "cyfaust.pyx":569
+  /* "cyfaust.pyx":573
  *     return fi.CsigMul(x, y)
  * 
  * cdef fi.Signal sig_div(fi.Signal x, fi.Signal y):             # <<<<<<<<<<<<<<
@@ -7828,7 +7833,7 @@ static Signal __pyx_f_7cyfaust_sig_div(Signal __pyx_v_x, Signal __pyx_v_y) {
   return __pyx_r;
 }
 
-/* "cyfaust.pyx":573
+/* "cyfaust.pyx":577
  *     return fi.CsigDiv(x, y)
  * 
  * cdef fi.Signal sig_rem(fi.Signal x, fi.Signal y):             # <<<<<<<<<<<<<<
@@ -7839,7 +7844,7 @@ static Signal __pyx_f_7cyfaust_sig_div(Signal __pyx_v_x, Signal __pyx_v_y) {
 static Signal __pyx_f_7cyfaust_sig_rem(Signal __pyx_v_x, Signal __pyx_v_y) {
   Signal __pyx_r;
 
-  /* "cyfaust.pyx":575
+  /* "cyfaust.pyx":579
  * cdef fi.Signal sig_rem(fi.Signal x, fi.Signal y):
  *     """Specific binary mathematical functions."""
  *     return fi.CsigRem(x, y)             # <<<<<<<<<<<<<<
@@ -7849,7 +7854,7 @@ static Signal __pyx_f_7cyfaust_sig_rem(Signal __pyx_v_x, Signal __pyx_v_y) {
   __pyx_r = CsigRem(__pyx_v_x, __pyx_v_y);
   goto __pyx_L0;
 
-  /* "cyfaust.pyx":573
+  /* "cyfaust.pyx":577
  *     return fi.CsigDiv(x, y)
  * 
  * cdef fi.Signal sig_rem(fi.Signal x, fi.Signal y):             # <<<<<<<<<<<<<<
@@ -7862,7 +7867,7 @@ static Signal __pyx_f_7cyfaust_sig_rem(Signal __pyx_v_x, Signal __pyx_v_y) {
   return __pyx_r;
 }
 
-/* "cyfaust.pyx":577
+/* "cyfaust.pyx":581
  *     return fi.CsigRem(x, y)
  * 
  * cdef fi.Signal sig_abs(fi.Signal x):             # <<<<<<<<<<<<<<
@@ -7873,7 +7878,7 @@ static Signal __pyx_f_7cyfaust_sig_rem(Signal __pyx_v_x, Signal __pyx_v_y) {
 static Signal __pyx_f_7cyfaust_sig_abs(Signal __pyx_v_x) {
   Signal __pyx_r;
 
-  /* "cyfaust.pyx":579
+  /* "cyfaust.pyx":583
  * cdef fi.Signal sig_abs(fi.Signal x):
  *     """Extended unary mathematical functions."""
  *     return fi.CsigAbs(x)             # <<<<<<<<<<<<<<
@@ -7883,7 +7888,7 @@ static Signal __pyx_f_7cyfaust_sig_abs(Signal __pyx_v_x) {
   __pyx_r = CsigAbs(__pyx_v_x);
   goto __pyx_L0;
 
-  /* "cyfaust.pyx":577
+  /* "cyfaust.pyx":581
  *     return fi.CsigRem(x, y)
  * 
  * cdef fi.Signal sig_abs(fi.Signal x):             # <<<<<<<<<<<<<<
@@ -7896,7 +7901,7 @@ static Signal __pyx_f_7cyfaust_sig_abs(Signal __pyx_v_x) {
   return __pyx_r;
 }
 
-/* "cyfaust.pyx":581
+/* "cyfaust.pyx":585
  *     return fi.CsigAbs(x)
  * 
  * cdef fi.Signal sig_remainder(fi.Signal x, fi.Signal y):             # <<<<<<<<<<<<<<
@@ -7907,7 +7912,7 @@ static Signal __pyx_f_7cyfaust_sig_abs(Signal __pyx_v_x) {
 static Signal __pyx_f_7cyfaust_sig_remainder(Signal __pyx_v_x, Signal __pyx_v_y) {
   Signal __pyx_r;
 
-  /* "cyfaust.pyx":583
+  /* "cyfaust.pyx":587
  * cdef fi.Signal sig_remainder(fi.Signal x, fi.Signal y):
  *     """Extended binary mathematical functions."""
  *     return fi.CsigRemainder(x, y)             # <<<<<<<<<<<<<<
@@ -7917,7 +7922,7 @@ static Signal __pyx_f_7cyfaust_sig_remainder(Signal __pyx_v_x, Signal __pyx_v_y)
   __pyx_r = CsigRemainder(__pyx_v_x, __pyx_v_y);
   goto __pyx_L0;
 
-  /* "cyfaust.pyx":581
+  /* "cyfaust.pyx":585
  *     return fi.CsigAbs(x)
  * 
  * cdef fi.Signal sig_remainder(fi.Signal x, fi.Signal y):             # <<<<<<<<<<<<<<
@@ -7930,7 +7935,7 @@ static Signal __pyx_f_7cyfaust_sig_remainder(Signal __pyx_v_x, Signal __pyx_v_y)
   return __pyx_r;
 }
 
-/* "cyfaust.pyx":586
+/* "cyfaust.pyx":590
  * 
  * 
  * cdef fi.Signal sig_recursion(fi.Signal s):             # <<<<<<<<<<<<<<
@@ -7941,7 +7946,7 @@ static Signal __pyx_f_7cyfaust_sig_remainder(Signal __pyx_v_x, Signal __pyx_v_y)
 static Signal __pyx_f_7cyfaust_sig_recursion(Signal __pyx_v_s) {
   Signal __pyx_r;
 
-  /* "cyfaust.pyx":588
+  /* "cyfaust.pyx":592
  * cdef fi.Signal sig_recursion(fi.Signal s):
  *     """Create a recursive signal. Use CsigSelf() to refer to the"""
  *     return fi.CsigRecursion(s)             # <<<<<<<<<<<<<<
@@ -7951,7 +7956,7 @@ static Signal __pyx_f_7cyfaust_sig_recursion(Signal __pyx_v_s) {
   __pyx_r = CsigRecursion(__pyx_v_s);
   goto __pyx_L0;
 
-  /* "cyfaust.pyx":586
+  /* "cyfaust.pyx":590
  * 
  * 
  * cdef fi.Signal sig_recursion(fi.Signal s):             # <<<<<<<<<<<<<<
@@ -7964,7 +7969,7 @@ static Signal __pyx_f_7cyfaust_sig_recursion(Signal __pyx_v_s) {
   return __pyx_r;
 }
 
-/* "cyfaust.pyx":590
+/* "cyfaust.pyx":594
  *     return fi.CsigRecursion(s)
  * 
  * cdef fi.Signal sig_self_n(int id):             # <<<<<<<<<<<<<<
@@ -7975,7 +7980,7 @@ static Signal __pyx_f_7cyfaust_sig_recursion(Signal __pyx_v_s) {
 static Signal __pyx_f_7cyfaust_sig_self_n(int __pyx_v_id) {
   Signal __pyx_r;
 
-  /* "cyfaust.pyx":592
+  /* "cyfaust.pyx":596
  * cdef fi.Signal sig_self_n(int id):
  *     """Create a recursive signal inside the CsigRecursionN expression."""
  *     return fi.CsigSelfN(id)             # <<<<<<<<<<<<<<
@@ -7985,7 +7990,7 @@ static Signal __pyx_f_7cyfaust_sig_self_n(int __pyx_v_id) {
   __pyx_r = CsigSelfN(__pyx_v_id);
   goto __pyx_L0;
 
-  /* "cyfaust.pyx":590
+  /* "cyfaust.pyx":594
  *     return fi.CsigRecursion(s)
  * 
  * cdef fi.Signal sig_self_n(int id):             # <<<<<<<<<<<<<<
@@ -7998,7 +8003,7 @@ static Signal __pyx_f_7cyfaust_sig_self_n(int __pyx_v_id) {
   return __pyx_r;
 }
 
-/* "cyfaust.pyx":594
+/* "cyfaust.pyx":598
  *     return fi.CsigSelfN(id)
  * 
  * cdef fi.Signal* sig_recursion_n(fi.Signal* rf):             # <<<<<<<<<<<<<<
@@ -8009,7 +8014,7 @@ static Signal __pyx_f_7cyfaust_sig_self_n(int __pyx_v_id) {
 static Signal *__pyx_f_7cyfaust_sig_recursion_n(Signal *__pyx_v_rf) {
   Signal *__pyx_r;
 
-  /* "cyfaust.pyx":596
+  /* "cyfaust.pyx":600
  * cdef fi.Signal* sig_recursion_n(fi.Signal* rf):
  *     """Create a recursive block of signals. Use CsigSelfN() to refer to the"""
  *     return fi.CsigRecursionN(rf)             # <<<<<<<<<<<<<<
@@ -8019,7 +8024,7 @@ static Signal *__pyx_f_7cyfaust_sig_recursion_n(Signal *__pyx_v_rf) {
   __pyx_r = CsigRecursionN(__pyx_v_rf);
   goto __pyx_L0;
 
-  /* "cyfaust.pyx":594
+  /* "cyfaust.pyx":598
  *     return fi.CsigSelfN(id)
  * 
  * cdef fi.Signal* sig_recursion_n(fi.Signal* rf):             # <<<<<<<<<<<<<<
@@ -8032,7 +8037,7 @@ static Signal *__pyx_f_7cyfaust_sig_recursion_n(Signal *__pyx_v_rf) {
   return __pyx_r;
 }
 
-/* "cyfaust.pyx":598
+/* "cyfaust.pyx":602
  *     return fi.CsigRecursionN(rf)
  * 
  * cdef fi.Signal sig_button(const char* label):             # <<<<<<<<<<<<<<
@@ -8043,7 +8048,7 @@ static Signal *__pyx_f_7cyfaust_sig_recursion_n(Signal *__pyx_v_rf) {
 static Signal __pyx_f_7cyfaust_sig_button(char const *__pyx_v_label) {
   Signal __pyx_r;
 
-  /* "cyfaust.pyx":600
+  /* "cyfaust.pyx":604
  * cdef fi.Signal sig_button(const char* label):
  *     """Create a button signal."""
  *     return fi.CsigButton(label)             # <<<<<<<<<<<<<<
@@ -8053,7 +8058,7 @@ static Signal __pyx_f_7cyfaust_sig_button(char const *__pyx_v_label) {
   __pyx_r = CsigButton(__pyx_v_label);
   goto __pyx_L0;
 
-  /* "cyfaust.pyx":598
+  /* "cyfaust.pyx":602
  *     return fi.CsigRecursionN(rf)
  * 
  * cdef fi.Signal sig_button(const char* label):             # <<<<<<<<<<<<<<
@@ -8066,7 +8071,7 @@ static Signal __pyx_f_7cyfaust_sig_button(char const *__pyx_v_label) {
   return __pyx_r;
 }
 
-/* "cyfaust.pyx":602
+/* "cyfaust.pyx":606
  *     return fi.CsigButton(label)
  * 
  * cdef fi.Signal sig_checkbox(const char* label):             # <<<<<<<<<<<<<<
@@ -8077,7 +8082,7 @@ static Signal __pyx_f_7cyfaust_sig_button(char const *__pyx_v_label) {
 static Signal __pyx_f_7cyfaust_sig_checkbox(char const *__pyx_v_label) {
   Signal __pyx_r;
 
-  /* "cyfaust.pyx":604
+  /* "cyfaust.pyx":608
  * cdef fi.Signal sig_checkbox(const char* label):
  *     """Create a checkbox signal."""
  *     return fi.CsigCheckbox(label)             # <<<<<<<<<<<<<<
@@ -8087,7 +8092,7 @@ static Signal __pyx_f_7cyfaust_sig_checkbox(char const *__pyx_v_label) {
   __pyx_r = CsigCheckbox(__pyx_v_label);
   goto __pyx_L0;
 
-  /* "cyfaust.pyx":602
+  /* "cyfaust.pyx":606
  *     return fi.CsigButton(label)
  * 
  * cdef fi.Signal sig_checkbox(const char* label):             # <<<<<<<<<<<<<<
@@ -8100,7 +8105,7 @@ static Signal __pyx_f_7cyfaust_sig_checkbox(char const *__pyx_v_label) {
   return __pyx_r;
 }
 
-/* "cyfaust.pyx":606
+/* "cyfaust.pyx":610
  *     return fi.CsigCheckbox(label)
  * 
  * cdef fi.Signal sig_v_slider(const char* label, fi.Signal init, fi.Signal min, fi.Signal max, fi.Signal step):             # <<<<<<<<<<<<<<
@@ -8111,7 +8116,7 @@ static Signal __pyx_f_7cyfaust_sig_checkbox(char const *__pyx_v_label) {
 static Signal __pyx_f_7cyfaust_sig_v_slider(char const *__pyx_v_label, Signal __pyx_v_init, Signal __pyx_v_min, Signal __pyx_v_max, Signal __pyx_v_step) {
   Signal __pyx_r;
 
-  /* "cyfaust.pyx":608
+  /* "cyfaust.pyx":612
  * cdef fi.Signal sig_v_slider(const char* label, fi.Signal init, fi.Signal min, fi.Signal max, fi.Signal step):
  *     """Create a vertical slider signal."""
  *     return fi.CsigVSlider(label, init, min, max, step)             # <<<<<<<<<<<<<<
@@ -8121,7 +8126,7 @@ static Signal __pyx_f_7cyfaust_sig_v_slider(char const *__pyx_v_label, Signal __
   __pyx_r = CsigVSlider(__pyx_v_label, __pyx_v_init, __pyx_v_min, __pyx_v_max, __pyx_v_step);
   goto __pyx_L0;
 
-  /* "cyfaust.pyx":606
+  /* "cyfaust.pyx":610
  *     return fi.CsigCheckbox(label)
  * 
  * cdef fi.Signal sig_v_slider(const char* label, fi.Signal init, fi.Signal min, fi.Signal max, fi.Signal step):             # <<<<<<<<<<<<<<
@@ -8134,7 +8139,7 @@ static Signal __pyx_f_7cyfaust_sig_v_slider(char const *__pyx_v_label, Signal __
   return __pyx_r;
 }
 
-/* "cyfaust.pyx":610
+/* "cyfaust.pyx":614
  *     return fi.CsigVSlider(label, init, min, max, step)
  * 
  * cdef fi.Signal sig_h_slider(const char* label, fi.Signal init, fi.Signal min, fi.Signal max, fi.Signal step):             # <<<<<<<<<<<<<<
@@ -8145,7 +8150,7 @@ static Signal __pyx_f_7cyfaust_sig_v_slider(char const *__pyx_v_label, Signal __
 static Signal __pyx_f_7cyfaust_sig_h_slider(char const *__pyx_v_label, Signal __pyx_v_init, Signal __pyx_v_min, Signal __pyx_v_max, Signal __pyx_v_step) {
   Signal __pyx_r;
 
-  /* "cyfaust.pyx":612
+  /* "cyfaust.pyx":616
  * cdef fi.Signal sig_h_slider(const char* label, fi.Signal init, fi.Signal min, fi.Signal max, fi.Signal step):
  *     """Create an horizontal slider signal."""
  *     return fi.CsigHSlider(label, init, min, max, step)             # <<<<<<<<<<<<<<
@@ -8155,7 +8160,7 @@ static Signal __pyx_f_7cyfaust_sig_h_slider(char const *__pyx_v_label, Signal __
   __pyx_r = CsigHSlider(__pyx_v_label, __pyx_v_init, __pyx_v_min, __pyx_v_max, __pyx_v_step);
   goto __pyx_L0;
 
-  /* "cyfaust.pyx":610
+  /* "cyfaust.pyx":614
  *     return fi.CsigVSlider(label, init, min, max, step)
  * 
  * cdef fi.Signal sig_h_slider(const char* label, fi.Signal init, fi.Signal min, fi.Signal max, fi.Signal step):             # <<<<<<<<<<<<<<
@@ -8168,7 +8173,7 @@ static Signal __pyx_f_7cyfaust_sig_h_slider(char const *__pyx_v_label, Signal __
   return __pyx_r;
 }
 
-/* "cyfaust.pyx":614
+/* "cyfaust.pyx":618
  *     return fi.CsigHSlider(label, init, min, max, step)
  * 
  * cdef fi.Signal sig_num_entry(const char* label, fi.Signal init, fi.Signal min, fi.Signal max, fi.Signal step):             # <<<<<<<<<<<<<<
@@ -8179,7 +8184,7 @@ static Signal __pyx_f_7cyfaust_sig_h_slider(char const *__pyx_v_label, Signal __
 static Signal __pyx_f_7cyfaust_sig_num_entry(char const *__pyx_v_label, Signal __pyx_v_init, Signal __pyx_v_min, Signal __pyx_v_max, Signal __pyx_v_step) {
   Signal __pyx_r;
 
-  /* "cyfaust.pyx":616
+  /* "cyfaust.pyx":620
  * cdef fi.Signal sig_num_entry(const char* label, fi.Signal init, fi.Signal min, fi.Signal max, fi.Signal step):
  *     """Create a num entry signal."""
  *     return fi.CsigNumEntry(label, init, min, max, step)             # <<<<<<<<<<<<<<
@@ -8189,7 +8194,7 @@ static Signal __pyx_f_7cyfaust_sig_num_entry(char const *__pyx_v_label, Signal _
   __pyx_r = CsigNumEntry(__pyx_v_label, __pyx_v_init, __pyx_v_min, __pyx_v_max, __pyx_v_step);
   goto __pyx_L0;
 
-  /* "cyfaust.pyx":614
+  /* "cyfaust.pyx":618
  *     return fi.CsigHSlider(label, init, min, max, step)
  * 
  * cdef fi.Signal sig_num_entry(const char* label, fi.Signal init, fi.Signal min, fi.Signal max, fi.Signal step):             # <<<<<<<<<<<<<<
@@ -8202,7 +8207,7 @@ static Signal __pyx_f_7cyfaust_sig_num_entry(char const *__pyx_v_label, Signal _
   return __pyx_r;
 }
 
-/* "cyfaust.pyx":618
+/* "cyfaust.pyx":622
  *     return fi.CsigNumEntry(label, init, min, max, step)
  * 
  * cdef fi.Signal sig_v_bargraph(const char* label, fi.Signal min, fi.Signal max, fi.Signal s):             # <<<<<<<<<<<<<<
@@ -8213,7 +8218,7 @@ static Signal __pyx_f_7cyfaust_sig_num_entry(char const *__pyx_v_label, Signal _
 static Signal __pyx_f_7cyfaust_sig_v_bargraph(char const *__pyx_v_label, Signal __pyx_v_min, Signal __pyx_v_max, Signal __pyx_v_s) {
   Signal __pyx_r;
 
-  /* "cyfaust.pyx":620
+  /* "cyfaust.pyx":624
  * cdef fi.Signal sig_v_bargraph(const char* label, fi.Signal min, fi.Signal max, fi.Signal s):
  *     """Create a vertical bargraph signal."""
  *     return fi.CsigVBargraph(label, min, max, s)             # <<<<<<<<<<<<<<
@@ -8223,7 +8228,7 @@ static Signal __pyx_f_7cyfaust_sig_v_bargraph(char const *__pyx_v_label, Signal 
   __pyx_r = CsigVBargraph(__pyx_v_label, __pyx_v_min, __pyx_v_max, __pyx_v_s);
   goto __pyx_L0;
 
-  /* "cyfaust.pyx":618
+  /* "cyfaust.pyx":622
  *     return fi.CsigNumEntry(label, init, min, max, step)
  * 
  * cdef fi.Signal sig_v_bargraph(const char* label, fi.Signal min, fi.Signal max, fi.Signal s):             # <<<<<<<<<<<<<<
@@ -8236,7 +8241,7 @@ static Signal __pyx_f_7cyfaust_sig_v_bargraph(char const *__pyx_v_label, Signal 
   return __pyx_r;
 }
 
-/* "cyfaust.pyx":622
+/* "cyfaust.pyx":626
  *     return fi.CsigVBargraph(label, min, max, s)
  * 
  * cdef fi.Signal sig_h_bargraph(const char* label, fi.Signal min, fi.Signal max, fi.Signal s):             # <<<<<<<<<<<<<<
@@ -8247,7 +8252,7 @@ static Signal __pyx_f_7cyfaust_sig_v_bargraph(char const *__pyx_v_label, Signal 
 static Signal __pyx_f_7cyfaust_sig_h_bargraph(char const *__pyx_v_label, Signal __pyx_v_min, Signal __pyx_v_max, Signal __pyx_v_s) {
   Signal __pyx_r;
 
-  /* "cyfaust.pyx":624
+  /* "cyfaust.pyx":628
  * cdef fi.Signal sig_h_bargraph(const char* label, fi.Signal min, fi.Signal max, fi.Signal s):
  *     """Create an horizontal bargraph signal."""
  *     return fi.CsigHBargraph(label, min, max, s)             # <<<<<<<<<<<<<<
@@ -8257,7 +8262,7 @@ static Signal __pyx_f_7cyfaust_sig_h_bargraph(char const *__pyx_v_label, Signal 
   __pyx_r = CsigHBargraph(__pyx_v_label, __pyx_v_min, __pyx_v_max, __pyx_v_s);
   goto __pyx_L0;
 
-  /* "cyfaust.pyx":622
+  /* "cyfaust.pyx":626
  *     return fi.CsigVBargraph(label, min, max, s)
  * 
  * cdef fi.Signal sig_h_bargraph(const char* label, fi.Signal min, fi.Signal max, fi.Signal s):             # <<<<<<<<<<<<<<
@@ -8270,7 +8275,7 @@ static Signal __pyx_f_7cyfaust_sig_h_bargraph(char const *__pyx_v_label, Signal 
   return __pyx_r;
 }
 
-/* "cyfaust.pyx":626
+/* "cyfaust.pyx":630
  *     return fi.CsigHBargraph(label, min, max, s)
  * 
  * cdef fi.Signal sig_attach(fi.Signal s1, fi.Signal s2):             # <<<<<<<<<<<<<<
@@ -8281,7 +8286,7 @@ static Signal __pyx_f_7cyfaust_sig_h_bargraph(char const *__pyx_v_label, Signal 
 static Signal __pyx_f_7cyfaust_sig_attach(Signal __pyx_v_s1, Signal __pyx_v_s2) {
   Signal __pyx_r;
 
-  /* "cyfaust.pyx":628
+  /* "cyfaust.pyx":632
  * cdef fi.Signal sig_attach(fi.Signal s1, fi.Signal s2):
  *     """Create an attach signal."""
  *     return fi.CsigAttach(s1, s2)             # <<<<<<<<<<<<<<
@@ -8291,7 +8296,7 @@ static Signal __pyx_f_7cyfaust_sig_attach(Signal __pyx_v_s1, Signal __pyx_v_s2) 
   __pyx_r = CsigAttach(__pyx_v_s1, __pyx_v_s2);
   goto __pyx_L0;
 
-  /* "cyfaust.pyx":626
+  /* "cyfaust.pyx":630
  *     return fi.CsigHBargraph(label, min, max, s)
  * 
  * cdef fi.Signal sig_attach(fi.Signal s1, fi.Signal s2):             # <<<<<<<<<<<<<<
@@ -8781,7 +8786,6 @@ static PyMethodDef __pyx_methods[] = {
 
 static int __Pyx_CreateStringTabAndInitStrings(void) {
   __Pyx_StringTabEntry __pyx_string_tab[] = {
-    {&__pyx_n_s_AssertionError, __pyx_k_AssertionError, sizeof(__pyx_k_AssertionError), 0, 0, 1, 1},
     {&__pyx_n_s_InterpreterDsp, __pyx_k_InterpreterDsp, sizeof(__pyx_k_InterpreterDsp), 0, 0, 1, 1},
     {&__pyx_n_s_InterpreterDspFactory, __pyx_k_InterpreterDspFactory, sizeof(__pyx_k_InterpreterDspFactory), 0, 0, 1, 1},
     {&__pyx_n_s_InterpreterDspFactory___reduce_c, __pyx_k_InterpreterDspFactory___reduce_c, sizeof(__pyx_k_InterpreterDspFactory___reduce_c), 0, 0, 1, 1},
@@ -8798,11 +8802,12 @@ static int __Pyx_CreateStringTabAndInitStrings(void) {
     {&__pyx_n_s_InterpreterDsp_get_samplerate, __pyx_k_InterpreterDsp_get_samplerate, sizeof(__pyx_k_InterpreterDsp_get_samplerate), 0, 0, 1, 1},
     {&__pyx_n_s_InterpreterDsp_init, __pyx_k_InterpreterDsp_init, sizeof(__pyx_k_InterpreterDsp_init), 0, 0, 1, 1},
     {&__pyx_n_s_InterpreterDsp_reset, __pyx_k_InterpreterDsp_reset, sizeof(__pyx_k_InterpreterDsp_reset), 0, 0, 1, 1},
+    {&__pyx_kp_u_OK_test_create_interpreter_dsp_f, __pyx_k_OK_test_create_interpreter_dsp_f, sizeof(__pyx_k_OK_test_create_interpreter_dsp_f), 0, 1, 0, 0},
     {&__pyx_n_s_ParamArray, __pyx_k_ParamArray, sizeof(__pyx_k_ParamArray), 0, 0, 1, 1},
     {&__pyx_n_s_ParamArray___reduce_cython, __pyx_k_ParamArray___reduce_cython, sizeof(__pyx_k_ParamArray___reduce_cython), 0, 0, 1, 1},
     {&__pyx_n_s_ParamArray___setstate_cython, __pyx_k_ParamArray___setstate_cython, sizeof(__pyx_k_ParamArray___setstate_cython), 0, 0, 1, 1},
     {&__pyx_n_s_TypeError, __pyx_k_TypeError, sizeof(__pyx_k_TypeError), 0, 0, 1, 1},
-    {&__pyx_n_s__26, __pyx_k__26, sizeof(__pyx_k__26), 0, 0, 1, 1},
+    {&__pyx_n_s__27, __pyx_k__27, sizeof(__pyx_k__27), 0, 0, 1, 1},
     {&__pyx_n_s_args, __pyx_k_args, sizeof(__pyx_k_args), 0, 0, 1, 1},
     {&__pyx_n_s_asyncio_coroutines, __pyx_k_asyncio_coroutines, sizeof(__pyx_k_asyncio_coroutines), 0, 0, 1, 1},
     {&__pyx_n_s_clear, __pyx_k_clear, sizeof(__pyx_k_clear), 0, 0, 1, 1},
@@ -8865,7 +8870,6 @@ static CYTHON_SMALL_CODE int __Pyx_InitCachedBuiltins(void) {
   __pyx_builtin_range = __Pyx_GetBuiltinName(__pyx_n_s_range); if (!__pyx_builtin_range) __PYX_ERR(0, 63, __pyx_L1_error)
   __pyx_builtin_TypeError = __Pyx_GetBuiltinName(__pyx_n_s_TypeError); if (!__pyx_builtin_TypeError) __PYX_ERR(1, 2, __pyx_L1_error)
   __pyx_builtin_print = __Pyx_GetBuiltinName(__pyx_n_s_print); if (!__pyx_builtin_print) __PYX_ERR(0, 107, __pyx_L1_error)
-  __pyx_builtin_AssertionError = __Pyx_GetBuiltinName(__pyx_n_s_AssertionError); if (!__pyx_builtin_AssertionError) __PYX_ERR(0, 444, __pyx_L1_error)
   return 0;
   __pyx_L1_error:;
   return -1;
@@ -8876,6 +8880,17 @@ static CYTHON_SMALL_CODE int __Pyx_InitCachedConstants(void) {
   __Pyx_RefNannyDeclarations
   __Pyx_RefNannySetupContext("__Pyx_InitCachedConstants", 0);
 
+  /* "cyfaust.pyx":448
+ *         print(error_msg.decode())
+ *     else:
+ *         print("OK: test_create_interpreter_dsp_factory_from_string")             # <<<<<<<<<<<<<<
+ * 
+ * 
+ */
+  __pyx_tuple_ = PyTuple_Pack(1, __pyx_kp_u_OK_test_create_interpreter_dsp_f); if (unlikely(!__pyx_tuple_)) __PYX_ERR(0, 448, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_tuple_);
+  __Pyx_GIVEREF(__pyx_tuple_);
+
   /* "cyfaust.pyx":27
  * ##
  * 
@@ -8883,17 +8898,17 @@ static CYTHON_SMALL_CODE int __Pyx_InitCachedConstants(void) {
  *     """Get the version of the library.
  * 
  */
-  __pyx_codeobj_ = (PyObject*)__Pyx_PyCode_New(0, 0, 0, 0, 0, CO_OPTIMIZED|CO_NEWLOCALS, __pyx_empty_bytes, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_kp_s_cyfaust_pyx, __pyx_n_s_get_version, 27, __pyx_empty_bytes); if (unlikely(!__pyx_codeobj_)) __PYX_ERR(0, 27, __pyx_L1_error)
+  __pyx_codeobj__2 = (PyObject*)__Pyx_PyCode_New(0, 0, 0, 0, 0, CO_OPTIMIZED|CO_NEWLOCALS, __pyx_empty_bytes, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_kp_s_cyfaust_pyx, __pyx_n_s_get_version, 27, __pyx_empty_bytes); if (unlikely(!__pyx_codeobj__2)) __PYX_ERR(0, 27, __pyx_L1_error)
 
   /* "(tree fragment)":1
  * def __reduce_cython__(self):             # <<<<<<<<<<<<<<
  *     raise TypeError, "no default __reduce__ due to non-trivial __cinit__"
  * def __setstate_cython__(self, __pyx_state):
  */
-  __pyx_tuple__2 = PyTuple_Pack(1, __pyx_n_s_self); if (unlikely(!__pyx_tuple__2)) __PYX_ERR(1, 1, __pyx_L1_error)
-  __Pyx_GOTREF(__pyx_tuple__2);
-  __Pyx_GIVEREF(__pyx_tuple__2);
-  __pyx_codeobj__3 = (PyObject*)__Pyx_PyCode_New(1, 0, 0, 1, 0, CO_OPTIMIZED|CO_NEWLOCALS, __pyx_empty_bytes, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_tuple__2, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_kp_s_stringsource, __pyx_n_s_reduce_cython, 1, __pyx_empty_bytes); if (unlikely(!__pyx_codeobj__3)) __PYX_ERR(1, 1, __pyx_L1_error)
+  __pyx_tuple__3 = PyTuple_Pack(1, __pyx_n_s_self); if (unlikely(!__pyx_tuple__3)) __PYX_ERR(1, 1, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_tuple__3);
+  __Pyx_GIVEREF(__pyx_tuple__3);
+  __pyx_codeobj__4 = (PyObject*)__Pyx_PyCode_New(1, 0, 0, 1, 0, CO_OPTIMIZED|CO_NEWLOCALS, __pyx_empty_bytes, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_tuple__3, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_kp_s_stringsource, __pyx_n_s_reduce_cython, 1, __pyx_empty_bytes); if (unlikely(!__pyx_codeobj__4)) __PYX_ERR(1, 1, __pyx_L1_error)
 
   /* "(tree fragment)":3
  * def __reduce_cython__(self):
@@ -8901,10 +8916,10 @@ static CYTHON_SMALL_CODE int __Pyx_InitCachedConstants(void) {
  * def __setstate_cython__(self, __pyx_state):             # <<<<<<<<<<<<<<
  *     raise TypeError, "no default __reduce__ due to non-trivial __cinit__"
  */
-  __pyx_tuple__4 = PyTuple_Pack(2, __pyx_n_s_self, __pyx_n_s_pyx_state); if (unlikely(!__pyx_tuple__4)) __PYX_ERR(1, 3, __pyx_L1_error)
-  __Pyx_GOTREF(__pyx_tuple__4);
-  __Pyx_GIVEREF(__pyx_tuple__4);
-  __pyx_codeobj__5 = (PyObject*)__Pyx_PyCode_New(2, 0, 0, 2, 0, CO_OPTIMIZED|CO_NEWLOCALS, __pyx_empty_bytes, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_tuple__4, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_kp_s_stringsource, __pyx_n_s_setstate_cython, 3, __pyx_empty_bytes); if (unlikely(!__pyx_codeobj__5)) __PYX_ERR(1, 3, __pyx_L1_error)
+  __pyx_tuple__5 = PyTuple_Pack(2, __pyx_n_s_self, __pyx_n_s_pyx_state); if (unlikely(!__pyx_tuple__5)) __PYX_ERR(1, 3, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_tuple__5);
+  __Pyx_GIVEREF(__pyx_tuple__5);
+  __pyx_codeobj__6 = (PyObject*)__Pyx_PyCode_New(2, 0, 0, 2, 0, CO_OPTIMIZED|CO_NEWLOCALS, __pyx_empty_bytes, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_tuple__5, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_kp_s_stringsource, __pyx_n_s_setstate_cython, 3, __pyx_empty_bytes); if (unlikely(!__pyx_codeobj__6)) __PYX_ERR(1, 3, __pyx_L1_error)
 
   /* "cyfaust.pyx":83
  *             delete_interpreter_dsp_factory(self.ptr)
@@ -8913,10 +8928,10 @@ static CYTHON_SMALL_CODE int __Pyx_InitCachedConstants(void) {
  *     def from_sha(str sha_key) -> InterpreterDspFactory:
  *         cdef InterpreterDspFactory factory = InterpreterDspFactory.__new__(
  */
-  __pyx_tuple__6 = PyTuple_Pack(2, __pyx_n_s_sha_key, __pyx_n_s_factory); if (unlikely(!__pyx_tuple__6)) __PYX_ERR(0, 83, __pyx_L1_error)
-  __Pyx_GOTREF(__pyx_tuple__6);
-  __Pyx_GIVEREF(__pyx_tuple__6);
-  __pyx_codeobj__7 = (PyObject*)__Pyx_PyCode_New(1, 0, 0, 2, 0, CO_OPTIMIZED|CO_NEWLOCALS, __pyx_empty_bytes, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_tuple__6, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_kp_s_cyfaust_pyx, __pyx_n_s_from_sha, 83, __pyx_empty_bytes); if (unlikely(!__pyx_codeobj__7)) __PYX_ERR(0, 83, __pyx_L1_error)
+  __pyx_tuple__7 = PyTuple_Pack(2, __pyx_n_s_sha_key, __pyx_n_s_factory); if (unlikely(!__pyx_tuple__7)) __PYX_ERR(0, 83, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_tuple__7);
+  __Pyx_GIVEREF(__pyx_tuple__7);
+  __pyx_codeobj__8 = (PyObject*)__Pyx_PyCode_New(1, 0, 0, 2, 0, CO_OPTIMIZED|CO_NEWLOCALS, __pyx_empty_bytes, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_tuple__7, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_kp_s_cyfaust_pyx, __pyx_n_s_from_sha, 83, __pyx_empty_bytes); if (unlikely(!__pyx_codeobj__8)) __PYX_ERR(0, 83, __pyx_L1_error)
 
   /* "cyfaust.pyx":91
  *         return factory
@@ -8925,10 +8940,10 @@ static CYTHON_SMALL_CODE int __Pyx_InitCachedConstants(void) {
  *     def from_file(str filepath, str args) -> InterpreterDspFactory:
  *         cdef char error_msg[4096]
  */
-  __pyx_tuple__8 = PyTuple_Pack(5, __pyx_n_s_filepath, __pyx_n_s_args, __pyx_n_s_error_msg, __pyx_n_s_factory, __pyx_n_s_params); if (unlikely(!__pyx_tuple__8)) __PYX_ERR(0, 91, __pyx_L1_error)
-  __Pyx_GOTREF(__pyx_tuple__8);
-  __Pyx_GIVEREF(__pyx_tuple__8);
-  __pyx_codeobj__9 = (PyObject*)__Pyx_PyCode_New(2, 0, 0, 5, 0, CO_OPTIMIZED|CO_NEWLOCALS, __pyx_empty_bytes, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_tuple__8, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_kp_s_cyfaust_pyx, __pyx_n_s_from_file, 91, __pyx_empty_bytes); if (unlikely(!__pyx_codeobj__9)) __PYX_ERR(0, 91, __pyx_L1_error)
+  __pyx_tuple__9 = PyTuple_Pack(5, __pyx_n_s_filepath, __pyx_n_s_args, __pyx_n_s_error_msg, __pyx_n_s_factory, __pyx_n_s_params); if (unlikely(!__pyx_tuple__9)) __PYX_ERR(0, 91, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_tuple__9);
+  __Pyx_GIVEREF(__pyx_tuple__9);
+  __pyx_codeobj__10 = (PyObject*)__Pyx_PyCode_New(2, 0, 0, 5, 0, CO_OPTIMIZED|CO_NEWLOCALS, __pyx_empty_bytes, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_tuple__9, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_kp_s_cyfaust_pyx, __pyx_n_s_from_file, 91, __pyx_empty_bytes); if (unlikely(!__pyx_codeobj__10)) __PYX_ERR(0, 91, __pyx_L1_error)
 
   /* "cyfaust.pyx":111
  *         return factory
@@ -8937,17 +8952,17 @@ static CYTHON_SMALL_CODE int __Pyx_InitCachedConstants(void) {
  *     def from_string(str name_app, str code, str args) -> InterpreterDspFactory:
  *         cdef char error_msg[4096]
  */
-  __pyx_tuple__10 = PyTuple_Pack(6, __pyx_n_s_name_app, __pyx_n_s_code, __pyx_n_s_args, __pyx_n_s_error_msg, __pyx_n_s_factory, __pyx_n_s_params); if (unlikely(!__pyx_tuple__10)) __PYX_ERR(0, 111, __pyx_L1_error)
-  __Pyx_GOTREF(__pyx_tuple__10);
-  __Pyx_GIVEREF(__pyx_tuple__10);
-  __pyx_codeobj__11 = (PyObject*)__Pyx_PyCode_New(3, 0, 0, 6, 0, CO_OPTIMIZED|CO_NEWLOCALS, __pyx_empty_bytes, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_tuple__10, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_kp_s_cyfaust_pyx, __pyx_n_s_from_string, 111, __pyx_empty_bytes); if (unlikely(!__pyx_codeobj__11)) __PYX_ERR(0, 111, __pyx_L1_error)
+  __pyx_tuple__11 = PyTuple_Pack(6, __pyx_n_s_name_app, __pyx_n_s_code, __pyx_n_s_args, __pyx_n_s_error_msg, __pyx_n_s_factory, __pyx_n_s_params); if (unlikely(!__pyx_tuple__11)) __PYX_ERR(0, 111, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_tuple__11);
+  __Pyx_GIVEREF(__pyx_tuple__11);
+  __pyx_codeobj__12 = (PyObject*)__Pyx_PyCode_New(3, 0, 0, 6, 0, CO_OPTIMIZED|CO_NEWLOCALS, __pyx_empty_bytes, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_tuple__11, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_kp_s_cyfaust_pyx, __pyx_n_s_from_string, 111, __pyx_empty_bytes); if (unlikely(!__pyx_codeobj__12)) __PYX_ERR(0, 111, __pyx_L1_error)
 
   /* "(tree fragment)":1
  * def __reduce_cython__(self):             # <<<<<<<<<<<<<<
  *     raise TypeError, "no default __reduce__ due to non-trivial __cinit__"
  * def __setstate_cython__(self, __pyx_state):
  */
-  __pyx_codeobj__12 = (PyObject*)__Pyx_PyCode_New(1, 0, 0, 1, 0, CO_OPTIMIZED|CO_NEWLOCALS, __pyx_empty_bytes, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_tuple__2, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_kp_s_stringsource, __pyx_n_s_reduce_cython, 1, __pyx_empty_bytes); if (unlikely(!__pyx_codeobj__12)) __PYX_ERR(1, 1, __pyx_L1_error)
+  __pyx_codeobj__13 = (PyObject*)__Pyx_PyCode_New(1, 0, 0, 1, 0, CO_OPTIMIZED|CO_NEWLOCALS, __pyx_empty_bytes, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_tuple__3, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_kp_s_stringsource, __pyx_n_s_reduce_cython, 1, __pyx_empty_bytes); if (unlikely(!__pyx_codeobj__13)) __PYX_ERR(1, 1, __pyx_L1_error)
 
   /* "(tree fragment)":3
  * def __reduce_cython__(self):
@@ -8955,7 +8970,7 @@ static CYTHON_SMALL_CODE int __Pyx_InitCachedConstants(void) {
  * def __setstate_cython__(self, __pyx_state):             # <<<<<<<<<<<<<<
  *     raise TypeError, "no default __reduce__ due to non-trivial __cinit__"
  */
-  __pyx_codeobj__13 = (PyObject*)__Pyx_PyCode_New(2, 0, 0, 2, 0, CO_OPTIMIZED|CO_NEWLOCALS, __pyx_empty_bytes, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_tuple__4, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_kp_s_stringsource, __pyx_n_s_setstate_cython, 3, __pyx_empty_bytes); if (unlikely(!__pyx_codeobj__13)) __PYX_ERR(1, 3, __pyx_L1_error)
+  __pyx_codeobj__14 = (PyObject*)__Pyx_PyCode_New(2, 0, 0, 2, 0, CO_OPTIMIZED|CO_NEWLOCALS, __pyx_empty_bytes, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_tuple__5, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_kp_s_stringsource, __pyx_n_s_setstate_cython, 3, __pyx_empty_bytes); if (unlikely(!__pyx_codeobj__14)) __PYX_ERR(1, 3, __pyx_L1_error)
 
   /* "cyfaust.pyx":404
  *         return dsp
@@ -8964,7 +8979,7 @@ static CYTHON_SMALL_CODE int __Pyx_InitCachedConstants(void) {
  *         return get_numinputs_interpreter_dsp_instance(self.ptr)
  * 
  */
-  __pyx_codeobj__14 = (PyObject*)__Pyx_PyCode_New(1, 0, 0, 1, 0, CO_OPTIMIZED|CO_NEWLOCALS, __pyx_empty_bytes, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_tuple__2, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_kp_s_cyfaust_pyx, __pyx_n_s_get_numinputs, 404, __pyx_empty_bytes); if (unlikely(!__pyx_codeobj__14)) __PYX_ERR(0, 404, __pyx_L1_error)
+  __pyx_codeobj__15 = (PyObject*)__Pyx_PyCode_New(1, 0, 0, 1, 0, CO_OPTIMIZED|CO_NEWLOCALS, __pyx_empty_bytes, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_tuple__3, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_kp_s_cyfaust_pyx, __pyx_n_s_get_numinputs, 404, __pyx_empty_bytes); if (unlikely(!__pyx_codeobj__15)) __PYX_ERR(0, 404, __pyx_L1_error)
 
   /* "cyfaust.pyx":407
  *         return get_numinputs_interpreter_dsp_instance(self.ptr)
@@ -8973,7 +8988,7 @@ static CYTHON_SMALL_CODE int __Pyx_InitCachedConstants(void) {
  *         return get_numoutputs_interpreter_dsp_instance(self.ptr)
  * 
  */
-  __pyx_codeobj__15 = (PyObject*)__Pyx_PyCode_New(1, 0, 0, 1, 0, CO_OPTIMIZED|CO_NEWLOCALS, __pyx_empty_bytes, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_tuple__2, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_kp_s_cyfaust_pyx, __pyx_n_s_get_numoutputs, 407, __pyx_empty_bytes); if (unlikely(!__pyx_codeobj__15)) __PYX_ERR(0, 407, __pyx_L1_error)
+  __pyx_codeobj__16 = (PyObject*)__Pyx_PyCode_New(1, 0, 0, 1, 0, CO_OPTIMIZED|CO_NEWLOCALS, __pyx_empty_bytes, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_tuple__3, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_kp_s_cyfaust_pyx, __pyx_n_s_get_numoutputs, 407, __pyx_empty_bytes); if (unlikely(!__pyx_codeobj__16)) __PYX_ERR(0, 407, __pyx_L1_error)
 
   /* "cyfaust.pyx":410
  *         return get_numoutputs_interpreter_dsp_instance(self.ptr)
@@ -8982,7 +8997,7 @@ static CYTHON_SMALL_CODE int __Pyx_InitCachedConstants(void) {
  *         return get_samplerate_interpreter_dsp_instance(self.ptr)
  * 
  */
-  __pyx_codeobj__16 = (PyObject*)__Pyx_PyCode_New(1, 0, 0, 1, 0, CO_OPTIMIZED|CO_NEWLOCALS, __pyx_empty_bytes, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_tuple__2, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_kp_s_cyfaust_pyx, __pyx_n_s_get_samplerate, 410, __pyx_empty_bytes); if (unlikely(!__pyx_codeobj__16)) __PYX_ERR(0, 410, __pyx_L1_error)
+  __pyx_codeobj__17 = (PyObject*)__Pyx_PyCode_New(1, 0, 0, 1, 0, CO_OPTIMIZED|CO_NEWLOCALS, __pyx_empty_bytes, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_tuple__3, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_kp_s_cyfaust_pyx, __pyx_n_s_get_samplerate, 410, __pyx_empty_bytes); if (unlikely(!__pyx_codeobj__17)) __PYX_ERR(0, 410, __pyx_L1_error)
 
   /* "cyfaust.pyx":413
  *         return get_samplerate_interpreter_dsp_instance(self.ptr)
@@ -8991,10 +9006,10 @@ static CYTHON_SMALL_CODE int __Pyx_InitCachedConstants(void) {
  *         intance_init_interpreter_dsp_instance(self.ptr, sample_rate)
  * 
  */
-  __pyx_tuple__17 = PyTuple_Pack(2, __pyx_n_s_self, __pyx_n_s_sample_rate); if (unlikely(!__pyx_tuple__17)) __PYX_ERR(0, 413, __pyx_L1_error)
-  __Pyx_GOTREF(__pyx_tuple__17);
-  __Pyx_GIVEREF(__pyx_tuple__17);
-  __pyx_codeobj__18 = (PyObject*)__Pyx_PyCode_New(2, 0, 0, 2, 0, CO_OPTIMIZED|CO_NEWLOCALS, __pyx_empty_bytes, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_tuple__17, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_kp_s_cyfaust_pyx, __pyx_n_s_init, 413, __pyx_empty_bytes); if (unlikely(!__pyx_codeobj__18)) __PYX_ERR(0, 413, __pyx_L1_error)
+  __pyx_tuple__18 = PyTuple_Pack(2, __pyx_n_s_self, __pyx_n_s_sample_rate); if (unlikely(!__pyx_tuple__18)) __PYX_ERR(0, 413, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_tuple__18);
+  __Pyx_GIVEREF(__pyx_tuple__18);
+  __pyx_codeobj__19 = (PyObject*)__Pyx_PyCode_New(2, 0, 0, 2, 0, CO_OPTIMIZED|CO_NEWLOCALS, __pyx_empty_bytes, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_tuple__18, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_kp_s_cyfaust_pyx, __pyx_n_s_init, 413, __pyx_empty_bytes); if (unlikely(!__pyx_codeobj__19)) __PYX_ERR(0, 413, __pyx_L1_error)
 
   /* "cyfaust.pyx":416
  *         intance_init_interpreter_dsp_instance(self.ptr, sample_rate)
@@ -9003,7 +9018,7 @@ static CYTHON_SMALL_CODE int __Pyx_InitCachedConstants(void) {
  *         instance_constants_interpreter_dsp_instance(self.ptr, sample_rate)
  * 
  */
-  __pyx_codeobj__19 = (PyObject*)__Pyx_PyCode_New(2, 0, 0, 2, 0, CO_OPTIMIZED|CO_NEWLOCALS, __pyx_empty_bytes, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_tuple__17, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_kp_s_cyfaust_pyx, __pyx_n_s_constants, 416, __pyx_empty_bytes); if (unlikely(!__pyx_codeobj__19)) __PYX_ERR(0, 416, __pyx_L1_error)
+  __pyx_codeobj__20 = (PyObject*)__Pyx_PyCode_New(2, 0, 0, 2, 0, CO_OPTIMIZED|CO_NEWLOCALS, __pyx_empty_bytes, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_tuple__18, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_kp_s_cyfaust_pyx, __pyx_n_s_constants, 416, __pyx_empty_bytes); if (unlikely(!__pyx_codeobj__20)) __PYX_ERR(0, 416, __pyx_L1_error)
 
   /* "cyfaust.pyx":419
  *         instance_constants_interpreter_dsp_instance(self.ptr, sample_rate)
@@ -9012,7 +9027,7 @@ static CYTHON_SMALL_CODE int __Pyx_InitCachedConstants(void) {
  *         instance_reset_userinterface_interpreter_dsp_instance(self.ptr)
  * 
  */
-  __pyx_codeobj__20 = (PyObject*)__Pyx_PyCode_New(1, 0, 0, 1, 0, CO_OPTIMIZED|CO_NEWLOCALS, __pyx_empty_bytes, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_tuple__2, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_kp_s_cyfaust_pyx, __pyx_n_s_reset, 419, __pyx_empty_bytes); if (unlikely(!__pyx_codeobj__20)) __PYX_ERR(0, 419, __pyx_L1_error)
+  __pyx_codeobj__21 = (PyObject*)__Pyx_PyCode_New(1, 0, 0, 1, 0, CO_OPTIMIZED|CO_NEWLOCALS, __pyx_empty_bytes, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_tuple__3, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_kp_s_cyfaust_pyx, __pyx_n_s_reset, 419, __pyx_empty_bytes); if (unlikely(!__pyx_codeobj__21)) __PYX_ERR(0, 419, __pyx_L1_error)
 
   /* "cyfaust.pyx":422
  *         instance_reset_userinterface_interpreter_dsp_instance(self.ptr)
@@ -9021,14 +9036,14 @@ static CYTHON_SMALL_CODE int __Pyx_InitCachedConstants(void) {
  *         instance_clear_interpreter_dsp_instance(self.ptr)
  * 
  */
-  __pyx_codeobj__21 = (PyObject*)__Pyx_PyCode_New(1, 0, 0, 1, 0, CO_OPTIMIZED|CO_NEWLOCALS, __pyx_empty_bytes, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_tuple__2, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_kp_s_cyfaust_pyx, __pyx_n_s_clear, 422, __pyx_empty_bytes); if (unlikely(!__pyx_codeobj__21)) __PYX_ERR(0, 422, __pyx_L1_error)
+  __pyx_codeobj__22 = (PyObject*)__Pyx_PyCode_New(1, 0, 0, 1, 0, CO_OPTIMIZED|CO_NEWLOCALS, __pyx_empty_bytes, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_tuple__3, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_kp_s_cyfaust_pyx, __pyx_n_s_clear, 422, __pyx_empty_bytes); if (unlikely(!__pyx_codeobj__22)) __PYX_ERR(0, 422, __pyx_L1_error)
 
   /* "(tree fragment)":1
  * def __reduce_cython__(self):             # <<<<<<<<<<<<<<
  *     raise TypeError, "no default __reduce__ due to non-trivial __cinit__"
  * def __setstate_cython__(self, __pyx_state):
  */
-  __pyx_codeobj__22 = (PyObject*)__Pyx_PyCode_New(1, 0, 0, 1, 0, CO_OPTIMIZED|CO_NEWLOCALS, __pyx_empty_bytes, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_tuple__2, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_kp_s_stringsource, __pyx_n_s_reduce_cython, 1, __pyx_empty_bytes); if (unlikely(!__pyx_codeobj__22)) __PYX_ERR(1, 1, __pyx_L1_error)
+  __pyx_codeobj__23 = (PyObject*)__Pyx_PyCode_New(1, 0, 0, 1, 0, CO_OPTIMIZED|CO_NEWLOCALS, __pyx_empty_bytes, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_tuple__3, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_kp_s_stringsource, __pyx_n_s_reduce_cython, 1, __pyx_empty_bytes); if (unlikely(!__pyx_codeobj__23)) __PYX_ERR(1, 1, __pyx_L1_error)
 
   /* "(tree fragment)":3
  * def __reduce_cython__(self):
@@ -9036,7 +9051,7 @@ static CYTHON_SMALL_CODE int __Pyx_InitCachedConstants(void) {
  * def __setstate_cython__(self, __pyx_state):             # <<<<<<<<<<<<<<
  *     raise TypeError, "no default __reduce__ due to non-trivial __cinit__"
  */
-  __pyx_codeobj__23 = (PyObject*)__Pyx_PyCode_New(2, 0, 0, 2, 0, CO_OPTIMIZED|CO_NEWLOCALS, __pyx_empty_bytes, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_tuple__4, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_kp_s_stringsource, __pyx_n_s_setstate_cython, 3, __pyx_empty_bytes); if (unlikely(!__pyx_codeobj__23)) __PYX_ERR(1, 3, __pyx_L1_error)
+  __pyx_codeobj__24 = (PyObject*)__Pyx_PyCode_New(2, 0, 0, 2, 0, CO_OPTIMIZED|CO_NEWLOCALS, __pyx_empty_bytes, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_tuple__5, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_kp_s_stringsource, __pyx_n_s_setstate_cython, 3, __pyx_empty_bytes); if (unlikely(!__pyx_codeobj__24)) __PYX_ERR(1, 3, __pyx_L1_error)
 
   /* "cyfaust.pyx":432
  * ##
@@ -9045,10 +9060,10 @@ static CYTHON_SMALL_CODE int __Pyx_InitCachedConstants(void) {
  *     cdef char error_msg[4096]
  * 
  */
-  __pyx_tuple__24 = PyTuple_Pack(3, __pyx_n_s_error_msg, __pyx_n_s_code, __pyx_n_s_factory); if (unlikely(!__pyx_tuple__24)) __PYX_ERR(0, 432, __pyx_L1_error)
-  __Pyx_GOTREF(__pyx_tuple__24);
-  __Pyx_GIVEREF(__pyx_tuple__24);
-  __pyx_codeobj__25 = (PyObject*)__Pyx_PyCode_New(0, 0, 0, 3, 0, CO_OPTIMIZED|CO_NEWLOCALS, __pyx_empty_bytes, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_tuple__24, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_kp_s_cyfaust_pyx, __pyx_n_s_test_create_interpreter_dsp_fact, 432, __pyx_empty_bytes); if (unlikely(!__pyx_codeobj__25)) __PYX_ERR(0, 432, __pyx_L1_error)
+  __pyx_tuple__25 = PyTuple_Pack(3, __pyx_n_s_error_msg, __pyx_n_s_code, __pyx_n_s_factory); if (unlikely(!__pyx_tuple__25)) __PYX_ERR(0, 432, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_tuple__25);
+  __Pyx_GIVEREF(__pyx_tuple__25);
+  __pyx_codeobj__26 = (PyObject*)__Pyx_PyCode_New(0, 0, 0, 3, 0, CO_OPTIMIZED|CO_NEWLOCALS, __pyx_empty_bytes, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_tuple__25, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_kp_s_cyfaust_pyx, __pyx_n_s_test_create_interpreter_dsp_fact, 432, __pyx_empty_bytes); if (unlikely(!__pyx_codeobj__26)) __PYX_ERR(0, 432, __pyx_L1_error)
   __Pyx_RefNannyFinishContext();
   return 0;
   __pyx_L1_error:;
@@ -9066,14 +9081,7 @@ static CYTHON_SMALL_CODE int __Pyx_InitConstants(void) {
 /* #### Code section: init_globals ### */
 
 static CYTHON_SMALL_CODE int __Pyx_InitGlobals(void) {
-  /* AssertionsEnabled.init */
-  if (likely(__Pyx_init_assertions_enabled() == 0)); else
-
-if (unlikely(PyErr_Occurred())) __PYX_ERR(0, 1, __pyx_L1_error)
-
   return 0;
-  __pyx_L1_error:;
-  return -1;
 }
 /* #### Code section: init_module ### */
 
@@ -9509,7 +9517,7 @@ if (!__Pyx_RefNanny) {
  *     """Get the version of the library.
  * 
  */
-  __pyx_t_2 = __Pyx_CyFunction_New(&__pyx_mdef_7cyfaust_1get_version, 0, __pyx_n_s_get_version, NULL, __pyx_n_s_cyfaust, __pyx_d, ((PyObject *)__pyx_codeobj_)); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 27, __pyx_L1_error)
+  __pyx_t_2 = __Pyx_CyFunction_New(&__pyx_mdef_7cyfaust_1get_version, 0, __pyx_n_s_get_version, NULL, __pyx_n_s_cyfaust, __pyx_d, ((PyObject *)__pyx_codeobj__2)); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 27, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_2);
   if (PyDict_SetItem(__pyx_d, __pyx_n_s_get_version, __pyx_t_2) < 0) __PYX_ERR(0, 27, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
@@ -9519,7 +9527,7 @@ if (!__Pyx_RefNanny) {
  *     raise TypeError, "no default __reduce__ due to non-trivial __cinit__"
  * def __setstate_cython__(self, __pyx_state):
  */
-  __pyx_t_2 = __Pyx_CyFunction_New(&__pyx_mdef_7cyfaust_10ParamArray_5__reduce_cython__, __Pyx_CYFUNCTION_CCLASS, __pyx_n_s_ParamArray___reduce_cython, NULL, __pyx_n_s_cyfaust, __pyx_d, ((PyObject *)__pyx_codeobj__3)); if (unlikely(!__pyx_t_2)) __PYX_ERR(1, 1, __pyx_L1_error)
+  __pyx_t_2 = __Pyx_CyFunction_New(&__pyx_mdef_7cyfaust_10ParamArray_5__reduce_cython__, __Pyx_CYFUNCTION_CCLASS, __pyx_n_s_ParamArray___reduce_cython, NULL, __pyx_n_s_cyfaust, __pyx_d, ((PyObject *)__pyx_codeobj__4)); if (unlikely(!__pyx_t_2)) __PYX_ERR(1, 1, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_2);
   if (PyDict_SetItem(__pyx_d, __pyx_n_s_reduce_cython, __pyx_t_2) < 0) __PYX_ERR(1, 1, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
@@ -9530,7 +9538,7 @@ if (!__Pyx_RefNanny) {
  * def __setstate_cython__(self, __pyx_state):             # <<<<<<<<<<<<<<
  *     raise TypeError, "no default __reduce__ due to non-trivial __cinit__"
  */
-  __pyx_t_2 = __Pyx_CyFunction_New(&__pyx_mdef_7cyfaust_10ParamArray_7__setstate_cython__, __Pyx_CYFUNCTION_CCLASS, __pyx_n_s_ParamArray___setstate_cython, NULL, __pyx_n_s_cyfaust, __pyx_d, ((PyObject *)__pyx_codeobj__5)); if (unlikely(!__pyx_t_2)) __PYX_ERR(1, 3, __pyx_L1_error)
+  __pyx_t_2 = __Pyx_CyFunction_New(&__pyx_mdef_7cyfaust_10ParamArray_7__setstate_cython__, __Pyx_CYFUNCTION_CCLASS, __pyx_n_s_ParamArray___setstate_cython, NULL, __pyx_n_s_cyfaust, __pyx_d, ((PyObject *)__pyx_codeobj__6)); if (unlikely(!__pyx_t_2)) __PYX_ERR(1, 3, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_2);
   if (PyDict_SetItem(__pyx_d, __pyx_n_s_setstate_cython, __pyx_t_2) < 0) __PYX_ERR(1, 3, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
@@ -9545,7 +9553,7 @@ if (!__Pyx_RefNanny) {
   __pyx_t_2 = __Pyx_PyDict_NewPresized(1); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 83, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_2);
   if (PyDict_SetItem(__pyx_t_2, __pyx_n_s_return, __pyx_n_s_InterpreterDspFactory) < 0) __PYX_ERR(0, 83, __pyx_L1_error)
-  __pyx_t_3 = __Pyx_CyFunction_New(&__pyx_mdef_7cyfaust_21InterpreterDspFactory_5from_sha, __Pyx_CYFUNCTION_STATICMETHOD | __Pyx_CYFUNCTION_CCLASS, __pyx_n_s_InterpreterDspFactory_from_sha, NULL, __pyx_n_s_cyfaust, __pyx_d, ((PyObject *)__pyx_codeobj__7)); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 83, __pyx_L1_error)
+  __pyx_t_3 = __Pyx_CyFunction_New(&__pyx_mdef_7cyfaust_21InterpreterDspFactory_5from_sha, __Pyx_CYFUNCTION_STATICMETHOD | __Pyx_CYFUNCTION_CCLASS, __pyx_n_s_InterpreterDspFactory_from_sha, NULL, __pyx_n_s_cyfaust, __pyx_d, ((PyObject *)__pyx_codeobj__8)); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 83, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_3);
   __Pyx_CyFunction_SetAnnotationsDict(__pyx_t_3, __pyx_t_2);
   __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
@@ -9571,7 +9579,7 @@ if (!__Pyx_RefNanny) {
   __pyx_t_2 = __Pyx_PyDict_NewPresized(1); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 91, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_2);
   if (PyDict_SetItem(__pyx_t_2, __pyx_n_s_return, __pyx_n_s_InterpreterDspFactory) < 0) __PYX_ERR(0, 91, __pyx_L1_error)
-  __pyx_t_3 = __Pyx_CyFunction_New(&__pyx_mdef_7cyfaust_21InterpreterDspFactory_7from_file, __Pyx_CYFUNCTION_STATICMETHOD | __Pyx_CYFUNCTION_CCLASS, __pyx_n_s_InterpreterDspFactory_from_file, NULL, __pyx_n_s_cyfaust, __pyx_d, ((PyObject *)__pyx_codeobj__9)); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 91, __pyx_L1_error)
+  __pyx_t_3 = __Pyx_CyFunction_New(&__pyx_mdef_7cyfaust_21InterpreterDspFactory_7from_file, __Pyx_CYFUNCTION_STATICMETHOD | __Pyx_CYFUNCTION_CCLASS, __pyx_n_s_InterpreterDspFactory_from_file, NULL, __pyx_n_s_cyfaust, __pyx_d, ((PyObject *)__pyx_codeobj__10)); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 91, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_3);
   __Pyx_CyFunction_SetAnnotationsDict(__pyx_t_3, __pyx_t_2);
   __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
@@ -9597,7 +9605,7 @@ if (!__Pyx_RefNanny) {
   __pyx_t_2 = __Pyx_PyDict_NewPresized(1); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 111, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_2);
   if (PyDict_SetItem(__pyx_t_2, __pyx_n_s_return, __pyx_n_s_InterpreterDspFactory) < 0) __PYX_ERR(0, 111, __pyx_L1_error)
-  __pyx_t_3 = __Pyx_CyFunction_New(&__pyx_mdef_7cyfaust_21InterpreterDspFactory_9from_string, __Pyx_CYFUNCTION_STATICMETHOD | __Pyx_CYFUNCTION_CCLASS, __pyx_n_s_InterpreterDspFactory_from_strin, NULL, __pyx_n_s_cyfaust, __pyx_d, ((PyObject *)__pyx_codeobj__11)); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 111, __pyx_L1_error)
+  __pyx_t_3 = __Pyx_CyFunction_New(&__pyx_mdef_7cyfaust_21InterpreterDspFactory_9from_string, __Pyx_CYFUNCTION_STATICMETHOD | __Pyx_CYFUNCTION_CCLASS, __pyx_n_s_InterpreterDspFactory_from_strin, NULL, __pyx_n_s_cyfaust, __pyx_d, ((PyObject *)__pyx_codeobj__12)); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 111, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_3);
   __Pyx_CyFunction_SetAnnotationsDict(__pyx_t_3, __pyx_t_2);
   __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
@@ -9618,7 +9626,7 @@ if (!__Pyx_RefNanny) {
  *     raise TypeError, "no default __reduce__ due to non-trivial __cinit__"
  * def __setstate_cython__(self, __pyx_state):
  */
-  __pyx_t_2 = __Pyx_CyFunction_New(&__pyx_mdef_7cyfaust_21InterpreterDspFactory_11__reduce_cython__, __Pyx_CYFUNCTION_CCLASS, __pyx_n_s_InterpreterDspFactory___reduce_c, NULL, __pyx_n_s_cyfaust, __pyx_d, ((PyObject *)__pyx_codeobj__12)); if (unlikely(!__pyx_t_2)) __PYX_ERR(1, 1, __pyx_L1_error)
+  __pyx_t_2 = __Pyx_CyFunction_New(&__pyx_mdef_7cyfaust_21InterpreterDspFactory_11__reduce_cython__, __Pyx_CYFUNCTION_CCLASS, __pyx_n_s_InterpreterDspFactory___reduce_c, NULL, __pyx_n_s_cyfaust, __pyx_d, ((PyObject *)__pyx_codeobj__13)); if (unlikely(!__pyx_t_2)) __PYX_ERR(1, 1, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_2);
   if (PyDict_SetItem(__pyx_d, __pyx_n_s_reduce_cython, __pyx_t_2) < 0) __PYX_ERR(1, 1, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
@@ -9629,7 +9637,7 @@ if (!__Pyx_RefNanny) {
  * def __setstate_cython__(self, __pyx_state):             # <<<<<<<<<<<<<<
  *     raise TypeError, "no default __reduce__ due to non-trivial __cinit__"
  */
-  __pyx_t_2 = __Pyx_CyFunction_New(&__pyx_mdef_7cyfaust_21InterpreterDspFactory_13__setstate_cython__, __Pyx_CYFUNCTION_CCLASS, __pyx_n_s_InterpreterDspFactory___setstate, NULL, __pyx_n_s_cyfaust, __pyx_d, ((PyObject *)__pyx_codeobj__13)); if (unlikely(!__pyx_t_2)) __PYX_ERR(1, 3, __pyx_L1_error)
+  __pyx_t_2 = __Pyx_CyFunction_New(&__pyx_mdef_7cyfaust_21InterpreterDspFactory_13__setstate_cython__, __Pyx_CYFUNCTION_CCLASS, __pyx_n_s_InterpreterDspFactory___setstate, NULL, __pyx_n_s_cyfaust, __pyx_d, ((PyObject *)__pyx_codeobj__14)); if (unlikely(!__pyx_t_2)) __PYX_ERR(1, 3, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_2);
   if (PyDict_SetItem(__pyx_d, __pyx_n_s_setstate_cython, __pyx_t_2) < 0) __PYX_ERR(1, 3, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
@@ -9644,7 +9652,7 @@ if (!__Pyx_RefNanny) {
   __pyx_t_2 = __Pyx_PyDict_NewPresized(1); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 404, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_2);
   if (PyDict_SetItem(__pyx_t_2, __pyx_n_s_return, __pyx_n_s_int) < 0) __PYX_ERR(0, 404, __pyx_L1_error)
-  __pyx_t_3 = __Pyx_CyFunction_New(&__pyx_mdef_7cyfaust_14InterpreterDsp_5get_numinputs, __Pyx_CYFUNCTION_CCLASS, __pyx_n_s_InterpreterDsp_get_numinputs, NULL, __pyx_n_s_cyfaust, __pyx_d, ((PyObject *)__pyx_codeobj__14)); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 404, __pyx_L1_error)
+  __pyx_t_3 = __Pyx_CyFunction_New(&__pyx_mdef_7cyfaust_14InterpreterDsp_5get_numinputs, __Pyx_CYFUNCTION_CCLASS, __pyx_n_s_InterpreterDsp_get_numinputs, NULL, __pyx_n_s_cyfaust, __pyx_d, ((PyObject *)__pyx_codeobj__15)); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 404, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_3);
   __Pyx_CyFunction_SetAnnotationsDict(__pyx_t_3, __pyx_t_2);
   __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
@@ -9662,7 +9670,7 @@ if (!__Pyx_RefNanny) {
   __pyx_t_3 = __Pyx_PyDict_NewPresized(1); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 407, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_3);
   if (PyDict_SetItem(__pyx_t_3, __pyx_n_s_return, __pyx_n_s_int) < 0) __PYX_ERR(0, 407, __pyx_L1_error)
-  __pyx_t_2 = __Pyx_CyFunction_New(&__pyx_mdef_7cyfaust_14InterpreterDsp_7get_numoutputs, __Pyx_CYFUNCTION_CCLASS, __pyx_n_s_InterpreterDsp_get_numoutputs, NULL, __pyx_n_s_cyfaust, __pyx_d, ((PyObject *)__pyx_codeobj__15)); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 407, __pyx_L1_error)
+  __pyx_t_2 = __Pyx_CyFunction_New(&__pyx_mdef_7cyfaust_14InterpreterDsp_7get_numoutputs, __Pyx_CYFUNCTION_CCLASS, __pyx_n_s_InterpreterDsp_get_numoutputs, NULL, __pyx_n_s_cyfaust, __pyx_d, ((PyObject *)__pyx_codeobj__16)); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 407, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_2);
   __Pyx_CyFunction_SetAnnotationsDict(__pyx_t_2, __pyx_t_3);
   __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
@@ -9680,7 +9688,7 @@ if (!__Pyx_RefNanny) {
   __pyx_t_2 = __Pyx_PyDict_NewPresized(1); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 410, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_2);
   if (PyDict_SetItem(__pyx_t_2, __pyx_n_s_return, __pyx_n_s_int) < 0) __PYX_ERR(0, 410, __pyx_L1_error)
-  __pyx_t_3 = __Pyx_CyFunction_New(&__pyx_mdef_7cyfaust_14InterpreterDsp_9get_samplerate, __Pyx_CYFUNCTION_CCLASS, __pyx_n_s_InterpreterDsp_get_samplerate, NULL, __pyx_n_s_cyfaust, __pyx_d, ((PyObject *)__pyx_codeobj__16)); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 410, __pyx_L1_error)
+  __pyx_t_3 = __Pyx_CyFunction_New(&__pyx_mdef_7cyfaust_14InterpreterDsp_9get_samplerate, __Pyx_CYFUNCTION_CCLASS, __pyx_n_s_InterpreterDsp_get_samplerate, NULL, __pyx_n_s_cyfaust, __pyx_d, ((PyObject *)__pyx_codeobj__17)); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 410, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_3);
   __Pyx_CyFunction_SetAnnotationsDict(__pyx_t_3, __pyx_t_2);
   __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
@@ -9695,7 +9703,7 @@ if (!__Pyx_RefNanny) {
  *         intance_init_interpreter_dsp_instance(self.ptr, sample_rate)
  * 
  */
-  __pyx_t_3 = __Pyx_CyFunction_New(&__pyx_mdef_7cyfaust_14InterpreterDsp_11init, __Pyx_CYFUNCTION_CCLASS, __pyx_n_s_InterpreterDsp_init, NULL, __pyx_n_s_cyfaust, __pyx_d, ((PyObject *)__pyx_codeobj__18)); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 413, __pyx_L1_error)
+  __pyx_t_3 = __Pyx_CyFunction_New(&__pyx_mdef_7cyfaust_14InterpreterDsp_11init, __Pyx_CYFUNCTION_CCLASS, __pyx_n_s_InterpreterDsp_init, NULL, __pyx_n_s_cyfaust, __pyx_d, ((PyObject *)__pyx_codeobj__19)); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 413, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_3);
   if (__Pyx_SetItemOnTypeDict((PyObject *)__pyx_ptype_7cyfaust_InterpreterDsp, __pyx_n_s_init, __pyx_t_3) < 0) __PYX_ERR(0, 413, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
@@ -9708,7 +9716,7 @@ if (!__Pyx_RefNanny) {
  *         instance_constants_interpreter_dsp_instance(self.ptr, sample_rate)
  * 
  */
-  __pyx_t_3 = __Pyx_CyFunction_New(&__pyx_mdef_7cyfaust_14InterpreterDsp_13constants, __Pyx_CYFUNCTION_CCLASS, __pyx_n_s_InterpreterDsp_constants, NULL, __pyx_n_s_cyfaust, __pyx_d, ((PyObject *)__pyx_codeobj__19)); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 416, __pyx_L1_error)
+  __pyx_t_3 = __Pyx_CyFunction_New(&__pyx_mdef_7cyfaust_14InterpreterDsp_13constants, __Pyx_CYFUNCTION_CCLASS, __pyx_n_s_InterpreterDsp_constants, NULL, __pyx_n_s_cyfaust, __pyx_d, ((PyObject *)__pyx_codeobj__20)); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 416, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_3);
   if (__Pyx_SetItemOnTypeDict((PyObject *)__pyx_ptype_7cyfaust_InterpreterDsp, __pyx_n_s_constants, __pyx_t_3) < 0) __PYX_ERR(0, 416, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
@@ -9721,7 +9729,7 @@ if (!__Pyx_RefNanny) {
  *         instance_reset_userinterface_interpreter_dsp_instance(self.ptr)
  * 
  */
-  __pyx_t_3 = __Pyx_CyFunction_New(&__pyx_mdef_7cyfaust_14InterpreterDsp_15reset, __Pyx_CYFUNCTION_CCLASS, __pyx_n_s_InterpreterDsp_reset, NULL, __pyx_n_s_cyfaust, __pyx_d, ((PyObject *)__pyx_codeobj__20)); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 419, __pyx_L1_error)
+  __pyx_t_3 = __Pyx_CyFunction_New(&__pyx_mdef_7cyfaust_14InterpreterDsp_15reset, __Pyx_CYFUNCTION_CCLASS, __pyx_n_s_InterpreterDsp_reset, NULL, __pyx_n_s_cyfaust, __pyx_d, ((PyObject *)__pyx_codeobj__21)); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 419, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_3);
   if (__Pyx_SetItemOnTypeDict((PyObject *)__pyx_ptype_7cyfaust_InterpreterDsp, __pyx_n_s_reset, __pyx_t_3) < 0) __PYX_ERR(0, 419, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
@@ -9734,7 +9742,7 @@ if (!__Pyx_RefNanny) {
  *         instance_clear_interpreter_dsp_instance(self.ptr)
  * 
  */
-  __pyx_t_3 = __Pyx_CyFunction_New(&__pyx_mdef_7cyfaust_14InterpreterDsp_17clear, __Pyx_CYFUNCTION_CCLASS, __pyx_n_s_InterpreterDsp_clear, NULL, __pyx_n_s_cyfaust, __pyx_d, ((PyObject *)__pyx_codeobj__21)); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 422, __pyx_L1_error)
+  __pyx_t_3 = __Pyx_CyFunction_New(&__pyx_mdef_7cyfaust_14InterpreterDsp_17clear, __Pyx_CYFUNCTION_CCLASS, __pyx_n_s_InterpreterDsp_clear, NULL, __pyx_n_s_cyfaust, __pyx_d, ((PyObject *)__pyx_codeobj__22)); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 422, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_3);
   if (__Pyx_SetItemOnTypeDict((PyObject *)__pyx_ptype_7cyfaust_InterpreterDsp, __pyx_n_s_clear, __pyx_t_3) < 0) __PYX_ERR(0, 422, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
@@ -9745,7 +9753,7 @@ if (!__Pyx_RefNanny) {
  *     raise TypeError, "no default __reduce__ due to non-trivial __cinit__"
  * def __setstate_cython__(self, __pyx_state):
  */
-  __pyx_t_3 = __Pyx_CyFunction_New(&__pyx_mdef_7cyfaust_14InterpreterDsp_19__reduce_cython__, __Pyx_CYFUNCTION_CCLASS, __pyx_n_s_InterpreterDsp___reduce_cython, NULL, __pyx_n_s_cyfaust, __pyx_d, ((PyObject *)__pyx_codeobj__22)); if (unlikely(!__pyx_t_3)) __PYX_ERR(1, 1, __pyx_L1_error)
+  __pyx_t_3 = __Pyx_CyFunction_New(&__pyx_mdef_7cyfaust_14InterpreterDsp_19__reduce_cython__, __Pyx_CYFUNCTION_CCLASS, __pyx_n_s_InterpreterDsp___reduce_cython, NULL, __pyx_n_s_cyfaust, __pyx_d, ((PyObject *)__pyx_codeobj__23)); if (unlikely(!__pyx_t_3)) __PYX_ERR(1, 1, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_3);
   if (PyDict_SetItem(__pyx_d, __pyx_n_s_reduce_cython, __pyx_t_3) < 0) __PYX_ERR(1, 1, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
@@ -9756,7 +9764,7 @@ if (!__Pyx_RefNanny) {
  * def __setstate_cython__(self, __pyx_state):             # <<<<<<<<<<<<<<
  *     raise TypeError, "no default __reduce__ due to non-trivial __cinit__"
  */
-  __pyx_t_3 = __Pyx_CyFunction_New(&__pyx_mdef_7cyfaust_14InterpreterDsp_21__setstate_cython__, __Pyx_CYFUNCTION_CCLASS, __pyx_n_s_InterpreterDsp___setstate_cython, NULL, __pyx_n_s_cyfaust, __pyx_d, ((PyObject *)__pyx_codeobj__23)); if (unlikely(!__pyx_t_3)) __PYX_ERR(1, 3, __pyx_L1_error)
+  __pyx_t_3 = __Pyx_CyFunction_New(&__pyx_mdef_7cyfaust_14InterpreterDsp_21__setstate_cython__, __Pyx_CYFUNCTION_CCLASS, __pyx_n_s_InterpreterDsp___setstate_cython, NULL, __pyx_n_s_cyfaust, __pyx_d, ((PyObject *)__pyx_codeobj__24)); if (unlikely(!__pyx_t_3)) __PYX_ERR(1, 3, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_3);
   if (PyDict_SetItem(__pyx_d, __pyx_n_s_setstate_cython, __pyx_t_3) < 0) __PYX_ERR(1, 3, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
@@ -9768,7 +9776,7 @@ if (!__Pyx_RefNanny) {
  *     cdef char error_msg[4096]
  * 
  */
-  __pyx_t_3 = __Pyx_CyFunction_New(&__pyx_mdef_7cyfaust_3test_create_interpreter_dsp_factory_from_string, 0, __pyx_n_s_test_create_interpreter_dsp_fact, NULL, __pyx_n_s_cyfaust, __pyx_d, ((PyObject *)__pyx_codeobj__25)); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 432, __pyx_L1_error)
+  __pyx_t_3 = __Pyx_CyFunction_New(&__pyx_mdef_7cyfaust_3test_create_interpreter_dsp_factory_from_string, 0, __pyx_n_s_test_create_interpreter_dsp_fact, NULL, __pyx_n_s_cyfaust, __pyx_d, ((PyObject *)__pyx_codeobj__26)); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 432, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_3);
   if (PyDict_SetItem(__pyx_d, __pyx_n_s_test_create_interpreter_dsp_fact, __pyx_t_3) < 0) __PYX_ERR(0, 432, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
@@ -13706,7 +13714,7 @@ __Pyx_PyType_GetName(PyTypeObject* tp)
     if (unlikely(name == NULL) || unlikely(!PyUnicode_Check(name))) {
         PyErr_Clear();
         Py_XDECREF(name);
-        name = __Pyx_NewRef(__pyx_n_s__26);
+        name = __Pyx_NewRef(__pyx_n_s__27);
     }
     return name;
 }

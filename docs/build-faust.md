@@ -1,3 +1,23 @@
+# Faust Build Scenarios
+
+
+## Key Links
+
+- [CCRMA Faust Tutorials](https://ccrma.stanford.edu/~rmichon/faustTutorials/)
+- [Embedding the Faust Compiler Using libfaust](https://faustdoc.grame.fr/manual/embedding/)
+- 
+
+
+## Building faust libs with LLVM
+
+```bash
+git clone --recursive https://github.com/grame-cncm/faust.git
+cd faust
+# to test llvm@14 as well
+PATH=`brew --prefix llvm@16`/bin:$PATH make most
+# if it builds successfully
+PATH=`brew --prefix llvm@16`/bin:$PATH PREFIX=`pwd`/prefix make install
+```
 
 ## Building libfaust.a with interp backend and interp target
 
@@ -63,8 +83,7 @@ interp : updatesubmodules
 	$(MAKE) -C $(BUILDLOCATION)
 ```
 
-So in the root of faust:
-
+Then in the root of faust:
 
 ```
 git clone --recursive https://github.com/grame-cncm/faust.git
