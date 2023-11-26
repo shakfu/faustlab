@@ -63,6 +63,11 @@ cdef class ParamArray:
         for i in range(self.argc):
             self.argv[i] = PyUnicode_AsUTF8(plist[i])
 
+    def dump(self):
+        if self.argv:
+            for i in range(self.argc):
+                print(self.argv[i].decode())
+
     def __dealloc__(self):
         if self.argv:
             free(self.argv)
@@ -429,6 +434,10 @@ cdef class InterpreterDsp:
 ## interpreter tests
 ##
 
+def test_param_array():
+    xs = ParamArray(["abc", "def"])
+    xs.dump()
+
 def test_create_interpreter_dsp_factory_from_string():
     cdef char error_msg[4096]
 
@@ -546,11 +555,11 @@ cdef fi.Signal sig_select3(fi.Signal selector, fi.Signal s1, fi.Signal s2, fi.Si
     """Create a selector between three signals."""
     return fi.CsigSelect3(selector, s1, s2, s3)
 
-# cdef fi.Signal sig_f_const(enum SType type, const char* name, const char* file):
+# cdef fi.Signal sig_fconst(enum SType type, const char* name, const char* file):
 #     """Create a foreign constant signal."""
 #     return fi.CsigFConst(type, name, file)
 
-# cdef fi.Signal sig_f_var(enum SType type, const char* name, const char* file):
+# cdef fi.Signal sig_fvar(enum SType type, const char* name, const char* file):
 #     """Create a foreign variable signal."""
 #     return fi.CsigFVar(type, name, file)
 
@@ -607,11 +616,11 @@ cdef fi.Signal sig_checkbox(const char* label):
     """Create a checkbox signal."""
     return fi.CsigCheckbox(label)
 
-cdef fi.Signal sig_v_slider(const char* label, fi.Signal init, fi.Signal min, fi.Signal max, fi.Signal step):
+cdef fi.Signal sig_vslider(const char* label, fi.Signal init, fi.Signal min, fi.Signal max, fi.Signal step):
     """Create a vertical slider signal."""
     return fi.CsigVSlider(label, init, min, max, step)
 
-cdef fi.Signal sig_h_slider(const char* label, fi.Signal init, fi.Signal min, fi.Signal max, fi.Signal step):
+cdef fi.Signal sig_hslider(const char* label, fi.Signal init, fi.Signal min, fi.Signal max, fi.Signal step):
     """Create an horizontal slider signal."""
     return fi.CsigHSlider(label, init, min, max, step)
 
@@ -619,11 +628,11 @@ cdef fi.Signal sig_num_entry(const char* label, fi.Signal init, fi.Signal min, f
     """Create a num entry signal."""
     return fi.CsigNumEntry(label, init, min, max, step)
 
-cdef fi.Signal sig_v_bargraph(const char* label, fi.Signal min, fi.Signal max, fi.Signal s):
+cdef fi.Signal sig_vbargraph(const char* label, fi.Signal min, fi.Signal max, fi.Signal s):
     """Create a vertical bargraph signal."""
     return fi.CsigVBargraph(label, min, max, s)
 
-cdef fi.Signal sig_h_bargraph(const char* label, fi.Signal min, fi.Signal max, fi.Signal s):
+cdef fi.Signal sig_hbargraph(const char* label, fi.Signal min, fi.Signal max, fi.Signal s):
     """Create an horizontal bargraph signal."""
     return fi.CsigHBargraph(label, min, max, s)
 
