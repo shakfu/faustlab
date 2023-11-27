@@ -33,7 +33,7 @@ test_cpp:
 test_audio:
 	@g++ -std=c++11 $(MIN_OSX_VER) -O3 \
 		-DINTERP_DSP=1 -D__MACOSX_CORE__ \
-		$(INTERP_TESTS)/interp-audio-test.cpp ./include/rtaudio/RtAudio.cpp \
+		$(INTERP_TESTS)/interp-audio-min.cpp ./include/rtaudio/RtAudio.cpp \
 		-I./include \
 		-L./lib -L`brew --prefix`/lib $(FAUST_STATICLIB) \
 		-framework CoreFoundation -framework CoreAudio -lpthread \
@@ -55,4 +55,5 @@ test:
 	@python3 build/test_cyfaust.py
 
 clean:
+	@rm projects/cyfaust/cyfaust.cpp
 	@rm -rf cyfaust.*.so build

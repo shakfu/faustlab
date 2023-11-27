@@ -35,7 +35,7 @@
 
 
 #define SAMPLE_RATE 44100
-#define BUFFER_SIZE 200000
+#define BUFFER_SIZE 10000
 
 using namespace std;
 

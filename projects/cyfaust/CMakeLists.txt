@@ -15,6 +15,27 @@ add_library(
     ${PROJECT_SRC}
 )
 
+
+add_custom_command(
+    OUTPUT ${CMAKE_CURRENT_SOURCE_DIR}/cyfaust.cpp
+    COMMAND cythonize -3 cyfaust.pyx
+    WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
+    DEPENDS cyfaust.pyx
+    COMMENT "Generating cyfaust.cpp"
+)
+
+add_custom_target(
+    cyfaust_cpp
+    DEPENDS cyfaust.pyx
+)
+
+add_dependencies(
+    ${PROJECT_NAME} 
+    cyfaust_cpp
+)
+
+
+
 string(TOLOWER ${CMAKE_SYSTEM_NAME} platform)
 set_target_properties(
     ${PROJECT_NAME}
@@ -55,23 +76,6 @@ target_compile_options(
     $<$<PLATFORM_ID:Windows>:/MD> # api module works with this
 )
 
-add_custom_command(
-    OUTPUT ${CMAKE_CURRENT_SOURCE_DIR}/cyfaust.cpp
-    COMMAND cythonize -3 cyfaust.pyx
-    WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
-    DEPENDS cyfaust.pyx
-    COMMENT "Generating cyfaust.cpp"
-)
-
-add_custom_target(
-    cyfaust_cpp
-    DEPENDS cyfaust.pyx
-)
-
-add_dependencies(
-    ${PROJECT_NAME} 
-    cyfaust_cpp
-)
 
 target_link_options(
     ${PROJECT_NAME}
