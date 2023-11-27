@@ -30,6 +30,17 @@ test_cpp:
 		-o /tmp/interp-test
 	@/tmp/interp-test tests/noise.dsp
 
+test_audio:
+	@g++ -std=c++11 $(MIN_OSX_VER) -O3 \
+		-DINTERP_DSP=1 -D__MACOSX_CORE__ \
+		$(INTERP_TESTS)/interp-audio-test.cpp ./include/rtaudio/RtAudio.cpp \
+		-I./include \
+		-L./lib -L`brew --prefix`/lib $(FAUST_STATICLIB) \
+		-framework CoreFoundation -framework CoreAudio -lpthread \
+		-o /tmp/audio-test
+	@/tmp/audio-test tests/noise.dsp
+# 	@/tmp/audio-test tests/test_faust_interp/foo.dsp
+
 test_c:
 	@g++ -O3 $(MIN_OSX_VER) \
 		-DINTERP_DSP=1 \
