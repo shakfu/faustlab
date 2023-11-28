@@ -6,6 +6,8 @@
 #include "faust/dsp/libfaust-signal.h"
 #include "faust/dsp/libfaust-box.h"
 #include "faust/dsp/interpreter-dsp.h"
+#include "faust/audio/rtaudio-dsp.h"
+#include "faust/gui/PrintUI.h"
 // #include "faust/compiler/tlib/tree.hh" // for CTree
 
 // rtaudio
@@ -24,14 +26,16 @@ PYBIND11_MODULE(pyfaust, m)
 
 
     // -----------------------------------------------------------------------
-    // libfaust-signal
+    // faust/dsp/libfaust-signal.h
+    
     py::class_<CTree>(m, "CTree")
         .def(py::init<>());
     py::class_<Signal>(m, "Signal")
         .def(py::init<>());
 
     // -----------------------------------------------------------------------
-    // libfaust
+    // faust/dsp/libfaust.h
+    
     m.def("generate_sha1", &generateSHA1, "Generate SHA1 key from a string.");
     m.def("expand_dsp_from_file", [](const std::string& filename, std::vector<std::string> args, std::string& sha_key, std::string& error_msg) {
         std::vector<const char *> argv;
@@ -62,7 +66,7 @@ PYBIND11_MODULE(pyfaust, m)
     }, "Expand DSP source code from a file into a self-contained DSP string.");
 
     // -----------------------------------------------------------------------
-    // interpreter-dsp
+    // faust/dsp/interpreter-dsp.h
 
     m.def("get_version", &getCLibFaustVersion, "Retrieve the libfaust version.");
     m.def("get_interpreter_dsp_factory_from_sha_key", &getInterpreterDSPFactoryFromSHAKey, "Get the Faust DSP factory associated with a given SHA key.");
@@ -84,20 +88,6 @@ PYBIND11_MODULE(pyfaust, m)
         }
         return factory;
     }, py::arg("filename"), "Create a Faust DSP factory from a DSP source code as a file.", py::return_value_policy::reference);
-
-    // m.def("create_interpreter_dsp_factory_from_file", [](const std::string& filename, std::vector<std::string> args) -> interpreter_dsp_factory* {
-    //     std::string error_msg; 
-    //     std::vector<const char *> argv;
-    //     argv.reserve(args.size());
-    //     for (auto &i : args) 
-    //         argv.push_back(const_cast<char *>(i.c_str()));
-    //     interpreter_dsp_factory* factory = (interpreter_dsp_factory*)createInterpreterDSPFactoryFromFile(filename, argv.size(), argv.data(), error_msg);
-    //     if (!factory) {
-    //         std::cerr << "Cannot create factory : " << error_msg;
-    //         return NULL;
-    //     }
-    //     return factory;
-    // }, py::arg("filename"), Create a Faust DSP factory from a DSP source code as a file.");
 
     m.def("create_interpreter_dsp_factory_from_string", [](const std::string& name_app, const std::string& dsp_content, std::vector<std::string> args, std::string& error_msg) {
         std::vector<const char *> argv;
@@ -159,7 +149,33 @@ PYBIND11_MODULE(pyfaust, m)
         ;
 
     // -----------------------------------------------------------------------
-    // rtaudio
+    // faust/audio/rtaudio-dsp.h
+    
+    py::class_<rtaudio>(m, "AudioDriver")
+        .def(py::init<int, int>())
+        // .def("init", py::overload_cast<const char*, dsp*>(&rtaudio::init), "initialize driver")
+        .def("init", [](rtaudio &self, dsp* instance) {
+            return self.init("FaustDSP", instance); // first char* arg is a dummy
+        }, "initialize audio driver")
+        .def("set_dsp", &rtaudio::setDsp)
+        .def("start", &rtaudio::start)
+        .def("stop", &rtaudio::stop)
+        .def("get_buffersize", &rtaudio::getBufferSize)
+        .def("get_sapmplerate", &rtaudio::getSampleRate)
+        .def("get_numinputs", &rtaudio::getNumInputs)
+        .def("get_numoutputs", &rtaudio::getNumOutputs)
+        ;
+
+    // -----------------------------------------------------------------------
+    // faust/gui/PrintUI.h
+    
+    py::class_<PrintUI>(m, "PrintUI")
+        .def(py::init<>())
+        ;
+
+
+    // -----------------------------------------------------------------------
+    // rtaudio/RtAudio.h
 
     py::enum_<RtAudioErrorType>(m, "RtAudioErrorType")
         .value("RTAUDIO_NO_ERROR",          RtAudioErrorType::RTAUDIO_NO_ERROR,           "No error")
@@ -260,5 +276,7 @@ PYBIND11_MODULE(pyfaust, m)
     _rta.def("get_stream_samplerate", &RtAudio::getStreamSampleRate, "Returns actual sample rate in use by the (open) stream.");
     _rta.def("set_error_callback", &RtAudio::setErrorCallback, "Set a client-defined function that will be invoked when an error or warning occurs.");
     _rta.def("show_warnings", &RtAudio::showWarnings, "Specify whether warning messages should be output or not.");
+
+
 
 }

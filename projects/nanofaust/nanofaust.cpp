@@ -1,4 +1,5 @@
 #include <nanobind/nanobind.h>
+#include <nanobind/stl/string.h>
 
 // faust
 #include "faust/dsp/libfaust.h"
@@ -59,7 +60,8 @@ NB_MODULE(nanofaust, m)
     //     std::string error_msg;
     //     std::vector<const char *> argv;
     //     for (const auto &arg : args) {
-    //         params.push_back(arg.from_cpp());
+    //         // pybind11: params.push_back(arg.cast<std::string>()); // <- this works
+    //         params.push_back(arg.cast<std::string>()); // <- this doesn't
     //     }
     //     argv.reserve(params.size());
     //     for (auto &i : params)
