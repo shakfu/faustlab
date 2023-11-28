@@ -6,7 +6,7 @@
 
 #include "faust/dsp/interpreter-dsp.h"
 #include "faust/dsp/libfaust.h"
-#include "faust/audio/rtaudio-dsp-fixed.h"
+#include "faust/audio/rtaudio-dsp.h"
 #include "faust/gui/DecoratorUI.h"
 #include "faust/gui/PrintUI.h"
 #include "faust/misc.h"

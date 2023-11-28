@@ -92,13 +92,12 @@ class rtaudio : public audio {
                 fDevNumInChans(0), fDevNumOutChans(0) {}
             
         virtual ~rtaudio() 
-        {   
-            try {
-                fAudioDAC.stopStream();
-                fAudioDAC.closeStream();
-            } catch (RtAudioError& e) {
-                std::cout << '\n' << e.getMessage() << '\n' << std::endl;
+        {
+            RtAudioErrorType err = fAudioDAC.stopStream();
+            if (err != RTAUDIO_NO_ERROR) {
+                std::cout << '\n' << fAudioDAC.getErrorText() << '\n' << std::endl;
             }
+            fAudioDAC.closeStream();
         }
         
         virtual bool init(const char* name, dsp* DSP)
@@ -134,16 +133,15 @@ class rtaudio : public audio {
             
             RtAudio::StreamOptions options;
             options.flags |= RTAUDIO_NONINTERLEAVED;
-         
-            try {
-                fAudioDAC.openStream(((numOutputs > 0) ? &oParams : NULL), 
-                    ((numInputs > 0) ? &iParams : NULL), FORMAT, 
-                    fSampleRate, &fBufferSize, audioCallback, this, &options);
-            } catch (RtAudioError& e) {
-                std::cout << '\n' << e.getMessage() << '\n' << std::endl;
+
+            RtAudioErrorType err = fAudioDAC.openStream(
+                ((numOutputs > 0) ? &oParams : NULL), 
+                ((numInputs > 0) ? &iParams : NULL), FORMAT, 
+                fSampleRate, &fBufferSize, audioCallback, this, &options);
+            if (err != RTAUDIO_NO_ERROR) {
+                std::cout << '\n' << fAudioDAC.getErrorText() << '\n' << std::endl;
                 return false;
-            }
-               
+            }               
             return true;
         }
         
@@ -163,21 +161,19 @@ class rtaudio : public audio {
         
         virtual bool start() 
         {
-            try {
-                fAudioDAC.startStream();
-            } catch (RtAudioError& e) {
-                std::cout << '\n' << e.getMessage() << '\n' << std::endl;
-                return false;
+            RtAudioErrorType err = fAudioDAC.startStream();
+            if (err != RTAUDIO_NO_ERROR) {
+                std::cout << '\n' << fAudioDAC.getErrorText() << '\n' << std::endl;
+                return false;                
             }
             return true;
         }
         
         virtual void stop() 
         {
-            try {
-                fAudioDAC.stopStream();
-            } catch (RtAudioError& e) {
-                std::cout << '\n' << e.getMessage() << '\n' << std::endl;
+            RtAudioErrorType err = fAudioDAC.stopStream();
+            if (err != RTAUDIO_NO_ERROR) {
+                std::cout << '\n' << fAudioDAC.getErrorText() << '\n' << std::endl;
             }
         }
         

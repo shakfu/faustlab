@@ -35,20 +35,6 @@
 
 #define FORMAT RTAUDIO_FLOAT32
 
-
-struct RtAudioError : public std::exception
-{
-    const char * what () const throw ()
-    {
-        return "RTAUDIO_ERROR";
-    }
-    const std::string getMessage() const throw ()
-    {
-        return std::string("RTAUDIO_ERROR");
-    }
-};
-
-
 /******************************************************************************
  *******************************************************************************
  
@@ -106,11 +92,10 @@ class rtaudio : public audio {
                 fDevNumInChans(0), fDevNumOutChans(0) {}
             
         virtual ~rtaudio() 
-        {   
-            RtAudioErrorType err;
-            err = fAudioDAC.stopStream();
+        {
+            RtAudioErrorType err = fAudioDAC.stopStream();
             if (err != RTAUDIO_NO_ERROR) {
-                std::cout << '\n' << "rtaudio: cannot stop stream" << '\n' << std::endl;
+                std::cout << '\n' << fAudioDAC.getErrorText() << '\n' << std::endl;
             }
             fAudioDAC.closeStream();
         }
@@ -126,91 +111,37 @@ class rtaudio : public audio {
         }
         
         bool init(const char* /*name*/, int numInputs, int numOutputs)
-        {
-
-            fAudioDAC.showWarnings(true);
-
-            std::vector<unsigned int> deviceIds = fAudioDAC.getDeviceIds();
-            if ( deviceIds.size() < 1 ) {
-                std::cout << "\nNo audio devices found!\n";
-                return false;
-            }
-            std::cout << "\nn devices found: " << deviceIds.size() << std::endl;
-
-            std::vector<std::string> deviceNames = fAudioDAC.getDeviceNames();
-            for (std::vector<std::string>::iterator t=deviceNames.begin(); t!=deviceNames.end(); ++t) 
-            {
-                std::cout<< *t << std::endl;
-            }
-
-            std::vector<RtAudio::Api> apis;
-            RtAudio::getCompiledApi(apis);
-
-            // ensure the known APIs return valid names
-            std::cout << "API names by identifier (C++):" << std::endl;
-            for ( size_t i = 0; i < apis.size() ; ++i ) {
-                const std::string name = RtAudio::getApiName(apis[i]);
-                if (name.empty()) {
-                    std::cout << "Invalid name for API " << (int)apis[i] << "\n";
-                    exit(1);
-                }
-                const std::string displayName = RtAudio::getApiDisplayName(apis[i]);
-                if (displayName.empty()) {
-                    std::cout << "Invalid display name for API " << (int)apis[i] << "\n";
-                    exit(1);
-                }
-                std::cout << "    # " << (int)apis[i] << " '" << name << "': '" << displayName << "'\n";
-            }
-
-
-            // RtAudio::Api api = fAudioDAC.getCurrentApi();
-
-            // std::cout << "\nAPI: " << fAudioDAC::getApiDisplayName(fAudioDAC.getCurrentApi()) << std::endl;
-
+        {           
             if (fAudioDAC.getDeviceCount() < 1) {
                 std::cout << "No audio devices found!\n";
-                
+                return false;
             }
             
-            unsigned int default_in_device = fAudioDAC.getDefaultInputDevice();
-            unsigned int default_out_device = fAudioDAC.getDefaultOutputDevice();
-
-
-            std::cout << "Default input device number is: " << default_in_device << std::endl;
-            std::cout << "Default input device name is: " << deviceNames[default_in_device] << std::endl;
-
-            std::cout << "Default output device number is: " << default_out_device << std::endl;
-            std::cout << "Default output device name is: " << deviceNames[default_out_device] << std::endl;
-
-            RtAudio::DeviceInfo info_in = fAudioDAC.getDeviceInfo(default_in_device);
-            RtAudio::DeviceInfo info_out = fAudioDAC.getDeviceInfo(default_out_device);
+            RtAudio::DeviceInfo info_in = fAudioDAC.getDeviceInfo(fAudioDAC.getDefaultInputDevice());
+            RtAudio::DeviceInfo info_out = fAudioDAC.getDeviceInfo(fAudioDAC.getDefaultOutputDevice());
             RtAudio::StreamParameters iParams, oParams;
             
-            iParams.deviceId = default_in_device;
+            iParams.deviceId = fAudioDAC.getDefaultInputDevice();
             fDevNumInChans = info_in.inputChannels;
             iParams.nChannels = fDevNumInChans;
             iParams.firstChannel = 0;
             
-            oParams.deviceId = default_out_device;
+            oParams.deviceId = fAudioDAC.getDefaultOutputDevice();
             fDevNumOutChans = info_out.outputChannels;
             oParams.nChannels = fDevNumOutChans;
             oParams.firstChannel = 0;
             
             RtAudio::StreamOptions options;
-
-            // options.flags = RTAUDIO_HOG_DEVICE;
-            // options.flags |= RTAUDIO_SCHEDULE_REALTIME;
-            
             options.flags |= RTAUDIO_NONINTERLEAVED;
-         
-            RtAudioErrorType err = fAudioDAC.openStream(((numOutputs > 0) ? &oParams : NULL), 
-                    ((numInputs > 0) ? &iParams : NULL), FORMAT, 
-                    fSampleRate, &fBufferSize, audioCallback, this, &options);
+
+            RtAudioErrorType err = fAudioDAC.openStream(
+                ((numOutputs > 0) ? &oParams : NULL), 
+                ((numInputs > 0) ? &iParams : NULL), FORMAT, 
+                fSampleRate, &fBufferSize, audioCallback, this, &options);
             if (err != RTAUDIO_NO_ERROR) {
-                std::cout << '\n' << "rtaudio: cannot open stream" << '\n' << std::endl;
+                std::cout << '\n' << fAudioDAC.getErrorText() << '\n' << std::endl;
                 return false;
-            }
-               
+            }               
             return true;
         }
         
@@ -232,7 +163,7 @@ class rtaudio : public audio {
         {
             RtAudioErrorType err = fAudioDAC.startStream();
             if (err != RTAUDIO_NO_ERROR) {
-                std::cout << '\n' << "rtaudio: cannot start stream" << '\n' << std::endl;
+                std::cout << '\n' << fAudioDAC.getErrorText() << '\n' << std::endl;
                 return false;                
             }
             return true;
@@ -242,7 +173,7 @@ class rtaudio : public audio {
         {
             RtAudioErrorType err = fAudioDAC.stopStream();
             if (err != RTAUDIO_NO_ERROR) {
-                std::cout << '\n' << "rtaudio: cannot stop stream" << '\n' << std::endl;
+                std::cout << '\n' << fAudioDAC.getErrorText() << '\n' << std::endl;
             }
         }
         
