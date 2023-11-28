@@ -8,15 +8,20 @@ list(APPEND CMAKE_PREFIX_PATH "${NB_DIR}")
 find_package(nanobind CONFIG REQUIRED)
 
 
-set(NANOFAUST_LIB ${CMAKE_SOURCE_DIR}/lib)
-set(NANOFAUST_INCLUDE ${CMAKE_SOURCE_DIR}/include)
+set(PROJECT_LIB ${CMAKE_SOURCE_DIR}/lib)
+set(PROJECT_INCLUDE ${CMAKE_SOURCE_DIR}/include)
+set(RTAUDIO_SRC
+    ${PROJECT_INCLUDE}/rtaudio/RtAudio.cpp
+    ${PROJECT_INCLUDE}/rtaudio/RtAudio.h
+)
 
 
 find_package(pybind11 REQUIRED)
 
 
 nanobind_add_module(
-    ${PROJECT_NAME} 
+    ${PROJECT_NAME}
+    ${RTAUDIO_SRC}
     nanofaust.cpp
 )
 
@@ -24,17 +29,17 @@ nanobind_add_module(
 target_include_directories(
     ${PROJECT_NAME} 
     PUBLIC
-    ${NANOFAUST_INCLUDE}
+    ${PROJECT_INCLUDE}
 )
 
 target_link_directories(
     ${PROJECT_NAME} 
     PUBLIC
-    ${NANOFAUST_LIB}
+    ${PROJECT_LIB}
 )
 
 target_link_libraries(
     ${PROJECT_NAME}    
     PUBLIC
-    ${NANOFAUST_LIB}/libfaust.a
+    ${PROJECT_LIB}/libfaust.a
 )

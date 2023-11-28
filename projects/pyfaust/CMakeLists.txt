@@ -1,5 +1,9 @@
-set(PYFAUST_LIB ${CMAKE_SOURCE_DIR}/lib)
-set(PYFAUST_INCLUDE ${CMAKE_SOURCE_DIR}/include)
+set(PROJECT_LIB ${CMAKE_SOURCE_DIR}/lib)
+set(PROJECT_INCLUDE ${CMAKE_SOURCE_DIR}/include)
+set(RTAUDIO_SRC
+    ${PROJECT_INCLUDE}/rtaudio/RtAudio.cpp
+    ${PROJECT_INCLUDE}/rtaudio/RtAudio.h
+)
 
 # Detect the installed pybind11 package and import it into CMake
 execute_process(
@@ -11,20 +15,24 @@ find_package(pybind11 CONFIG REQUIRED)
 # find_package(pybind11 REQUIRED)
 
 
-pybind11_add_module(pyfaust pyfaust.cpp)
+pybind11_add_module(
+    pyfaust
+    ${RTAUDIO_SRC}
+    pyfaust.cpp
+)
 
 
 target_include_directories(pyfaust
     PUBLIC
-    ${PYFAUST_INCLUDE}
+    ${PROJECT_INCLUDE}
 )
 
 target_link_directories(pyfaust
     PUBLIC
-    ${PYFAUST_LIB}
+    ${PROJECT_LIB}
 )
 
 target_link_libraries(pyfaust
     PUBLIC
-    ${PYFAUST_LIB}/libfaust.a
+    ${PROJECT_LIB}/libfaust.a
 )
