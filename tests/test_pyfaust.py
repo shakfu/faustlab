@@ -26,10 +26,11 @@ def test_pyfaust():
     audio.init(dsp)
 
     audio.start()
-    time.sleep(1000)
-    audio.stop()
+    time.sleep(2)
+    # audio.stop() # not needed here
 
-    # # cleanup
+
+    # cleanup
     del dsp
     pyfaust.delete_interpreter_dsp_factory(factory)
 
