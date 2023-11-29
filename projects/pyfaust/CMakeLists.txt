@@ -36,3 +36,8 @@ target_link_libraries(pyfaust
     PUBLIC
     ${PROJECT_LIB}/libfaust.a
 )
+
+file(
+    COPY ${CMAKE_SOURCE_DIR}/tests/test_pyfaust.py 
+    DESTINATION ${CMAKE_BINARY_DIR}
+)

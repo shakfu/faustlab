@@ -7,7 +7,9 @@
 #include "faust/dsp/libfaust-box.h"
 #include "faust/dsp/interpreter-dsp.h"
 #include "faust/audio/rtaudio-dsp.h"
+#include "faust/gui/meta.h"
 #include "faust/gui/PrintUI.h"
+#include "faust/gui/Soundfile.h"
 // #include "faust/compiler/tlib/tree.hh" // for CTree
 
 // rtaudio
@@ -17,6 +19,12 @@ namespace py = pybind11;
 
 class CTree {};
 
+struct DspMeta : Meta, std::map<const char*, const char*>
+{
+    void declare(const char* key, const char* value) { (*this)[key] = value; }
+};
+
+
 // PYBIND11_MAKE_OPAQUE(CTree);
 
 PYBIND11_MODULE(pyfaust, m)
@@ -24,7 +32,36 @@ PYBIND11_MODULE(pyfaust, m)
     m.doc() = "pyfaust: a pybind11 wrapper around the faust interpreter.";
     m.attr("__version__") = "0.0.1";
 
+    // -----------------------------------------------------------------------
+    // faust/gui/PrintUI.h
+    
+    py::class_<PrintUI>(m, "PrintUI")
+        .def(py::init<>())
+        .def("open_tab_box", &PrintUI::openTabBox)
+        .def("open_horizontal_box", &PrintUI::openHorizontalBox)
+        .def("open_vertical_box", &PrintUI::openVerticalBox)
+        .def("close_box", &PrintUI::closeBox)
+        .def("add_button", &PrintUI::addButton)
+        .def("add_check_button", &PrintUI::addCheckButton)
+        .def("add_vertical_slider", &PrintUI::addVerticalSlider)
+        .def("add_horizontal_slider", &PrintUI::addHorizontalSlider)
+        .def("add_numentry", &PrintUI::addNumEntry)
+        .def("add_horizontal_bargraph", &PrintUI::addHorizontalBargraph)
+        .def("add_vertical_bargraph", &PrintUI::addVerticalBargraph)
+        // .def("add_soundfile", &PrintUI::addSoundfile)
+        .def("declare", &PrintUI::declare)
+        ;
 
+    // -----------------------------------------------------------------------
+    // faust/gui/meta.h
+    py::class_<Meta>(m, "Meta")
+        .def("declare", &Meta::declare, "declare key value items")
+        ;
+    
+    py::class_<DspMeta>(m, "DspMeta")
+        .def("declare", &DspMeta::declare, "declare key value items")
+        ;
+    
     // -----------------------------------------------------------------------
     // faust/dsp/libfaust-signal.h
     
@@ -123,7 +160,7 @@ PYBIND11_MODULE(pyfaust, m)
     py::class_<interpreter_dsp>(m, "InterpreterDsp")
         .def("get_numinputs", &interpreter_dsp::getNumInputs, "Return instance number of audio inputs")
         .def("get_numoutputs", &interpreter_dsp::getNumOutputs, "Return instance number of audio outputs")
-        // .def("build_user_interface", &interpreter_dsp::buildUserInterface, "Trigger the ui_interface parameter with instance specific calls")
+        .def("build_user_interface", &interpreter_dsp::buildUserInterface, "Trigger the ui_interface parameter with instance specific calls")
         .def("get_sampletate", &interpreter_dsp::getSampleRate, "Return the sample rate currently used by the instance")
         .def("init", &interpreter_dsp::init, "Global init calls classInit and instanceInit")
         .def("instance_init", &interpreter_dsp::instanceInit, "Init instance state")
@@ -131,7 +168,7 @@ PYBIND11_MODULE(pyfaust, m)
         .def("instance_reset_user_interface", &interpreter_dsp::instanceResetUserInterface, "Init default control parameters values")
         .def("instance_clear", &interpreter_dsp::instanceClear, "Init instance state but keep the control parameter values")
         .def("clone", &interpreter_dsp::clone, "Return a clone of the instance.")
-        // .def("metadata", &interpreter_dsp::metadata, "Trigger the Meta* parameter with instance specific calls to 'declare' (key, value) metadata.")
+        .def("metadata", &interpreter_dsp::metadata, "Trigger the Meta* parameter with instance specific calls to 'declare' (key, value) metadata.")
         // .def("compute", &interpreter_dsp::compute, "DSP instance computation, to be called with successive in/out audio buffers.")
         ;
 
@@ -165,14 +202,6 @@ PYBIND11_MODULE(pyfaust, m)
         .def("get_numinputs", &rtaudio::getNumInputs)
         .def("get_numoutputs", &rtaudio::getNumOutputs)
         ;
-
-    // -----------------------------------------------------------------------
-    // faust/gui/PrintUI.h
-    
-    py::class_<PrintUI>(m, "PrintUI")
-        .def(py::init<>())
-        ;
-
 
     // -----------------------------------------------------------------------
     // rtaudio/RtAudio.h
