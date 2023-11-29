@@ -2,10 +2,14 @@
 #include <nanobind/stl/string.h>
 
 // faust
+#include "faust/dsp/dsp.h"
 #include "faust/dsp/libfaust.h"
 #include "faust/dsp/libfaust-signal.h"
 #include "faust/dsp/libfaust-box.h"
 #include "faust/dsp/interpreter-dsp.h"
+#include "faust/audio/rtaudio-dsp.h"
+#include "faust/gui/meta.h"
+#include "faust/gui/PrintUI.h"
 
 // rtaudio
 #include "rtaudio/RtAudio.h"
@@ -13,12 +17,30 @@
 namespace nb = nanobind;
 using namespace nb::literals;
 
+
+// class CTree {};
+
+
 NB_MODULE(nanofaust, m)
 {
     m.doc() = "nanofaust: a nanobind wrapper around the faust interpreter.";
     m.attr("__version__") = "0.0.1";
 
-    // libfaust
+    // -----------------------------------------------------------------------
+    // faust/dsp/dsp.h
+
+    nb::class_<dsp>(m, "Dsp");
+
+    
+    // -----------------------------------------------------------------------
+    // faust/dsp/libfaust-signal.h
+    
+    // nb::class_<Signal>(m, "Signal")
+    //     .def(nb::init<>());
+
+    // -----------------------------------------------------------------------
+    // faust/dsp/libfaust.h
+    
     m.def("generate_sha1", &generateSHA1, "Generate SHA1 key from a string.");
 
     m.def("expand_dsp_from_file", [](const std::string& filename, std::vector<std::string> args, std::string& sha_key,  std::string& error_msg) {
@@ -49,7 +71,7 @@ NB_MODULE(nanofaust, m)
         return generateAuxFilesFromString(name_app, dsp_content, cstrs.size(), cstrs.data(), error_msg);
     }, "Generate additional file (other backends, SVG, XML, JSON...) starting from a string.");
 
-
+    // -----------------------------------------------------------------------
     // interpreter-dsp
 
     m.def("get_version", &getCLibFaustVersion, "Retrieve the libfaust version.");

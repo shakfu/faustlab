@@ -17,16 +17,14 @@
 
 namespace py = pybind11;
 
-// struct Soundfile {};
 class CTree {};
-
-// struct DspMeta : Meta, std::map<const char*, const char*>
-// {
-//     void declare(const char* key, const char* value) { (*this)[key] = value; }
-// };
-
-
 // PYBIND11_MAKE_OPAQUE(CTree);
+
+struct DspMeta : Meta, std::map<const char*, const char*>
+{
+    void declare(const char* key, const char* value) { (*this)[key] = value; }
+};
+
 
 PYBIND11_MODULE(pyfaust, m)
 {
@@ -36,44 +34,12 @@ PYBIND11_MODULE(pyfaust, m)
     // -----------------------------------------------------------------------
     // faust/dsp/dsp.h
 
-    py::class_<dsp>(m, "Dsp")
-    ;
+    py::class_<dsp>(m, "Dsp");
 
-    // -----------------------------------------------------------------------
-    // faust/gui/PrintUI.h
-    
-    py::class_<PrintUI>(m, "PrintUI")
-        .def(py::init<>())
-        .def("open_tab_box", &PrintUI::openTabBox)
-        .def("open_horizontal_box", &PrintUI::openHorizontalBox)
-        .def("open_vertical_box", &PrintUI::openVerticalBox)
-        .def("close_box", &PrintUI::closeBox)
-        .def("add_button", &PrintUI::addButton)
-        .def("add_check_button", &PrintUI::addCheckButton)
-        .def("add_vertical_slider", &PrintUI::addVerticalSlider)
-        .def("add_horizontal_slider", &PrintUI::addHorizontalSlider)
-        .def("add_numentry", &PrintUI::addNumEntry)
-        .def("add_horizontal_bargraph", &PrintUI::addHorizontalBargraph)
-        .def("add_vertical_bargraph", &PrintUI::addVerticalBargraph)
-        // .def("add_soundfile", &PrintUI::addSoundfile)
-        .def("declare", &PrintUI::declare)
-        ;
-
-    // -----------------------------------------------------------------------
-    // faust/gui/meta.h
-    py::class_<Meta>(m, "Meta")
-        .def("declare", &Meta::declare, "declare key value items")
-        ;
-    
-    // py::class_<DspMeta>(m, "DspMeta")
-    //     .def("declare", &DspMeta::declare, "declare key value items")
-    //     ;
     
     // -----------------------------------------------------------------------
     // faust/dsp/libfaust-signal.h
     
-    // py::class_<CTree>(m, "CTree")
-    //     .def(py::init<>());
     py::class_<Signal>(m, "Signal")
         .def(py::init<>());
 
@@ -215,6 +181,36 @@ PYBIND11_MODULE(pyfaust, m)
         ;
 
     // -----------------------------------------------------------------------
+    // faust/gui/PrintUI.h
+    
+    py::class_<PrintUI>(m, "PrintUI")
+        .def(py::init<>())
+        .def("open_tab_box", &PrintUI::openTabBox)
+        .def("open_horizontal_box", &PrintUI::openHorizontalBox)
+        .def("open_vertical_box", &PrintUI::openVerticalBox)
+        .def("close_box", &PrintUI::closeBox)
+        .def("add_button", &PrintUI::addButton)
+        .def("add_check_button", &PrintUI::addCheckButton)
+        .def("add_vertical_slider", &PrintUI::addVerticalSlider)
+        .def("add_horizontal_slider", &PrintUI::addHorizontalSlider)
+        .def("add_numentry", &PrintUI::addNumEntry)
+        .def("add_horizontal_bargraph", &PrintUI::addHorizontalBargraph)
+        .def("add_vertical_bargraph", &PrintUI::addVerticalBargraph)
+        // .def("add_soundfile", &PrintUI::addSoundfile)
+        .def("declare", &PrintUI::declare)
+        ;
+
+    // -----------------------------------------------------------------------
+    // faust/gui/meta.h
+    py::class_<Meta>(m, "Meta")
+        .def("declare", &Meta::declare, "declare key value items")
+        ;
+    
+    // py::class_<DspMeta>(m, "DspMeta")
+    //     .def("declare", &DspMeta::declare, "declare key value items")
+    //     ;
+
+    // -----------------------------------------------------------------------
     // rtaudio/RtAudio.h
 
     // py::enum_<RtAudioErrorType>(m, "RtAudioErrorType")
@@ -316,7 +312,5 @@ PYBIND11_MODULE(pyfaust, m)
     // _rta.def("get_stream_samplerate", &RtAudio::getStreamSampleRate, "Returns actual sample rate in use by the (open) stream.");
     // _rta.def("set_error_callback", &RtAudio::setErrorCallback, "Set a client-defined function that will be invoked when an error or warning occurs.");
     // _rta.def("show_warnings", &RtAudio::showWarnings, "Specify whether warning messages should be output or not.");
-
-
 
 }
