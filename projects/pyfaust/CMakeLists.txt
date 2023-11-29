@@ -1,3 +1,5 @@
+
+set(PROJECT_NAME pyfaust)
 set(PROJECT_LIB ${CMAKE_SOURCE_DIR}/lib)
 set(PROJECT_INCLUDE ${CMAKE_SOURCE_DIR}/include)
 set(RTAUDIO_SRC
@@ -16,24 +18,36 @@ find_package(pybind11 CONFIG REQUIRED)
 
 
 pybind11_add_module(
-    pyfaust
+    ${PROJECT_NAME}
     ${RTAUDIO_SRC}
     pyfaust.cpp
 )
 
 
-target_include_directories(pyfaust
+target_include_directories(
+    ${PROJECT_NAME}
     PUBLIC
     ${PROJECT_INCLUDE}
+
 )
 
-target_link_directories(pyfaust
+target_compile_definitions(
+    ${PROJECT_NAME}
+    PUBLIC
+    __MACOSX_CORE__
+)
+
+target_link_directories(
+    ${PROJECT_NAME}
     PUBLIC
     ${PROJECT_LIB}
 )
 
-target_link_libraries(pyfaust
+target_link_libraries(
+    ${PROJECT_NAME}
     PUBLIC
+    -lpthread
+    "-framework CoreAudio"
     ${PROJECT_LIB}/libfaust.a
 )
 

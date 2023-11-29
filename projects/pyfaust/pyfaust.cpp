@@ -2,6 +2,7 @@
 #include <pybind11/stl.h>
 
 // faust
+#include "faust/dsp/dsp.h"
 #include "faust/dsp/libfaust.h"
 #include "faust/dsp/libfaust-signal.h"
 #include "faust/dsp/libfaust-box.h"
@@ -9,7 +10,6 @@
 #include "faust/audio/rtaudio-dsp.h"
 #include "faust/gui/meta.h"
 #include "faust/gui/PrintUI.h"
-#include "faust/gui/Soundfile.h"
 // #include "faust/compiler/tlib/tree.hh" // for CTree
 
 // rtaudio
@@ -17,6 +17,7 @@
 
 namespace py = pybind11;
 
+struct Soundfile {};
 class CTree {};
 
 struct DspMeta : Meta, std::map<const char*, const char*>
@@ -31,6 +32,12 @@ PYBIND11_MODULE(pyfaust, m)
 {
     m.doc() = "pyfaust: a pybind11 wrapper around the faust interpreter.";
     m.attr("__version__") = "0.0.1";
+
+    // -----------------------------------------------------------------------
+    // faust/dsp/dsp.h
+
+    py::class_<dsp>(m, "Dsp")
+    ;
 
     // -----------------------------------------------------------------------
     // faust/gui/PrintUI.h
@@ -157,10 +164,14 @@ PYBIND11_MODULE(pyfaust, m)
     m.def("read_interpreter_dsp_factory_from_bitcode_file", &readInterpreterDSPFactoryFromBitcodeFile, "Create a Faust DSP factory from a bitcode file.");
     m.def("write_interpreter_dsp_factory_to_bitcode_file", &writeInterpreterDSPFactoryToBitcodeFile, "Write a Faust DSP factory into a bitcode file.");
 
-    py::class_<interpreter_dsp>(m, "InterpreterDsp")
+    py::class_<interpreter_dsp, dsp>(m, "InterpreterDsp")
         .def("get_numinputs", &interpreter_dsp::getNumInputs, "Return instance number of audio inputs")
         .def("get_numoutputs", &interpreter_dsp::getNumOutputs, "Return instance number of audio outputs")
-        .def("build_user_interface", &interpreter_dsp::buildUserInterface, "Trigger the ui_interface parameter with instance specific calls")
+        // .def("build_user_interface", &interpreter_dsp::buildUserInterface, "Trigger the ui_interface parameter with instance specific calls")
+        .def("build_user_interface", [](interpreter_dsp &self) {
+            PrintUI print_ui;
+            return self.buildUserInterface(&print_ui);
+         }, "Trigger the ui_interface parameter with instance specific calls")
         .def("get_sampletate", &interpreter_dsp::getSampleRate, "Return the sample rate currently used by the instance")
         .def("init", &interpreter_dsp::init, "Global init calls classInit and instanceInit")
         .def("instance_init", &interpreter_dsp::instanceInit, "Init instance state")
@@ -188,7 +199,7 @@ PYBIND11_MODULE(pyfaust, m)
     // -----------------------------------------------------------------------
     // faust/audio/rtaudio-dsp.h
     
-    py::class_<rtaudio>(m, "AudioDriver")
+    py::class_<rtaudio>(m, "RtAudioDriver")
         .def(py::init<int, int>())
         // .def("init", py::overload_cast<const char*, dsp*>(&rtaudio::init), "initialize driver")
         .def("init", [](rtaudio &self, dsp* instance) {

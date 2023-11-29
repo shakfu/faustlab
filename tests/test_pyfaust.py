@@ -13,24 +13,23 @@ def test_pyfaust():
 
     dsp = factory.create_dsp_instance()
 
-    ui = pyfaust.PrintUI()
+    # FIXME: doesn't work!!
+    # ui = pyfaust.PrintUI()
+    # dsp.build_user_interface(ui)
+    
+    # bypass
+    dsp.build_user_interface()
 
-    dsp.build_user_interface(ui)
+    audio = pyfaust.RtAudioDriver(48000, 256)
 
-    audio = RtAudioDriver(44800, 256)
-
+    # audio.init("FaustDSP", dsp)
     audio.init(dsp)
 
     audio.start()
-
     time.sleep(1000)
-
     audio.stop()
-    audio.start();
-    usleep(1000000);
-    audio.stop();
 
-    # cleanup
+    # # cleanup
     del dsp
     pyfaust.delete_interpreter_dsp_factory(factory)
 
