@@ -26,7 +26,7 @@ def test_pyfaust():
     audio.init(dsp)
 
     audio.start()
-    time.sleep(2)
+    time.sleep(1)
     # audio.stop() # not needed here
 
 

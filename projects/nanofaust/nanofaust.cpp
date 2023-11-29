@@ -55,31 +55,30 @@ NB_MODULE(nanofaust, m)
     m.def("get_version", &getCLibFaustVersion, "Retrieve the libfaust version.");
     m.def("get_interpreter_dsp_factory_from_sha_key", &getInterpreterDSPFactoryFromSHAKey, "Get the Faust DSP factory associated with a given SHA key.");
 
-    // m.def("create_interpreter_dsp_factory_from_file", [](const std::string& filename, nb::args& args) -> interpreter_dsp_factory* {
-    //     std::vector<std::string> params;
-    //     std::string error_msg;
-    //     std::vector<const char *> argv;
-    //     for (const auto &arg : args) {
-    //         // pybind11: params.push_back(arg.cast<std::string>()); // <- this works
-    //         params.push_back(arg.cast<std::string>()); // <- this doesn't
-    //     }
-    //     argv.reserve(params.size());
-    //     for (auto &i : params)
-    //         argv.push_back(const_cast<char *>(i.c_str()));
-    //     interpreter_dsp_factory* factory = (interpreter_dsp_factory*)createInterpreterDSPFactoryFromFile(filename, argv.size(), argv.data(), error_msg);
-    //     if (!factory) {
-    //         std::cerr << "Cannot create factory : " << error_msg;
-    //         return NULL;
-    //     }
-    //     return factory;
-    // }, nb::arg("filename"), "Create a Faust DSP factory from a DSP source code as a file.", nb::rv_policy::reference);
+    m.def("create_interpreter_dsp_factory_from_file", [](const std::string& filename, nb::args& args) -> interpreter_dsp_factory* {
+        std::vector<std::string> params;
+        std::string error_msg;
+        std::vector<const char *> argv;
+        for (const auto &arg : args) {
+            params.push_back(nb::cast<std::string>(arg));
+        }
+        argv.reserve(params.size());
+        for (auto &i : params)
+            argv.push_back(const_cast<char *>(i.c_str()));
+        interpreter_dsp_factory* factory = (interpreter_dsp_factory*)createInterpreterDSPFactoryFromFile(filename, argv.size(), argv.data(), error_msg);
+        if (!factory) {
+            std::cerr << "Cannot create factory : " << error_msg;
+            return NULL;
+        }
+        return factory;
+    }, /* nb::arg("filename"), */ "Create a Faust DSP factory from a DSP source code as a file.", nb::rv_policy::reference);
 
-    m.def("create_interpreter_dsp_factory_from_file", [](const std::string& filename, std::vector<std::string> args, std::string& error_msg) {
-        std::vector<const char *> cstrs;
-        cstrs.reserve(args.size());
-        for (auto &i : args) cstrs.push_back(const_cast<char *>(i.c_str()));
-        return createInterpreterDSPFactoryFromFile(filename, cstrs.size(), cstrs.data(), error_msg);
-    }, "Create a Faust DSP factory from a DSP source code as a file.");
+    // m.def("create_interpreter_dsp_factory_from_file", [](const std::string& filename, std::vector<std::string> args, std::string& error_msg) {
+    //     std::vector<const char *> cstrs;
+    //     cstrs.reserve(args.size());
+    //     for (auto &i : args) cstrs.push_back(const_cast<char *>(i.c_str()));
+    //     return createInterpreterDSPFactoryFromFile(filename, cstrs.size(), cstrs.data(), error_msg);
+    // }, "Create a Faust DSP factory from a DSP source code as a file.");
 
     m.def("create_interpreter_dsp_factory_from_string", [](const std::string& name_app, const std::string& dsp_content, std::vector<std::string> args, std::string& error_msg) {
         std::vector<const char *> cstrs;

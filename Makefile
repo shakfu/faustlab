@@ -50,10 +50,10 @@ test_c:
 		-o /tmp/interp-test
 	@/tmp/interp-test tests/noise.dsp
 
-test:
-	@cp tests/test_cyfaust.py build/
-	@python3 build/test_cyfaust.py
+test: pyfaust
+	@cd build && python3 test_pyfaust.py
 
 clean:
 	@rm projects/cyfaust/cyfaust.cpp
 	@rm -rf cyfaust.*.so build
+

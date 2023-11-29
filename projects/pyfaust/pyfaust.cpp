@@ -17,13 +17,13 @@
 
 namespace py = pybind11;
 
-struct Soundfile {};
+// struct Soundfile {};
 class CTree {};
 
-struct DspMeta : Meta, std::map<const char*, const char*>
-{
-    void declare(const char* key, const char* value) { (*this)[key] = value; }
-};
+// struct DspMeta : Meta, std::map<const char*, const char*>
+// {
+//     void declare(const char* key, const char* value) { (*this)[key] = value; }
+// };
 
 
 // PYBIND11_MAKE_OPAQUE(CTree);
@@ -65,15 +65,15 @@ PYBIND11_MODULE(pyfaust, m)
         .def("declare", &Meta::declare, "declare key value items")
         ;
     
-    py::class_<DspMeta>(m, "DspMeta")
-        .def("declare", &DspMeta::declare, "declare key value items")
-        ;
+    // py::class_<DspMeta>(m, "DspMeta")
+    //     .def("declare", &DspMeta::declare, "declare key value items")
+    //     ;
     
     // -----------------------------------------------------------------------
     // faust/dsp/libfaust-signal.h
     
-    py::class_<CTree>(m, "CTree")
-        .def(py::init<>());
+    // py::class_<CTree>(m, "CTree")
+    //     .def(py::init<>());
     py::class_<Signal>(m, "Signal")
         .def(py::init<>());
 
