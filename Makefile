@@ -51,6 +51,7 @@ test_c:
 	@/tmp/interp-test tests/noise.dsp
 
 test: pyfaust
+	@cp tests/noise.dsp ./build/
 	@cd build && python3 test_pyfaust.py
 
 clean:
