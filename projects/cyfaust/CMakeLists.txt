@@ -7,14 +7,11 @@ set(PROJECT_SRC
     ${CMAKE_CURRENT_SOURCE_DIR}/cyfaust.cpp
 )
 
-
-
 add_library( 
     ${PROJECT_NAME} 
     MODULE
     ${PROJECT_SRC}
 )
-
 
 add_custom_command(
     OUTPUT ${CMAKE_CURRENT_SOURCE_DIR}/cyfaust.cpp
@@ -34,8 +31,6 @@ add_dependencies(
     cyfaust_cpp
 )
 
-
-
 string(TOLOWER ${CMAKE_SYSTEM_NAME} platform)
 set_target_properties(
     ${PROJECT_NAME}
@@ -44,7 +39,6 @@ set_target_properties(
     LIBRARY_OUTPUT_NAME "${PROJECT_NAME}.cpython-${Python_VERSION_MAJOR}${Python_VERSION_MINOR}-${platform}"
 )
     
-
 target_include_directories(
     ${PROJECT_NAME}
     PUBLIC
@@ -58,7 +52,6 @@ target_compile_definitions(
     -DNDEBUG
     -DINTERP_DSP=1
 )
-
 
 target_compile_options(
     ${PROJECT_NAME}
@@ -75,7 +68,6 @@ target_compile_options(
     $<$<PLATFORM_ID:Windows>:/O2>
     $<$<PLATFORM_ID:Windows>:/MD> # api module works with this
 )
-
 
 target_link_options(
     ${PROJECT_NAME}
