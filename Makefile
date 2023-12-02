@@ -6,15 +6,14 @@ MIN_OSX_VER := -mmacosx-version-min=13.6
 FAUST_STATICLIB := ./lib/libfaust.a
 INTERP_TESTS := tests/test_faust_interp
 
-.PHONY: clean test test_cpp test_c pyfaust cyfaust cyfaust_inplace
+.PHONY: cmake clean test test_cpp test_c pyfaust cyfaust_setup_py cyfaust_inplace
 
-all: pyfaust # cyfaust
+all: cmake
 
-
-pyfaust:
+cmake:
 	@mkdir -p build && cd build && cmake .. && make
 
-cyfaust:
+cyfaust_setup_py:
 	@python3 setup.py build
 
 cyfaust_inplace:
@@ -50,8 +49,14 @@ test_c:
 		-o /tmp/interp-test
 	@/tmp/interp-test tests/noise.dsp
 
-test: pyfaust
+test: cmake
 	@cp tests/noise.dsp ./build/
+	@cp tests/test_cyfaust.py ./build/
+	@cd build && python3 test_cyfaust.py
+
+test_pyfaust: cmake
+	@cp tests/noise.dsp ./build/
+	@cp tests/test_pyfaust.py ./build/
 	@cd build && python3 test_pyfaust.py
 
 clean:

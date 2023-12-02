@@ -1,10 +1,10 @@
-set(PROJECT_NAME cyfaust)
+set(PROJECT_NAME cfaust)
 
-set(CYFAUST_LIB ${CMAKE_SOURCE_DIR}/lib)
-set(CYFAUST_INCLUDE ${CMAKE_SOURCE_DIR}/include)
+set(CFAUST_LIB ${CMAKE_SOURCE_DIR}/lib)
+set(CFAUST_INCLUDE ${CMAKE_SOURCE_DIR}/include)
 
 set(PROJECT_SRC
-    ${CMAKE_CURRENT_SOURCE_DIR}/cyfaust.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/cfaust.cpp
 )
 
 add_library( 
@@ -14,21 +14,21 @@ add_library(
 )
 
 add_custom_command(
-    OUTPUT ${CMAKE_CURRENT_SOURCE_DIR}/cyfaust.cpp
-    COMMAND cythonize -3 cyfaust.pyx
+    OUTPUT ${CMAKE_CURRENT_SOURCE_DIR}/cfaust.cpp
+    COMMAND cythonize -3 cfaust.pyx
     WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
-    DEPENDS cyfaust.pyx
-    COMMENT "Generating cyfaust.cpp"
+    DEPENDS cfaust.pyx
+    COMMENT "Generating cfaust.cpp"
 )
 
 add_custom_target(
-    cyfaust_cpp
-    DEPENDS cyfaust.pyx
+    cfaust_cpp
+    DEPENDS cfaust.pyx
 )
 
 add_dependencies(
     ${PROJECT_NAME} 
-    cyfaust_cpp
+    cfaust_cpp
 )
 
 string(TOLOWER ${CMAKE_SYSTEM_NAME} platform)
@@ -43,7 +43,7 @@ target_include_directories(
     ${PROJECT_NAME}
     PUBLIC
     ${Python_INCLUDE_DIRS}
-    ${CYFAUST_INCLUDE}
+    ${CFAUST_INCLUDE}
 )
 
 target_compile_definitions(
@@ -79,7 +79,7 @@ target_link_directories(
     ${PROJECT_NAME} 
     PUBLIC
     ${Python_LIBRARY_DIRS}
-    ${CYFAUST_LIB}
+    ${CFAUST_LIB}
 )
 
 target_link_libraries(
@@ -87,11 +87,11 @@ target_link_libraries(
     PUBLIC
     ${Python_LIBRARIES}
     "$<$<PLATFORM_ID:Darwin>:-ldl>"
-    ${CYFAUST_LIB}/libfaust.a
+    ${CFAUST_LIB}/libfaust.a
 )
 
 # file(
-#     COPY ${CMAKE_SOURCE_DIR}/tests/test_cyfaust.py 
+#     COPY ${CMAKE_SOURCE_DIR}/tests/test_cfaust.py 
 #     DESTINATION ${CMAKE_BINARY_DIR}
 # )
 
