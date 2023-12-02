@@ -129,7 +129,7 @@ cdef class InterpreterDspFactory:
         cdef InterpreterDspFactory factory = InterpreterDspFactory.__new__(
             InterpreterDspFactory)
         factory.ptr_owner = True
-        factory.ptr = <dsp_factory*>fi.getInterpreterDSPFactoryFromSHAKey(
+        factory.ptr = <fi.interpreter_dsp_factory*>fi.getInterpreterDSPFactoryFromSHAKey(
             sha_key.encode())
         return factory
 
@@ -142,7 +142,7 @@ cdef class InterpreterDspFactory:
             InterpreterDspFactory)
         cdef ParamArray params = ParamArray(args)
         factory.ptr_owner = True
-        factory.ptr = <dsp_factory*>fi.createInterpreterDSPFactoryFromFile(
+        factory.ptr = <fi.interpreter_dsp_factory*>fi.createInterpreterDSPFactoryFromFile(
             filepath.encode('utf8'),
             params.argc,
             params.argv,
@@ -153,6 +153,48 @@ cdef class InterpreterDspFactory:
             return
         return factory
 
+    # @staticmethod
+    # def from_signals(str name_app, fi.tvec signals, *args) -> InterpreterDspFactory:
+    #     """Create a Faust DSP factory from a vector of output signals."""
+    #     cdef string error_msg
+    #     error_msg.reserve(4096)
+    #     cdef InterpreterDspFactory factory = InterpreterDspFactory.__new__(
+    #         InterpreterDspFactory)
+    #     cdef ParamArray params = ParamArray(args)
+    #     factory.ptr_owner = True
+    #     factory.ptr = <fi.interpreter_dsp_factory*>fi.createInterpreterDSPFactoryFromSignals(
+    #         name_app.encode('utf8'),
+    #         signals,
+    #         params.argc,
+    #         params.argv,
+    #         error_msg,
+    #     )
+    #     if error_msg.empty():
+    #         print(error_msg.decode())
+    #         return
+    #     return factory
+
+    # @staticmethod
+    # def from_boxes(str name_app, fi.Box box, *args) -> InterpreterDspFactory:
+    #     """Create a Faust DSP factory from a box expression."""
+    #     cdef string error_msg
+    #     error_msg.reserve(4096)
+    #     cdef InterpreterDspFactory factory = InterpreterDspFactory.__new__(
+    #         InterpreterDspFactory)
+    #     cdef ParamArray params = ParamArray(args)
+    #     factory.ptr_owner = True
+    #     factory.ptr = <fi.interpreter_dsp_factory*>fi.createInterpreterDSPFactoryFromBoxes(
+    #         name_app.encode('utf8'),
+    #         box,
+    #         params.argc,
+    #         params.argv,
+    #         error_msg,
+    #     )
+    #     if error_msg.empty():
+    #         print(error_msg.decode())
+    #         return
+    #     return factory
+
     @staticmethod
     def from_bitcode_file(str bit_code_path) -> InterpreterDspFactory:
         """Create a Faust DSP factory from a bitcode file."""
@@ -161,7 +203,7 @@ cdef class InterpreterDspFactory:
         cdef InterpreterDspFactory factory = InterpreterDspFactory.__new__(
             InterpreterDspFactory)
         factory.ptr_owner = True
-        factory.ptr = <dsp_factory*>fi.readInterpreterDSPFactoryFromBitcodeFile(
+        factory.ptr = <fi.interpreter_dsp_factory*>fi.readInterpreterDSPFactoryFromBitcodeFile(
             bit_code_path.encode('utf8'),
             error_msg,
         )
@@ -179,7 +221,7 @@ cdef class InterpreterDspFactory:
             InterpreterDspFactory)
         cdef ParamArray params = ParamArray(args)
         factory.ptr_owner = True
-        factory.ptr = <dsp_factory*>fi.createInterpreterDSPFactoryFromString(
+        factory.ptr = <fi.interpreter_dsp_factory*>fi.createInterpreterDSPFactoryFromString(
             name_app.encode('utf8'),
             code.encode('utf8'),
             params.argc,
@@ -199,7 +241,7 @@ cdef class InterpreterDspFactory:
         cdef InterpreterDspFactory factory = InterpreterDspFactory.__new__(
             InterpreterDspFactory)
         factory.ptr_owner = True
-        factory.ptr = <dsp_factory*>fi.readInterpreterDSPFactoryFromBitcode(
+        factory.ptr = <fi.interpreter_dsp_factory*>fi.readInterpreterDSPFactoryFromBitcode(
             bitcode.encode('utf8'),
             error_msg,
         )
@@ -275,10 +317,6 @@ cdef class InterpreterDsp:
         """Trigger the meta parameter with instance specific calls."""
         self.ptr.metadata(m)
 
-
-ctypedef fi.interpreter_dsp_factory dsp_factory
-
-
 def get_dsp_factory_from_sha_key(str sha_key) -> InterpreterDspFactory:
     """Get the Faust DSP factory associated with a given SHA key."""
     return InterpreterDspFactory.from_sha_key(sha_key.encode())
@@ -291,69 +329,36 @@ def create_dsp_factory_from_string(name_app: str, code: str, *args) -> Interpret
     """Create a Faust DSP factory from a DSP source code as a string."""
     return InterpreterDspFactory.from_string(name_app, code, *args)
 
-cdef dsp_factory* create_interpreter_dsp_factory_from_signals(
-        const string& name_app, fi.tvec signals, int argc, const char* argv[], string& error_msg):
-    """Create a Faust DSP factory from a vector of output signals."""
-    return fi.createInterpreterDSPFactoryFromSignals(
-        name_app, signals, argc, argv, error_msg)
-
-cdef dsp_factory* create_interpreter_dsp_factory_from_boxes(
-        const string& name_app, fi.Box box, int argc, const char* argv[], string& error_msg):
-    """Create a Faust DSP factory from a box expression."""
-    return fi.createInterpreterDSPFactoryFromBoxes(
-        name_app, box, argc, argv, error_msg)
-
-def delete_all_interpreter_dsp_factories():
+def delete_all_dsp_factories():
     """Delete all Faust DSP factories kept in the library cache."""
     fi.deleteAllInterpreterDSPFactories()
 
-cdef vector[string] get_all_interpreter_dsp_factories():
+def get_all_dsp_factories():
     """Return Faust DSP factories of the library cache as a vector of their SHA keys."""
     return fi.getAllInterpreterDSPFactories()
 
 def start_multithreaded_access_mode() -> bool:
-    """Start multi-thread access mode"""
+    """Start multi-thread access mode."""
     return fi.startMTDSPFactories()
 
 def stop_multithreaded_access_mode():
     """Stop multi-thread access mode."""
     fi.stopMTDSPFactories()
 
-## api -------------------------------------------------------------------
+## to wrap -------------------------------------------------------------------
 
-cdef dsp_factory* get_interpreter_dsp_factory_from_sha_key(str sha_key):
-    """Get the Faust DSP factory associated with a given SHA key."""
-    return fi.getInterpreterDSPFactoryFromSHAKey(sha_key.encode())
+# cdef vector[string] get_all_interpreter_dsp_factories():
+#     """Return Faust DSP factories of the library cache as a vector of their SHA keys."""
+#     return fi.getAllInterpreterDSPFactories()
 
-cdef dsp_factory* create_interpreter_dsp_factory_from_file(
-        const string& filename, int argc, const char* argv[], string& error_msg):
-    """Create a Faust DSP factory from a DSP source code as a file."""
-    return fi.createInterpreterDSPFactoryFromFile(
-        filename, argc, argv, error_msg)
+cdef fi.interpreter_dsp_factory* create_interpreter_dsp_factory_from_signals(
+        const string& name_app, fi.tvec signals, int argc, const char* argv[], string& error_msg):
+    """Create a Faust DSP factory from a vector of output signals."""
+    return fi.createInterpreterDSPFactoryFromSignals(
+        name_app, signals, argc, argv, error_msg)
 
-cdef dsp_factory* create_interpreter_dsp_factory_from_string(
-        const string& name_app, const string& dsp_content, int argc, const char* argv[], string& error_msg):
-    """Create a Faust DSP factory from a DSP source code as a string."""
-    return fi.createInterpreterDSPFactoryFromString(
-        name_app, dsp_content, argc, argv, error_msg)
-
-cdef bint delete_interpreter_dsp_factory(dsp_factory* factory):
-    """Delete a Faust DSP factory."""
-    return fi.deleteInterpreterDSPFactory(factory)
-
-cdef dsp_factory* read_interpreter_dsp_factory_from_bitcode(const string& bitcode, string& error_msg):
-    """Create a Faust DSP factory from a bitcode string."""
-    return fi.readInterpreterDSPFactoryFromBitcode(bitcode, error_msg)
-
-cdef dsp_factory* read_dsp_factory_from_bitcode_file(const string& bit_code_path, string& error_msg):
-    """Create a Faust DSP factory from a bitcode file."""
-    return fi.readInterpreterDSPFactoryFromBitcodeFile(bit_code_path, error_msg)
-
-cdef string write_interpreter_dsp_factory_to_bitcode(dsp_factory* factory):
-    """Write a Faust DSP factory into a bitcode string."""
-    return fi.writeInterpreterDSPFactoryToBitcode(factory)
-
-cdef bint write_interpreter_dsp_factory_to_bitcode_file(dsp_factory* factory, const string& bit_code_path):
-    """Write a Faust DSP factory into a bitcode file."""
-    return fi.writeInterpreterDSPFactoryToBitcodeFile(factory, bit_code_path)
-
+cdef fi.interpreter_dsp_factory* create_interpreter_dsp_factory_from_boxes(
+        const string& name_app, fi.Box box, int argc, const char* argv[], string& error_msg):
+    """Create a Faust DSP factory from a box expression."""
+    return fi.createInterpreterDSPFactoryFromBoxes(
+        name_app, box, argc, argv, error_msg)
