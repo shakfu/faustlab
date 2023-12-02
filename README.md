@@ -1,11 +1,13 @@
 # faustlab
 
-A clean code attempt to wrap the Faust *interpreter* for use by python via the following wrapping frameworks
+A exploratory project to wrap the Faust *interpreter* for use by python via the following wrapping frameworks
 
-- [x] cython
-- [x] pybind11
-- [x] nanobind
+- [ ] cyfaust: 	cython 		(faust c++ interface)
+- [ ] cfaustt: 	cython 		(faust c interface)
+- [x] pyfaust: 	pybind11 	(faust c++ interface)
+- [ ] nanobind: nanobind 	(faust c++ interface)
 
+The tick in the box means that wrapper has passed a minimal functional test to produce audio given a faust dsp file.
 
 ## Usage
 

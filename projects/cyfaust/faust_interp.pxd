@@ -12,6 +12,35 @@ cdef extern from "faust/gui/CInterface.h":
     ctypedef struct UIGlue
     ctypedef struct MetaGlue
 
+cdef extern from "faust/gui/meta.h":
+    cdef cppclass Meta:
+        void declare(const char* key, const char* value)
+
+cdef extern from "faust/gui/UI.h":
+    cdef cppclass UI:
+        void declare(const char* key, const char* value)
+
+cdef extern from "faust/gui/PrintUI.h":
+    cdef cppclass PrintUI:
+        PrintUI() except +
+        void openTabBox(const char* label)
+        void openHorizontalBox(const char* label)
+        void openVerticalBox(const char* label)
+        void closeBox()
+        void addButton(const char* label, FAUSTFLOAT* zone)
+        void addCheckButton(const char* label, FAUSTFLOAT* zone)
+        void addVerticalSlider(const char* label, FAUSTFLOAT* zone, FAUSTFLOAT init, FAUSTFLOAT min, FAUSTFLOAT max, FAUSTFLOAT step)
+        void addHorizontalSlider(const char* label, FAUSTFLOAT* zone, FAUSTFLOAT init, FAUSTFLOAT min, FAUSTFLOAT max, FAUSTFLOAT step)
+        void addNumEntry(const char* label, FAUSTFLOAT* zone, FAUSTFLOAT init, FAUSTFLOAT min, FAUSTFLOAT max, FAUSTFLOAT step)
+        void addHorizontalBargraph(const char* label, FAUSTFLOAT* zone, FAUSTFLOAT min, FAUSTFLOAT max) 
+        void addVerticalBargraph(const char* label, FAUSTFLOAT* zone, FAUSTFLOAT min, FAUSTFLOAT max)
+        # void addSoundfile(const char* label, const char* filename,  Soundfile** sf_zone)
+        void declare(FAUSTFLOAT* zone, const char* key, const char* val)
+
+
+cdef extern from "faust/dsp/dsp.h":
+    cdef cppclass dsp_memory_manager
+
 cdef extern from "faust/dsp/interpreter-dsp.h":
     const char* getCLibFaustVersion()
 
@@ -23,7 +52,7 @@ cdef extern from "faust/dsp/interpreter-dsp.h":
         interpreter_dsp() except +
         int getNumInputs()
         int getNumOutputs()
-        # void buildUserInterface(UI* ui_interface)
+        void buildUserInterface(UI* ui_interface)
         int getSampleRate()
         void init(int sample_rate)
         void instanceInit(int sample_rate)
@@ -31,7 +60,7 @@ cdef extern from "faust/dsp/interpreter-dsp.h":
         void instanceResetUserInterface()
         void instanceClear()
         interpreter_dsp* clone()
-        # void metadata(Meta* m)
+        void metadata(Meta* m)
         # void compute(int count, float** inputs, float** outputs)
 
     cdef cppclass interpreter_dsp_factory:
@@ -44,8 +73,8 @@ cdef extern from "faust/dsp/interpreter-dsp.h":
         vector[string] getIncludePathnames()
         vector[string] getWarningMessages()
         interpreter_dsp* createDSPInstance()
-        # void setMemoryManager(dsp_memory_manager* manager)
-        # dsp_memory_manager* getMemoryManager()
+        void setMemoryManager(dsp_memory_manager* manager)
+        dsp_memory_manager* getMemoryManager()
 
     # interpreter_dsp_factory
     interpreter_dsp_factory* getInterpreterDSPFactoryFromSHAKey(const string& sha_key)
