@@ -2,15 +2,14 @@ set(PROJECT_NAME cyfaust)
 
 set(CYFAUST_LIB ${CMAKE_SOURCE_DIR}/lib)
 set(CYFAUST_INCLUDE ${CMAKE_SOURCE_DIR}/include)
+set(CYFAUST_SRC ${CMAKE_CURRENT_SOURCE_DIR}/cyfaust.cpp)
 
-set(PROJECT_SRC
-    ${CMAKE_CURRENT_SOURCE_DIR}/cyfaust.cpp
-)
 
 add_library( 
     ${PROJECT_NAME} 
     MODULE
-    ${PROJECT_SRC}
+    ${RTAUDIO_SRC}
+    ${CYFAUST_SRC}
 )
 
 add_custom_command(
@@ -27,7 +26,7 @@ add_custom_target(
 )
 
 add_dependencies(
-    ${PROJECT_NAME} 
+    ${PROJECT_NAME}
     cyfaust_cpp
 )
 
@@ -43,6 +42,7 @@ target_include_directories(
     ${PROJECT_NAME}
     PUBLIC
     ${Python_INCLUDE_DIRS}
+    ${PROJECT_INCLUDE}
     ${CYFAUST_INCLUDE}
 )
 
@@ -87,6 +87,7 @@ target_link_libraries(
     PUBLIC
     ${Python_LIBRARIES}
     "$<$<PLATFORM_ID:Darwin>:-ldl>"
+    ${RTAUDIO_LINK_LIBS}
     ${CYFAUST_LIB}/libfaust.a
 )
 

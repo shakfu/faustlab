@@ -19,6 +19,7 @@ cdef extern from "Python.h":
 ##
 
 cdef class ParamArray:
+    """wrapper classs around faust paramater array"""
     cdef const char ** argv
     cdef int argc
 
@@ -134,6 +135,43 @@ def generate_auxfiles_from_string(name_app: str, dsp_content: str, *args) -> str
     return result
 
 ## ---------------------------------------------------------------------------
+## faust/audio/rtaudio-dsp
+
+cdef class RtAudioDriver:
+    """faust audio driver using rtaudio cross-platform lib."""
+    cdef fi.rtaudio *ptr
+
+    def __init__(self, int srate, int bsize):
+        self.ptr = new fi.rtaudio(srate, bsize)
+
+    def set_dsp(self, dsp: InterpreterDsp):
+        self.ptr.setDsp(<fi.dsp*>dsp.ptr)
+
+    def init(self, dsp: InterpreterDsp):
+        """initialize with dsp instance."""
+        self.ptr.init("RtAudioDriver", dsp.get_numinputs(), dsp.get_numoutputs())
+        self.set_dsp(dsp)
+
+    def start(self):
+        if not self.ptr.start():
+            print("RtAudioDriver: could not start")
+
+    def stop(self):
+        self.ptr.stop()
+
+    def get_buffersize(self):
+        return self.ptr.getBufferSize()
+
+    def get_samplerate(self):
+        return self.ptr.getSampleRate()
+
+    def get_numinputs(self):
+        return self.ptr.getNumInputs()
+
+    def get_numoutputs(self):
+        return self.ptr.getNumOutputs()
+
+## ---------------------------------------------------------------------------
 ## faust/dsp/interpreter-dsp
 
 
@@ -146,6 +184,8 @@ def get_version():
 
 
 cdef class InterpreterDspFactory:
+    """Interpreter DSP factory class."""
+
     cdef fi.interpreter_dsp_factory* ptr
     cdef bint ptr_owner
 
@@ -346,6 +386,8 @@ cdef class InterpreterDspFactory:
 
 
 cdef class InterpreterDsp:
+    """DSP instance class with methods."""
+
     cdef fi.interpreter_dsp* ptr
     cdef bint ptr_owner
 
@@ -403,9 +445,14 @@ cdef class InterpreterDsp:
         cdef fi.interpreter_dsp* dsp = self.ptr.clone()
         return InterpreterDsp.from_ptr(dsp)
 
-    cdef build_user_interface(self, fi.UI* ui_interface):
+    def build_user_interface(self):
         """Trigger the ui_interface parameter with instance specific calls."""
-        self.ptr.buildUserInterface(ui_interface)
+        cdef fi.PrintUI ui_interface
+        self.ptr.buildUserInterface(<fi.UI*>&ui_interface)
+
+    # cdef build_user_interface(self, fi.UI* ui_interface):
+    #     """Trigger the ui_interface parameter with instance specific calls."""
+    #     self.ptr.buildUserInterface(ui_interface)
 
     cdef metadata(self, fi.Meta* m):
         """Trigger the meta parameter with instance specific calls."""
@@ -442,13 +489,15 @@ def stop_multithreaded_access_mode():
 ## to wrap -------------------------------------------------------------------
 
 cdef fi.interpreter_dsp_factory* create_interpreter_dsp_factory_from_signals(
-        const string& name_app, fi.tvec signals, int argc, const char* argv[], string& error_msg):
+        const string& name_app, fi.tvec signals, int argc, const char* argv[], 
+        string& error_msg):
     """Create a Faust DSP factory from a vector of output signals."""
     return fi.createInterpreterDSPFactoryFromSignals(
         name_app, signals, argc, argv, error_msg)
 
 cdef fi.interpreter_dsp_factory* create_interpreter_dsp_factory_from_boxes(
-        const string& name_app, fi.Box box, int argc, const char* argv[], string& error_msg):
+        const string& name_app, fi.Box box, int argc, const char* argv[], 
+        string& error_msg):
     """Create a Faust DSP factory from a box expression."""
     return fi.createInterpreterDSPFactoryFromBoxes(
         name_app, box, argc, argv, error_msg)

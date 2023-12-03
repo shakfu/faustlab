@@ -105,7 +105,7 @@ cdef extern from "faust/dsp/interpreter-dsp.h":
 cdef extern from "faust/audio/rtaudio-dsp.h":
     cdef cppclass rtaudio:    
         rtaudio(int srate, int bsize) except +
-        bint init(const char* name, dsp* DSP)
+        # bint init(const char* name, dsp* DSP)
         bint init(const char* name, int numInputs, int numOutputs)
         void setDsp(dsp* DSP)
         bint start() 

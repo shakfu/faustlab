@@ -29,6 +29,19 @@ message(STATUS "Python_VERSION_MAJOR: ${Python_VERSION_MAJOR}")
 message(STATUS "Python_VERSION_MINOR: ${Python_VERSION_MINOR}")
 message(STATUS "Python_VERSION_PATCH: ${Python_VERSION_PATCH}")
 
+set(PROJECT_LIB ${CMAKE_SOURCE_DIR}/lib)
+set(PROJECT_INCLUDE ${CMAKE_SOURCE_DIR}/include)
+set(RTAUDIO_SRC
+    ${PROJECT_INCLUDE}/rtaudio/RtAudio.cpp
+    ${PROJECT_INCLUDE}/rtaudio/RtAudio.h
+)
+set(RTAUDIO_LINK_LIBS
+	-lpthread
+    "-framework CoreAudio"
+)
+
+
+
 if(Python_FOUND)
 	add_subdirectory(cfaust)
 	add_subdirectory(cyfaust)

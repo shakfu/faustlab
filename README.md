@@ -3,7 +3,7 @@
 A exploratory project to wrap the Faust *interpreter* for use by python via the following wrapping frameworks using the RtAudio cross-platform audio driver:
 
 - [ ] cyfaust: 	cython 		(faust c++ interface)
-- [ ] cfaustt: 	cython 		(faust c interface)
+- [ ] cfaustt: 	cython 		(faust c   interface)
 - [x] pyfaust: 	pybind11 	(faust c++ interface)
 - [ ] nanobind: nanobind 	(faust c++ interface)
 
