@@ -1,5 +1,8 @@
+#define INCLUDE_RTAUDIO_WRAPPER 0
+
 #include <nanobind/nanobind.h>
 #include <nanobind/stl/string.h>
+#include <nanobind/stl/vector.h>
 
 // faust
 #include "faust/dsp/dsp.h"
@@ -10,6 +13,7 @@
 #include "faust/audio/rtaudio-dsp.h"
 #include "faust/gui/meta.h"
 #include "faust/gui/PrintUI.h"
+// #include "faust/compiler/tlib/tree.hh" // for CTree
 
 // rtaudio
 #include "rtaudio/RtAudio.h"
@@ -17,8 +21,15 @@
 namespace nb = nanobind;
 using namespace nb::literals;
 
+struct CTree {};
 
-// class CTree {};
+// struct DspMeta : Meta, std::map<const char*, const char*>
+// {
+//     void declare(const char* key, const char* value)
+//     { 
+//         (*this)[key] = value;
+//     }
+// };
 
 
 NB_MODULE(nanofaust, m)
@@ -34,45 +45,43 @@ NB_MODULE(nanofaust, m)
     
     // -----------------------------------------------------------------------
     // faust/dsp/libfaust-signal.h
-    
-    // nb::class_<Signal>(m, "Signal")
-    //     .def(nb::init<>());
+
+    nb::class_<Signal>(m, "Signal");
 
     // -----------------------------------------------------------------------
     // faust/dsp/libfaust.h
     
     m.def("generate_sha1", &generateSHA1, "Generate SHA1 key from a string.");
+    m.def("expand_dsp_from_file", [](const std::string& filename, std::vector<std::string> args, std::string& sha_key, std::string& error_msg) {
+        std::vector<const char *> argv;
+        argv.reserve(args.size());
+        for (auto &i : args) argv.push_back(const_cast<char *>(i.c_str()));
+        return expandDSPFromFile(filename, argv.size(), argv.data(), sha_key, error_msg);
+    }, "Expand DSP source code from a file into a self-contained DSP string.");
 
-    m.def("expand_dsp_from_file", [](const std::string& filename, std::vector<std::string> args, std::string& sha_key,  std::string& error_msg) {
-        std::vector<const char *> cstrs;
-        cstrs.reserve(args.size());
-        for (auto &i : args) cstrs.push_back(const_cast<char *>(i.c_str()));
-        return expandDSPFromFile(filename, cstrs.size(), cstrs.data(), sha_key, error_msg);
-    }, "Expand DSP source code into a self-contained DSP.");
-
-    m.def("expand_dsp_from_string", [](const std::string& name_app, const std::string& dsp_content, std::vector<std::string> args, std::string& sha_key,  std::string& error_msg) {
-        std::vector<const char *> cstrs;
-        cstrs.reserve(args.size());
-        for (auto &i : args) cstrs.push_back(const_cast<char *>(i.c_str()));
-        return expandDSPFromString(name_app, dsp_content, cstrs.size(), cstrs.data(), sha_key, error_msg);
+    m.def("expand_dsp_from_string", [](const std::string& name_app, const std::string& dsp_content, std::vector<std::string> args, std::string& sha_key, std::string& error_msg) {
+        std::vector<const char *> argv;
+        argv.reserve(args.size());
+        for (auto &i : args) argv.push_back(const_cast<char *>(i.c_str()));
+        return expandDSPFromString(name_app, dsp_content, argv.size(), argv.data(), sha_key, error_msg);
     }, "Expand DSP source code from a file into a self-contained DSP string.");
 
     m.def("generate_aux_files_from_file", [](const std::string& filename, std::vector<std::string> args, std::string& error_msg) {
-        std::vector<const char *> cstrs;
-        cstrs.reserve(args.size());
-        for (auto &i : args) cstrs.push_back(const_cast<char *>(i.c_str()));
-        return generateAuxFilesFromFile(filename, cstrs.size(), cstrs.data(), error_msg);
+        std::vector<const char *> argv;
+        argv.reserve(args.size());
+        for (auto &i : args) argv.push_back(const_cast<char *>(i.c_str()));
+        return generateAuxFilesFromFile(filename, argv.size(), argv.data(), error_msg);
     }, "Generate additional file (other backends, SVG, XML, JSON...) starting from a filename.");
 
     m.def("generate_aux_files_from_string", [](const std::string& name_app, const std::string& dsp_content, std::vector<std::string> args, std::string& error_msg) {
-        std::vector<const char *> cstrs;
-        cstrs.reserve(args.size());
-        for (auto &i : args) cstrs.push_back(const_cast<char *>(i.c_str()));
-        return generateAuxFilesFromString(name_app, dsp_content, cstrs.size(), cstrs.data(), error_msg);
-    }, "Generate additional file (other backends, SVG, XML, JSON...) starting from a string.");
+        std::vector<const char *> argv;
+        argv.reserve(args.size());
+        for (auto &i : args) argv.push_back(const_cast<char *>(i.c_str()));
+        return generateAuxFilesFromString(name_app, dsp_content, argv.size(), argv.data(), error_msg);
+    }, "Expand DSP source code from a file into a self-contained DSP string.");
 
     // -----------------------------------------------------------------------
-    // interpreter-dsp
+    // faust/dsp/interpreter-dsp.h
 
     m.def("get_version", &getCLibFaustVersion, "Retrieve the libfaust version.");
     m.def("get_interpreter_dsp_factory_from_sha_key", &getInterpreterDSPFactoryFromSHAKey, "Get the Faust DSP factory associated with a given SHA key.");
@@ -93,25 +102,29 @@ NB_MODULE(nanofaust, m)
             return NULL;
         }
         return factory;
-    }, /* nb::arg("filename"), */ "Create a Faust DSP factory from a DSP source code as a file.", nb::rv_policy::reference);
-
-    // m.def("create_interpreter_dsp_factory_from_file", [](const std::string& filename, std::vector<std::string> args, std::string& error_msg) {
-    //     std::vector<const char *> cstrs;
-    //     cstrs.reserve(args.size());
-    //     for (auto &i : args) cstrs.push_back(const_cast<char *>(i.c_str()));
-    //     return createInterpreterDSPFactoryFromFile(filename, cstrs.size(), cstrs.data(), error_msg);
-    // }, "Create a Faust DSP factory from a DSP source code as a file.");
+    }, "Create a Faust DSP factory from a DSP source code as a file.", nb::rv_policy::reference);
 
     m.def("create_interpreter_dsp_factory_from_string", [](const std::string& name_app, const std::string& dsp_content, std::vector<std::string> args, std::string& error_msg) {
-        std::vector<const char *> cstrs;
-        cstrs.reserve(args.size());
-        for (auto &i : args) cstrs.push_back(const_cast<char *>(i.c_str()));
-        return createInterpreterDSPFactoryFromString(name_app, dsp_content, cstrs.size(), cstrs.data(), error_msg);
+        std::vector<const char *> argv;
+        argv.reserve(args.size());
+        for (auto &i : args) argv.push_back(const_cast<char *>(i.c_str()));
+        return createInterpreterDSPFactoryFromString(name_app, dsp_content, argv.size(), argv.data(), error_msg);
     }, "Create a Faust DSP factory from a DSP source code as a string.");
 
+    m.def("create_interpreter_dsp_factory_from_signals", [](const std::string& name_app, tvec signals, std::vector<std::string> args, std::string& error_msg) {
+        std::vector<const char *> argv;
+        argv.reserve(args.size());
+        for (auto &i : args) argv.push_back(const_cast<char *>(i.c_str()));    
+        return createInterpreterDSPFactoryFromSignals(name_app, signals, argv.size(), argv.data(), error_msg);
+    }, "Create a Faust DSP factory from a vector of output signals.");
 
-    // m.def("create_interpreter_dsp_factory_from_signals", &createInterpreterDSPFactoryFromSignals, "Create a Faust DSP factory from a vector of output signals.");
-    // m.def("create_interpreter_dsp_factory_from_boxes", &createInterpreterDSPFactoryFromBoxes, "Create a Faust DSP factory from a box expression.");
+    m.def("create_interpreter_dsp_factory_from_boxes", [](const std::string& name_app, Box box, std::vector<std::string> args, std::string& error_msg) {
+        std::vector<const char *> argv;
+        argv.reserve(args.size());
+        for (auto &i : args) argv.push_back(const_cast<char *>(i.c_str()));    
+        return createInterpreterDSPFactoryFromBoxes(name_app, box, argv.size(), argv.data(), error_msg);
+    }, "Create a Faust DSP factory from a box expression.");
+
     m.def("delete_interpreter_dsp_factory", &deleteInterpreterDSPFactory, "Delete a Faust DSP factory,");
     m.def("delete_all_interpreter_dsp_factories", &deleteAllInterpreterDSPFactories, "Delete all Faust DSP factories kept in the library cache.");
     m.def("get_all_interpreter_dsp_factories", &getAllInterpreterDSPFactories, "Return Faust DSP factories of the library cache as a vector of their SHA keys.");
@@ -122,10 +135,14 @@ NB_MODULE(nanofaust, m)
     m.def("read_interpreter_dsp_factory_from_bitcode_file", &readInterpreterDSPFactoryFromBitcodeFile, "Create a Faust DSP factory from a bitcode file.");
     m.def("write_interpreter_dsp_factory_to_bitcode_file", &writeInterpreterDSPFactoryToBitcodeFile, "Write a Faust DSP factory into a bitcode file.");
 
-    nb::class_<interpreter_dsp>(m, "InterpreterDsp")
+    nb::class_<interpreter_dsp, dsp>(m, "InterpreterDsp")
         .def("get_numinputs", &interpreter_dsp::getNumInputs, "Return instance number of audio inputs")
         .def("get_numoutputs", &interpreter_dsp::getNumOutputs, "Return instance number of audio outputs")
         // .def("build_user_interface", &interpreter_dsp::buildUserInterface, "Trigger the ui_interface parameter with instance specific calls")
+        .def("build_user_interface", [](interpreter_dsp &self) {
+            PrintUI print_ui;
+            return self.buildUserInterface(&print_ui);
+         }, "Trigger the ui_interface parameter with instance specific calls")
         .def("get_sampletate", &interpreter_dsp::getSampleRate, "Return the sample rate currently used by the instance")
         .def("init", &interpreter_dsp::init, "Global init calls classInit and instanceInit")
         .def("instance_init", &interpreter_dsp::instanceInit, "Init instance state")
@@ -133,7 +150,7 @@ NB_MODULE(nanofaust, m)
         .def("instance_reset_user_interface", &interpreter_dsp::instanceResetUserInterface, "Init default control parameters values")
         .def("instance_clear", &interpreter_dsp::instanceClear, "Init instance state but keep the control parameter values")
         .def("clone", &interpreter_dsp::clone, "Return a clone of the instance.")
-        // .def("metadata", &interpreter_dsp::metadata, "Trigger the Meta* parameter with instance specific calls to 'declare' (key, value) metadata.")
+        .def("metadata", &interpreter_dsp::metadata, "Trigger the Meta* parameter with instance specific calls to 'declare' (key, value) metadata.")
         // .def("compute", &interpreter_dsp::compute, "DSP instance computation, to be called with successive in/out audio buffers.")
         ;
 
@@ -150,9 +167,59 @@ NB_MODULE(nanofaust, m)
         .def("get_memory_manager", &interpreter_dsp_factory::getMemoryManager, "Return the currently set custom memory manager")
         ;
 
+    // -----------------------------------------------------------------------
+    // faust/audio/rtaudio-dsp.h
+    
+    nb::class_<rtaudio>(m, "RtAudioDriver")
+        .def(nb::init<int, int>())
+        // .def("init", nb::overload_cast<const char*, dsp*>(&rtaudio::init), "initialize driver")
+        .def("init", [](rtaudio &self, dsp* instance) {
+            return self.init("FaustDSP", instance); // first char* arg is a dummy
+        }, "initialize audio driver")
+        .def("set_dsp", &rtaudio::setDsp)
+        .def("start", &rtaudio::start)
+        .def("stop", &rtaudio::stop)
+        .def("get_buffersize", &rtaudio::getBufferSize)
+        .def("get_sapmplerate", &rtaudio::getSampleRate)
+        .def("get_numinputs", &rtaudio::getNumInputs)
+        .def("get_numoutputs", &rtaudio::getNumOutputs)
+        ;
 
     // -----------------------------------------------------------------------
-    // rtaudio
+    // faust/gui/PrintUI.h
+    
+    nb::class_<PrintUI>(m, "PrintUI")
+        .def(nb::init<>())
+        .def("open_tab_box", &PrintUI::openTabBox)
+        .def("open_horizontal_box", &PrintUI::openHorizontalBox)
+        .def("open_vertical_box", &PrintUI::openVerticalBox)
+        .def("close_box", &PrintUI::closeBox)
+        .def("add_button", &PrintUI::addButton)
+        .def("add_check_button", &PrintUI::addCheckButton)
+        .def("add_vertical_slider", &PrintUI::addVerticalSlider)
+        .def("add_horizontal_slider", &PrintUI::addHorizontalSlider)
+        .def("add_numentry", &PrintUI::addNumEntry)
+        .def("add_horizontal_bargraph", &PrintUI::addHorizontalBargraph)
+        .def("add_vertical_bargraph", &PrintUI::addVerticalBargraph)
+        // .def("add_soundfile", &PrintUI::addSoundfile)
+        .def("declare", &PrintUI::declare)
+        ;
+
+    // -----------------------------------------------------------------------
+    // faust/gui/meta.h
+
+    nb::class_<Meta>(m, "Meta")
+        .def("declare", &Meta::declare, "declare key value items")
+        ;
+    
+    // nb::class_<DspMeta>(m, "DspMeta")
+    //     .def("declare", &DspMeta::declare, "declare key value items")
+    //     ;
+
+    // -----------------------------------------------------------------------
+    // rtaudio/RtAudio.h
+
+#if INCLUDE_RTAUDIO_WRAPPER
 
     nb::enum_<RtAudioErrorType>(m, "RtAudioErrorType")
         .value("RTAUDIO_NO_ERROR",          RtAudioErrorType::RTAUDIO_NO_ERROR,           "No error")
@@ -174,17 +241,17 @@ NB_MODULE(nanofaust, m)
     nb::class_<RtAudio> _rta(m, "RtAudio");
 
     nb::enum_<RtAudio::Api>(_rta, "Api")
-        .value("UNSPECIFIED",   RtAudio::Api::UNSPECIFIED,    "Search for a working compiled API")
-        .value("MACOSX_CORE",   RtAudio::Api::MACOSX_CORE,    "Macintosh OS-X Core Audio API")
-        .value("LINUX_ALSA",    RtAudio::Api::LINUX_ALSA,     "The Advanced Linux Sound Architecture API")
-        .value("UNIX_JACK",     RtAudio::Api::UNIX_JACK,      "The Jack Low-Latency Audio Server API")
-        .value("LINUX_PULSE",   RtAudio::Api::LINUX_PULSE,    "The Linux PulseAudio API")
-        .value("LINUX_OSS",     RtAudio::Api::LINUX_OSS,      "The Linux Open Sound System API")
-        .value("WINDOWS_ASIO",  RtAudio::Api::WINDOWS_ASIO,   "The Steinberg Audio Stream I/O API")
+        .value("UNSPECIFIED",    RtAudio::Api::UNSPECIFIED,    "Search for a working compiled API")
+        .value("MACOSX_CORE",    RtAudio::Api::MACOSX_CORE,    "Macintosh OS-X Core Audio API")
+        .value("LINUX_ALSA",     RtAudio::Api::LINUX_ALSA,     "The Advanced Linux Sound Architecture API")
+        .value("UNIX_JACK",      RtAudio::Api::UNIX_JACK,      "The Jack Low-Latency Audio Server API")
+        .value("LINUX_PULSE",    RtAudio::Api::LINUX_PULSE,    "The Linux PulseAudio API")
+        .value("LINUX_OSS",      RtAudio::Api::LINUX_OSS,      "The Linux Open Sound System API")
+        .value("WINDOWS_ASIO",   RtAudio::Api::WINDOWS_ASIO,   "The Steinberg Audio Stream I/O API")
         .value("WINDOWS_WASAPI", RtAudio::Api::WINDOWS_WASAPI, "The Microsoft WASAPI API")
-        .value("WINDOWS_DS",    RtAudio::Api::WINDOWS_DS,     "The Microsoft DirectSound API")
-        .value("RTAUDIO_DUMMY", RtAudio::Api::RTAUDIO_DUMMY,  "A compilable but non-functional API")
-        .value("NUM_APIS",      RtAudio::Api::NUM_APIS,       "Number of values in this enum")
+        .value("WINDOWS_DS",     RtAudio::Api::WINDOWS_DS,     "The Microsoft DirectSound API")
+        .value("RTAUDIO_DUMMY",  RtAudio::Api::RTAUDIO_DUMMY,  "A compilable but non-functional API")
+        .value("NUM_APIS",       RtAudio::Api::NUM_APIS,       "Number of values in this enum")
         .export_values();
 
     nb::class_<RtAudio::DeviceInfo>(_rta, "DeviceInfo")
@@ -253,5 +320,7 @@ NB_MODULE(nanofaust, m)
     _rta.def("get_stream_samplerate", &RtAudio::getStreamSampleRate, "Returns actual sample rate in use by the (open) stream.");
     _rta.def("set_error_callback", &RtAudio::setErrorCallback, "Set a client-defined function that will be invoked when an error or warning occurs.");
     _rta.def("show_warnings", &RtAudio::showWarnings, "Specify whether warning messages should be output or not.");
+
+#endif // INCLUDE_RTAUDIO_WRAPPER
 
 }

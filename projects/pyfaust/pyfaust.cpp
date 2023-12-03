@@ -320,6 +320,7 @@ PYBIND11_MODULE(pyfaust, m)
     _rta.def("get_stream_samplerate", &RtAudio::getStreamSampleRate, "Returns actual sample rate in use by the (open) stream.");
     _rta.def("set_error_callback", &RtAudio::setErrorCallback, "Set a client-defined function that will be invoked when an error or warning occurs.");
     _rta.def("show_warnings", &RtAudio::showWarnings, "Specify whether warning messages should be output or not.");
-#endif
+
+#endif // INCLUDE_RTAUDIO_WRAPPER
 
 }

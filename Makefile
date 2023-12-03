@@ -59,6 +59,11 @@ test_pyfaust: cmake
 	@cp tests/test_pyfaust.py ./build/
 	@cd build && python3 test_pyfaust.py
 
+test_nanofaust: cmake
+	@cp tests/noise.dsp ./build/
+	@cp tests/test_nanofaust.py ./build/
+	@cd build && python3 test_nanofaust.py
+
 clean:
 	@rm projects/cyfaust/cyfaust.cpp
 	@rm -rf cyfaust.*.so build
