@@ -1,20 +1,15 @@
 set(PROJECT_NAME cfaust)
 
-set(CFAUST_LIB ${CMAKE_SOURCE_DIR}/lib)
-set(CFAUST_INCLUDE ${CMAKE_SOURCE_DIR}/include)
-
-set(PROJECT_SRC
-    ${CMAKE_CURRENT_SOURCE_DIR}/cfaust.cpp
-)
+set(PROJECT_SRC ${CMAKE_CURRENT_SOURCE_DIR}/cfaust.cpp)
 
 add_library( 
-    ${PROJECT_NAME} 
+    ${PROJECT_NAME}
     MODULE
     ${PROJECT_SRC}
 )
 
 add_custom_command(
-    OUTPUT ${CMAKE_CURRENT_SOURCE_DIR}/cfaust.cpp
+    OUTPUT ${PROJECT_NAME}
     COMMAND cythonize -3 cfaust.pyx
     WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
     DEPENDS cfaust.pyx
@@ -43,14 +38,15 @@ target_include_directories(
     ${PROJECT_NAME}
     PUBLIC
     ${Python_INCLUDE_DIRS}
-    ${CFAUST_INCLUDE}
+    ${PROJECT_INCLUDES}
 )
 
 target_compile_definitions(
     ${PROJECT_NAME}
     PUBLIC
     -DNDEBUG
-    -DINTERP_DSP=1
+    ${RTAUDIO_COMPILE_DEFS}
+    ${FAUST_COMPILE_DEFS}
 )
 
 target_compile_options(
@@ -79,7 +75,7 @@ target_link_directories(
     ${PROJECT_NAME} 
     PUBLIC
     ${Python_LIBRARY_DIRS}
-    ${CFAUST_LIB}
+    ${PROJECT_LIB_DIRS}
 )
 
 target_link_libraries(
@@ -87,7 +83,7 @@ target_link_libraries(
     PUBLIC
     ${Python_LIBRARIES}
     "$<$<PLATFORM_ID:Darwin>:-ldl>"
-    ${CFAUST_LIB}/libfaust.a
+    ${FAUST_STATICLIB}
 )
 
 

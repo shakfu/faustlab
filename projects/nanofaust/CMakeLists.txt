@@ -1,5 +1,7 @@
 set(PROJECT_NAME nanofaust)
 
+set(PROJECT_SRC ${CMAKE_CURRENT_SOURCE_DIR}/nanofaust.cpp)
+
 # Detect the installed nanobind package and import it into CMake
 execute_process(
     COMMAND "${Python_EXECUTABLE}" -m nanobind --cmake_dir
@@ -7,39 +9,34 @@ execute_process(
 list(APPEND CMAKE_PREFIX_PATH "${NB_DIR}")
 find_package(nanobind CONFIG REQUIRED)
 
-
-set(PROJECT_LIB ${CMAKE_SOURCE_DIR}/lib)
-set(PROJECT_INCLUDE ${CMAKE_SOURCE_DIR}/include)
-set(RTAUDIO_SRC
-    ${PROJECT_INCLUDE}/rtaudio/RtAudio.cpp
-    ${PROJECT_INCLUDE}/rtaudio/RtAudio.h
-)
-
-
-find_package(pybind11 REQUIRED)
-
-
 nanobind_add_module(
     ${PROJECT_NAME}
     ${RTAUDIO_SRC}
-    nanofaust.cpp
+    ${PROJECT_SRC}
 )
-
 
 target_include_directories(
     ${PROJECT_NAME} 
     PUBLIC
-    ${PROJECT_INCLUDE}
+    ${PROJECT_INCLUDES}
+)
+
+target_compile_definitions(
+    ${PROJECT_NAME}
+    PUBLIC
+    ${RTAUDIO_COMPILE_DEFS}
+    # ${FAUST_COMPILE_DEFS}
 )
 
 target_link_directories(
     ${PROJECT_NAME} 
     PUBLIC
-    ${PROJECT_LIB}
+    ${PROJECT_LIB_DIRS}
 )
 
 target_link_libraries(
     ${PROJECT_NAME}    
     PUBLIC
-    ${PROJECT_LIB}/libfaust.a
+    ${RTAUDIO_LINK_LIBS}
+    ${FAUST_STATICLIB}
 )

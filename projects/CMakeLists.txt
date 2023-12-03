@@ -29,17 +29,31 @@ message(STATUS "Python_VERSION_MAJOR: ${Python_VERSION_MAJOR}")
 message(STATUS "Python_VERSION_MINOR: ${Python_VERSION_MINOR}")
 message(STATUS "Python_VERSION_PATCH: ${Python_VERSION_PATCH}")
 
-set(PROJECT_LIB ${CMAKE_SOURCE_DIR}/lib)
-set(PROJECT_INCLUDE ${CMAKE_SOURCE_DIR}/include)
+# common variables
+
+set(PROJECT_LIB_DIRS ${CMAKE_SOURCE_DIR}/lib)
+set(PROJECT_INCLUDES ${CMAKE_SOURCE_DIR}/include)
+
+set(FAUST_STATICLIB 
+	${PROJECT_LIB_DIRS}/libfaust${CMAKE_STATIC_LIBRARY_SUFFIX})
+
+set(FAUST_COMPILE_DEFS
+	-DINTERP_DSP=1
+)
+
 set(RTAUDIO_SRC
-    ${PROJECT_INCLUDE}/rtaudio/RtAudio.cpp
-    ${PROJECT_INCLUDE}/rtaudio/RtAudio.h
+    ${PROJECT_INCLUDES}/rtaudio/RtAudio.cpp
+    ${PROJECT_INCLUDES}/rtaudio/RtAudio.h
 )
 set(RTAUDIO_LINK_LIBS
 	"$<$<PLATFORM_ID:Darwin>:-lpthread>"
 	"$<$<PLATFORM_ID:Darwin>:-framework CoreFoundation>"
 	"$<$<PLATFORM_ID:Darwin>:-framework CoreAudio>"
 )
+set(RTAUDIO_COMPILE_DEFS
+	$<$<PLATFORM_ID:Darwin>:__MACOSX_CORE__>
+)
+
 
 
 

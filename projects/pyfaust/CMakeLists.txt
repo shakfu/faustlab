@@ -1,5 +1,6 @@
-
 set(PROJECT_NAME pyfaust)
+
+set(PROJECT_SRC ${CMAKE_CURRENT_SOURCE_DIR}/pyfaust.cpp)
 
 # Detect the installed pybind11 package and import it into CMake
 execute_process(
@@ -8,41 +9,34 @@ execute_process(
 list(APPEND CMAKE_PREFIX_PATH "${PB_DIR}")
 find_package(pybind11 CONFIG REQUIRED)
 
-
 pybind11_add_module(
     ${PROJECT_NAME}
     ${RTAUDIO_SRC}
-    pyfaust.cpp
+    ${PROJECT_SRC}
 )
-
 
 target_include_directories(
     ${PROJECT_NAME}
     PUBLIC
-    ${PROJECT_INCLUDE}
-
+    ${PROJECT_INCLUDES}
 )
 
 target_compile_definitions(
     ${PROJECT_NAME}
     PUBLIC
-    __MACOSX_CORE__
+    ${RTAUDIO_COMPILE_DEFS}
+    # ${FAUST_COMPILE_DEFS}
 )
 
 target_link_directories(
     ${PROJECT_NAME}
     PUBLIC
-    ${PROJECT_LIB}
+    ${PROJECT_LIB_DIRS}
 )
 
 target_link_libraries(
     ${PROJECT_NAME}
     PUBLIC
     ${RTAUDIO_LINK_LIBS}
-    ${PROJECT_LIB}/libfaust.a
+    ${FAUST_STATICLIB}
 )
-
-# file(
-#     COPY ${CMAKE_SOURCE_DIR}/tests/test_pyfaust.py 
-#     DESTINATION ${CMAKE_BINARY_DIR}
-# )

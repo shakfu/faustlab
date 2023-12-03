@@ -1,19 +1,16 @@
 set(PROJECT_NAME cyfaust)
 
-set(CYFAUST_LIB ${CMAKE_SOURCE_DIR}/lib)
-set(CYFAUST_INCLUDE ${CMAKE_SOURCE_DIR}/include)
-set(CYFAUST_SRC ${CMAKE_CURRENT_SOURCE_DIR}/cyfaust.cpp)
-
+set(PROJECT_SRC ${CMAKE_CURRENT_SOURCE_DIR}/cyfaust.cpp)
 
 add_library( 
     ${PROJECT_NAME} 
     MODULE
     ${RTAUDIO_SRC}
-    ${CYFAUST_SRC}
+    ${PROJECT_SRC}
 )
 
 add_custom_command(
-    OUTPUT ${CMAKE_CURRENT_SOURCE_DIR}/cyfaust.cpp
+    OUTPUT ${PROJECT_SRC}
     COMMAND cythonize -3 cyfaust.pyx
     WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
     DEPENDS cyfaust.pyx
@@ -42,16 +39,15 @@ target_include_directories(
     ${PROJECT_NAME}
     PUBLIC
     ${Python_INCLUDE_DIRS}
-    ${PROJECT_INCLUDE}
-    ${CYFAUST_INCLUDE}
+    ${PROJECT_INCLUDES}
 )
 
 target_compile_definitions(
     ${PROJECT_NAME}
     PUBLIC
-    $<$<PLATFORM_ID:Darwin>:__MACOSX_CORE__>
+    ${RTAUDIO_COMPILE_DEFS}
+    ${FAUST_COMPILE_DEFS}
     -DNDEBUG
-    -DINTERP_DSP=1
 )
 
 target_compile_options(
@@ -80,7 +76,7 @@ target_link_directories(
     ${PROJECT_NAME} 
     PUBLIC
     ${Python_LIBRARY_DIRS}
-    ${CYFAUST_LIB}
+    ${PROJECT_LIB_DIRS}
 )
 
 target_link_libraries(
@@ -91,7 +87,7 @@ target_link_libraries(
     "$<$<PLATFORM_ID:Darwin>:-ldl>"
     "$<$<PLATFORM_ID:Darwin>:-ldl>"
     ${RTAUDIO_LINK_LIBS}
-    ${CYFAUST_LIB}/libfaust.a
+    ${FAUST_STATICLIB}
 )
 
 
