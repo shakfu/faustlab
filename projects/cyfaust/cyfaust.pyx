@@ -39,7 +39,7 @@ cdef class ParamArray:
 
 
 cdef class SignalVector:
-    """wraps tvec: typedef std::vector<CTree*> tvec"""
+    """wraps tvec: a std::vector<CTree*>"""
     cdef fi.tvec* ptr
     cdef bint ptr_owner
 
@@ -52,6 +52,86 @@ cdef class SignalVector:
 
 
 
+
+## ---------------------------------------------------------------------------
+## faust/dsp/libfaust
+
+def generate_sha1(data: str) -> str:
+    """Generate SHA1 key from a string."""
+    return fi.generateSHA1(data.encode('utf8')).decode()
+
+def expand_dsp_from_file(filename: str, *args) -> (str, str):
+    """Expand dsp in a file into a self-contained dsp string.
+    
+    Returns sha key for expanded dsp string and expanded dsp string
+    """
+    cdef ParamArray params = ParamArray(args)
+    cdef string error_msg, sha_key 
+    error_msg.reserve(4096)
+    sha_key.reserve(100) # sha1 is 40 chars
+    cdef string result = fi.expandDSPFromFile(
+        filename.encode('utf8'),
+        params.argc,
+        params.argv,
+        sha_key,
+        error_msg
+    )
+    if not error_msg.empty():
+        print(error_msg.decode())
+        return
+    return (sha_key.decode(), result.decode())
+
+def expand_dsp_from_string(name_app: str, dsp_content: str, *args) -> str:
+    """Expand dsp in a file into a self-contained dsp string."""
+    cdef ParamArray params = ParamArray(args)
+    cdef string error_msg, sha_key 
+    error_msg.reserve(4096)
+    sha_key.reserve(100) # sha1 is 40 chars
+    cdef string result = fi.expandDSPFromString(
+        name_app.encode('utf8'),
+        dsp_content.encode('utf8'),
+        params.argc,
+        params.argv,
+        sha_key,
+        error_msg
+    )
+    if not error_msg.empty():
+        print(error_msg.decode())
+        return
+    return (sha_key.decode(), result.decode())
+
+def generate_auxfiles_from_file(filename: str, *args) -> str:
+    """Generate additional files (other backends, SVG, XML, JSON...) from a file."""
+    cdef ParamArray params = ParamArray(args)
+    cdef string error_msg
+    error_msg.reserve(4096)
+    result = fi.generateAuxFilesFromFile(
+        filename.encode('utf8'),
+        params.argc,
+        params.argv,
+        error_msg
+    )
+    if not error_msg.empty():
+        print(error_msg.decode())
+        return False
+    return result
+
+def generate_auxfiles_from_string(name_app: str, dsp_content: str, *args) -> str:
+    """Generate additional files (other backends, SVG, XML, JSON...) from a string."""
+    cdef ParamArray params = ParamArray(args)
+    cdef string error_msg
+    error_msg.reserve(4096)
+    result = fi.generateAuxFilesFromString(
+        name_app.encode('utf8'),
+        dsp_content.encode('utf8'),
+        params.argc,
+        params.argv,
+        error_msg
+    )
+    if not error_msg.empty():
+        print(error_msg.decode())
+        return False
+    return result
 
 ## ---------------------------------------------------------------------------
 ## faust/dsp/interpreter-dsp
@@ -361,10 +441,6 @@ def stop_multithreaded_access_mode():
 
 ## to wrap -------------------------------------------------------------------
 
-# cdef vector[string] get_all_interpreter_dsp_factories():
-#     """Return Faust DSP factories of the library cache as a vector of their SHA keys."""
-#     return fi.getAllInterpreterDSPFactories()
-
 cdef fi.interpreter_dsp_factory* create_interpreter_dsp_factory_from_signals(
         const string& name_app, fi.tvec signals, int argc, const char* argv[], string& error_msg):
     """Create a Faust DSP factory from a vector of output signals."""
@@ -376,3 +452,5 @@ cdef fi.interpreter_dsp_factory* create_interpreter_dsp_factory_from_boxes(
     """Create a Faust DSP factory from a box expression."""
     return fi.createInterpreterDSPFactoryFromBoxes(
         name_app, box, argc, argv, error_msg)
+
+

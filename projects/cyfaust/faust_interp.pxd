@@ -1,12 +1,6 @@
 from libcpp.string cimport string
 from libcpp.vector cimport vector
 
-cdef extern from "faust/dsp/libfaust-signal.h":
-    cdef cppclass CTree
-    ctypedef vector[CTree*] tvec
-    ctypedef CTree* Signal
-    ctypedef CTree* Box
-
 cdef extern from "faust/gui/CInterface.h":
     ctypedef float FAUSTFLOAT
     ctypedef struct UIGlue
@@ -37,9 +31,24 @@ cdef extern from "faust/gui/PrintUI.h":
         # void addSoundfile(const char* label, const char* filename,  Soundfile** sf_zone)
         void declare(FAUSTFLOAT* zone, const char* key, const char* val)
 
-
 cdef extern from "faust/dsp/dsp.h":
     cdef cppclass dsp_memory_manager
+    cdef cppclass dsp
+
+cdef extern from "faust/dsp/libfaust.h":
+    string generateSHA1(const string& data)
+    string expandDSPFromFile(const string& filename, int argc, const char* argv[], string& sha_key, string& error_msg)
+    string expandDSPFromString(const string& name_app, const string& dsp_content, int argc, const char* argv[], string& sha_key, string& error_msg)
+    bint generateAuxFilesFromFile(const string& filename, int argc, const char* argv[], string& error_msg)
+    bint generateAuxFilesFromString(const string& name_app, const string& dsp_content, int argc, const char* argv[], string& error_msg)
+
+cdef extern from "faust/dsp/libfaust-signal.h":
+    cdef cppclass CTree
+    ctypedef vector[CTree*] tvec
+    ctypedef CTree* Signal
+    ctypedef CTree* Box
+
+
 
 cdef extern from "faust/dsp/interpreter-dsp.h":
     const char* getCLibFaustVersion()
@@ -92,3 +101,16 @@ cdef extern from "faust/dsp/interpreter-dsp.h":
     string writeInterpreterDSPFactoryToBitcode(interpreter_dsp_factory* factory)
     interpreter_dsp_factory* readInterpreterDSPFactoryFromBitcodeFile(const string& bit_code_path, string& error_msg)
     bint writeInterpreterDSPFactoryToBitcodeFile(interpreter_dsp_factory* factory, const string& bit_code_path)
+
+cdef extern from "faust/audio/rtaudio-dsp.h":
+    cdef cppclass rtaudio:    
+        rtaudio(int srate, int bsize) except +
+        bint init(const char* name, dsp* DSP)
+        bint init(const char* name, int numInputs, int numOutputs)
+        void setDsp(dsp* DSP)
+        bint start() 
+        void stop() 
+        int getBufferSize() 
+        int getSampleRate()
+        int getNumInputs()
+        int getNumOutputs()
