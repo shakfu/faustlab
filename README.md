@@ -1,13 +1,13 @@
 # faustlab
 
-A exploratory project to wrap the Faust *interpreter* for use by python via the following wrapping frameworks
+A exploratory project to wrap the Faust *interpreter* for use by python via the following wrapping frameworks using the RtAudio cross-platform audio driver:
 
 - [ ] cyfaust: 	cython 		(faust c++ interface)
 - [ ] cfaustt: 	cython 		(faust c interface)
 - [x] pyfaust: 	pybind11 	(faust c++ interface)
 - [ ] nanobind: nanobind 	(faust c++ interface)
 
-The tick in the box means that wrapper has passed a minimal functional test to produce audio given a faust dsp file.
+A tick in the box means that the respective wrapper code has passed a minimal functional test to produce audio given a faust dsp file.
 
 ## Usage
 

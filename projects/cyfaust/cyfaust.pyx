@@ -38,6 +38,20 @@ cdef class ParamArray:
             free(self.argv)
 
 
+cdef class SignalVector:
+    """wraps tvec: typedef std::vector<CTree*> tvec"""
+    cdef fi.tvec* ptr
+    cdef bint ptr_owner
+
+    def __cinit__(self):
+        self.ptr = new fi.tvec()
+        self.ptr_owner = False
+
+    cdef add(self, fi.Signal sig):
+        self.ptr.push_back(sig)
+
+
+
 
 ## ---------------------------------------------------------------------------
 ## faust/dsp/interpreter-dsp
@@ -148,7 +162,7 @@ cdef class InterpreterDspFactory:
             params.argv,
             error_msg,
         )
-        if error_msg.empty():
+        if not error_msg.empty():
             print(error_msg.decode())
             return
         return factory
@@ -169,7 +183,7 @@ cdef class InterpreterDspFactory:
     #         params.argv,
     #         error_msg,
     #     )
-    #     if error_msg.empty():
+    #     if not error_msg.empty():
     #         print(error_msg.decode())
     #         return
     #     return factory
@@ -190,7 +204,7 @@ cdef class InterpreterDspFactory:
     #         params.argv,
     #         error_msg,
     #     )
-    #     if error_msg.empty():
+    #     if not error_msg.empty():
     #         print(error_msg.decode())
     #         return
     #     return factory
@@ -245,7 +259,7 @@ cdef class InterpreterDspFactory:
             bitcode.encode('utf8'),
             error_msg,
         )
-        if error_msg.empty():
+        if not error_msg.empty():
             print(error_msg.decode())
             return
         return factory
