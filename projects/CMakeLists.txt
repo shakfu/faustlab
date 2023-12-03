@@ -36,8 +36,9 @@ set(RTAUDIO_SRC
     ${PROJECT_INCLUDE}/rtaudio/RtAudio.h
 )
 set(RTAUDIO_LINK_LIBS
-	-lpthread
-    "-framework CoreAudio"
+	"$<$<PLATFORM_ID:Darwin>:-lpthread>"
+	"$<$<PLATFORM_ID:Darwin>:-framework CoreFoundation>"
+	"$<$<PLATFORM_ID:Darwin>:-framework CoreAudio>"
 )
 
 

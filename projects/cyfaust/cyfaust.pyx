@@ -140,17 +140,27 @@ def generate_auxfiles_from_string(name_app: str, dsp_content: str, *args) -> str
 cdef class RtAudioDriver:
     """faust audio driver using rtaudio cross-platform lib."""
     cdef fi.rtaudio *ptr
+    cdef bint ptr_owner
 
-    def __init__(self, int srate, int bsize):
+    def __dealloc__(self):
+        if self.ptr and self.ptr_owner:
+            del self.ptr
+            self.ptr = NULL
+
+    def __cinit__(self, int srate, int bsize):
         self.ptr = new fi.rtaudio(srate, bsize)
+        self.ptr_owner = True
 
     def set_dsp(self, dsp: InterpreterDsp):
         self.ptr.setDsp(<fi.dsp*>dsp.ptr)
 
-    def init(self, dsp: InterpreterDsp):
+    def init(self, dsp: InterpreterDsp) -> bool:
         """initialize with dsp instance."""
-        self.ptr.init("RtAudioDriver", dsp.get_numinputs(), dsp.get_numoutputs())
-        self.set_dsp(dsp)
+        name = "RtAudioDriver".encode('utf8')
+        if self.ptr.init(name, dsp.get_numinputs(), dsp.get_numoutputs()):
+            self.set_dsp(dsp)
+            return True
+        return False
 
     def start(self):
         if not self.ptr.start():
@@ -391,10 +401,10 @@ cdef class InterpreterDsp:
     cdef fi.interpreter_dsp* ptr
     cdef bint ptr_owner
 
-    def __dealloc__(self):
-        if self.ptr and self.ptr_owner:
-            del self.ptr
-            self.ptr = NULL
+    # def __dealloc__(self):
+    #     if self.ptr and self.ptr_owner:
+    #         del self.ptr
+    #         self.ptr = NULL
 
     def __cinit__(self):
         self.ptr = NULL

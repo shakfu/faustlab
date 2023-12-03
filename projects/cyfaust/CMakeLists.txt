@@ -49,6 +49,7 @@ target_include_directories(
 target_compile_definitions(
     ${PROJECT_NAME}
     PUBLIC
+    $<$<PLATFORM_ID:Darwin>:__MACOSX_CORE__>
     -DNDEBUG
     -DINTERP_DSP=1
 )
@@ -87,13 +88,11 @@ target_link_libraries(
     PUBLIC
     ${Python_LIBRARIES}
     "$<$<PLATFORM_ID:Darwin>:-ldl>"
+    "$<$<PLATFORM_ID:Darwin>:-ldl>"
+    "$<$<PLATFORM_ID:Darwin>:-ldl>"
     ${RTAUDIO_LINK_LIBS}
     ${CYFAUST_LIB}/libfaust.a
 )
 
-# file(
-#     COPY ${CMAKE_SOURCE_DIR}/tests/test_cyfaust.py 
-#     DESTINATION ${CMAKE_BINARY_DIR}
-# )
 
 

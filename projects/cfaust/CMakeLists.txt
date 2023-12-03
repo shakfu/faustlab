@@ -22,13 +22,13 @@ add_custom_command(
 )
 
 add_custom_target(
-    cfaust_cpp
+    cfaust_c
     DEPENDS cfaust.pyx
 )
 
 add_dependencies(
     ${PROJECT_NAME} 
-    cfaust_cpp
+    cfaust_c
 )
 
 string(TOLOWER ${CMAKE_SYSTEM_NAME} platform)
@@ -89,10 +89,5 @@ target_link_libraries(
     "$<$<PLATFORM_ID:Darwin>:-ldl>"
     ${CFAUST_LIB}/libfaust.a
 )
-
-# file(
-#     COPY ${CMAKE_SOURCE_DIR}/tests/test_cfaust.py 
-#     DESTINATION ${CMAKE_BINARY_DIR}
-# )
 
 
