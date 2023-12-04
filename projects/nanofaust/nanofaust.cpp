@@ -103,6 +103,7 @@ NB_MODULE(nanofaust, m)
         }
         return factory;
     }, "Create a Faust DSP factory from a DSP source code as a file.", nb::rv_policy::reference);
+    // }, nb::args("filename"), nb::args("args"), "Create a Faust DSP factory from a DSP source code as a file.", nb::rv_policy::reference);
 
     m.def("create_interpreter_dsp_factory_from_string", [](const std::string& name_app, const std::string& dsp_content, std::vector<std::string> args, std::string& error_msg) {
         std::vector<const char *> argv;
