@@ -84,8 +84,6 @@ target_link_libraries(
     PUBLIC
     ${Python_LIBRARIES}
     "$<$<PLATFORM_ID:Darwin>:-ldl>"
-    "$<$<PLATFORM_ID:Darwin>:-ldl>"
-    "$<$<PLATFORM_ID:Darwin>:-ldl>"
     ${RTAUDIO_LINK_LIBS}
     ${FAUST_STATICLIB}
 )

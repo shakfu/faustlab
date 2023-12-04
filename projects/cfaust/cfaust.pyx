@@ -171,6 +171,7 @@ cdef class InterpreterDspFactory:
             return
         return factory
 
+
 cdef class InterpreterDsp:
     cdef fi.interpreter_dsp* ptr
     cdef bint ptr_owner
@@ -212,12 +213,13 @@ cdef class InterpreterDsp:
     def clear(self):
         fi.instanceClearCInterpreterDSPInstance(self.ptr)
 
+    def build_default_user_interface(self):
+        cdef fi.PrintCUI interface
+        fi.buildUserInterfaceCInterpreterDSPInstance(
+            self.ptr, <fi.UIGlue*>&interface)
+
     cdef void build_user_interface(self, fi.UIGlue* interface):
         fi.buildUserInterfaceCInterpreterDSPInstance(self.ptr, interface)
-    
-    def default_build_user_interface(self):
-        cdef fi.PrintCUI interface
-        fi.buildUserInterfaceCInterpreterDSPInstance(self.ptr, <fi.UIGlue*>&interface)
 
     cdef void metadata(self, fi.MetaGlue* meta):
         fi.metadataCInterpreterDSPInstance(self.ptr, meta)

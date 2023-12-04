@@ -49,10 +49,15 @@ test_c:
 		-o /tmp/interp-test
 	@/tmp/interp-test tests/noise.dsp
 
-test: cmake
+test_cyfaust: cmake
 	@cp tests/noise.dsp ./build/
 	@cp tests/test_cyfaust.py ./build/
 	@cd build && python3 test_cyfaust.py
+
+test_cfaust: cmake
+	@cp tests/noise.dsp ./build/
+	@cp tests/test_cfaust.py ./build/
+	@cd build && python3 test_cfaust.py
 
 test_pyfaust: cmake
 	@cp tests/noise.dsp ./build/
