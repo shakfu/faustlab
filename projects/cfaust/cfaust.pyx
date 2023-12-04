@@ -13,13 +13,6 @@ cdef extern from "Python.h":
 
 
 ## ---------------------------------------------------------------------------
-## type aliases 
-##
-
-ctypedef fi.interpreter_dsp_factory dsp_factory
-
-
-## ---------------------------------------------------------------------------
 ## utility functions
 ##
 
@@ -100,7 +93,7 @@ cdef class InterpreterDspFactory:
         cdef InterpreterDspFactory factory = InterpreterDspFactory.__new__(
             InterpreterDspFactory)
         factory.ptr_owner = True
-        factory.ptr = <dsp_factory*>fi.getCInterpreterDSPFactoryFromSHAKey(
+        factory.ptr = <fi.interpreter_dsp_factory*>fi.getCInterpreterDSPFactoryFromSHAKey(
             sha_key.encode('utf8')
         )
         return factory
@@ -113,7 +106,7 @@ cdef class InterpreterDspFactory:
             InterpreterDspFactory)
         cdef ParamArray params = ParamArray(args)
         factory.ptr_owner = True
-        factory.ptr = <dsp_factory*>fi.createCInterpreterDSPFactoryFromFile(
+        factory.ptr = <fi.interpreter_dsp_factory*>fi.createCInterpreterDSPFactoryFromFile(
             filepath.encode('utf8'),
             params.argc,
             params.argv,
@@ -132,7 +125,7 @@ cdef class InterpreterDspFactory:
             InterpreterDspFactory)
         cdef ParamArray params = ParamArray(args)
         factory.ptr_owner = True
-        factory.ptr = <dsp_factory*>fi.createCInterpreterDSPFactoryFromString(
+        factory.ptr = <fi.interpreter_dsp_factory*>fi.createCInterpreterDSPFactoryFromString(
             name_app.encode('utf8'),
             code.encode('utf8'),
             params.argc,
@@ -191,10 +184,10 @@ cdef class InterpreterDsp:
             fi.deleteCInterpreterDSPInstance(self.ptr)
 
     @staticmethod
-    cdef InterpreterDsp from_ptr(fi.interpreter_dsp* ptr):
+    cdef InterpreterDsp from_ptr(fi.interpreter_dsp* ptr, bint ptr_owner=False):
         """Wrap the dsp instance and manage its lifetime."""
         cdef InterpreterDsp dsp = InterpreterDsp.__new__(InterpreterDsp)
-        dsp.ptr_owner = True
+        dsp.ptr_owner = ptr_owner
         dsp.ptr = ptr
         return dsp
 
@@ -219,8 +212,23 @@ cdef class InterpreterDsp:
     def clear(self):
         fi.instanceClearCInterpreterDSPInstance(self.ptr)
 
-    cdef fi.interpreter_dsp* clone(self):
-        return fi.cloneCInterpreterDSPInstance(self.ptr)
+    cdef void build_user_interface(self, fi.UIGlue* interface):
+        fi.buildUserInterfaceCInterpreterDSPInstance(self.ptr, interface)
+    
+    def default_build_user_interface(self):
+        cdef fi.PrintCUI interface
+        fi.buildUserInterfaceCInterpreterDSPInstance(self.ptr, <fi.UIGlue*>&interface)
+
+    cdef void metadata(self, fi.MetaGlue* meta):
+        fi.metadataCInterpreterDSPInstance(self.ptr, meta)
+
+    def default_metadata(self):
+        cdef fi.MetaGlue meta
+        fi.metadataCInterpreterDSPInstance(self.ptr, <fi.MetaGlue*>&meta)
+
+    def clone(self) -> InterpreterDsp:
+        cdef fi.interpreter_dsp* dsp = fi.cloneCInterpreterDSPInstance(self.ptr)
+        return InterpreterDsp.from_ptr(dsp)
 
 ## ---------------------------------------------------------------------------
 ## faust/dsp/interpreter-dsp-c
@@ -289,109 +297,27 @@ def stop_multithreaded_access_mode():
     fi.stopMTDSPFactories()
 
 
-# cdef dsp_factory* create_interpreter_dsp_ractory_from_signals(
-#         const char* name_app, fi.Signal* signals, int argc, const char* argv[],
-#         char* error_msg):
-#     """Create a Faust DSP factory from a vector of output signals.
-#     """
-#     return fi.createCInterpreterDSPFactoryFromSignals(
-#         name_app, signals, argc, argv, error_msg)
+## not yet wrapped
 
-# cdef dsp_factory* create_interpreter_dsp_factory_from_boxes(
-#         const char* name_app, fi.Box box, int argc, const char* argv[], char* error_msg):
-#     """Create a Faust DSP factory from a box expression.
-#     """
-#     return fi.createCInterpreterDSPFactoryFromBoxes(
-#         name_app, box, argc, argv, error_msg)
+cdef fi.interpreter_dsp_factory* create_interpreter_dsp_factory_from_signals(
+        const char* name_app, fi.Signal* signals, int argc, const char* argv[],
+        char* error_msg):
+    """Create a Faust DSP factory from a vector of output signals.
+    """
+    return fi.createCInterpreterDSPFactoryFromSignals(
+        name_app, signals, argc, argv, error_msg)
 
+cdef fi.interpreter_dsp_factory* create_interpreter_dsp_factory_from_boxes(
+        const char* name_app, fi.Box box, int argc, const char* argv[], char* error_msg):
+    """Create a Faust DSP factory from a box expression.
+    """
+    return fi.createCInterpreterDSPFactoryFromBoxes(
+        name_app, box, argc, argv, error_msg)
 
 
 ## instance functions.
 
-# cdef void build_userinterface_interpreter_dsp_instance(fi.interpreter_dsp* dsp, fi.UIGlue* interface):
-#     fi.buildUserInterfaceCInterpreterDSPInstance(dsp, interface)
-    
-# cdef void metadata_interpreter_dsp_instance(fi.interpreter_dsp* dsp, fi.MetaGlue* meta):
-#     fi.metadataCInterpreterDSPInstance(dsp, meta)
-    
-# cdef void compute_interpreter_dsp_instance(fi.interpreter_dsp* dsp, int count, float** input, float** output):
-#     fi.computeCInterpreterDSPInstance(dsp, count, input, output)
-
-
-
-## ---------------------------------------------------------------------------
-## interpreter tests
-##
-
-def test_param_array():
-    xs = ParamArray(["abc", "def"])
-    xs.dump()
-
-def test_create_interpreter_dsp_factory_from_string():
-    cdef char error_msg[4096]
-
-    code = """\
-        import("stdfaust.lib");
-        f0 = hslider("[foo:bar]f0", 110, 110, 880, 1);
-        n = 2;
-        inst = par(i, n, os.oscs(f0 * (n+i) / n)) :> /(n);
-        process = inst, inst;
-    """
-    cdef fi.interpreter_dsp_factory* factory = fi.createCInterpreterDSPFactoryFromString(
-        "score", code.encode('utf8'), 0, NULL, error_msg)
-
-    if factory is NULL:
-        print(error_msg.decode())
-    else:
-        fi.deleteCInterpreterDSPFactory(factory)
-        print("OK: test_create_interpreter_dsp_factory_from_string")
-
-
-def test_create_dsp_factory_from_string():
-    code = """\
-        import("stdfaust.lib");
-        f0 = hslider("[foo:bar]f0", 110, 110, 880, 1);
-        n = 2;
-        inst = par(i, n, os.oscs(f0 * (n+i) / n)) :> /(n);
-        process = inst, inst;
-    """
-    factory = create_dsp_factory_from_string("score", code)
-    print("OK: test_create_interpreter_dsp_factory_from_string")
-
-
-
-
-def test_create_interpreter_dsp_factory_from_file():
-    print("faust version:", get_version())
-
-    factory = InterpreterDspFactory.from_file('noise.dsp')
-
-    print("compile options:", factory.get_compile_options())
-    print("library list:", factory.get_library_list())
-    print("sha key", factory.get_sha_key())
-
-    dsp = factory.create_dsp_instance()
-
-    # # FIXME: doesn't work!!
-    # # ui = pyfaust.PrintUI()
-    # # dsp.build_user_interface(ui)
-    
-    # # bypass
-    # dsp.build_user_interface()
-
-    # audio = pyfaust.RtAudioDriver(48000, 256)
-
-    # # audio.init("FaustDSP", dsp)
-    # audio.init(dsp)
-
-    # audio.start()
-    # time.sleep(1)
-    # # audio.stop() # not needed here
-
-
-    # # cleanup
-    # del dsp
-    # pyfaust.delete_interpreter_dsp_factory(factory)
-    print("OK: test_create_interpreter_dsp_factory_from_file")
+cdef void compute_interpreter_dsp_instance(fi.interpreter_dsp* dsp, int count, float** input, float** output):
+    fi.computeCInterpreterDSPInstance(dsp, count, input, output)
 
 

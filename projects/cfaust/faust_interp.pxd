@@ -2,6 +2,19 @@
 cdef extern from "faust/dsp/libfaust.h":
     void freeCMemory(void* ptr)
 
+cdef extern from "faust/gui/PrintCUI.h":
+    ctypedef struct PrintCUI:
+        int fVar1
+        float fVar2
+
+cdef extern from "faust/gui/CInterface.h":
+    ctypedef float FAUSTFLOAT
+    ctypedef struct UIGlue
+    ctypedef void (* metaDeclareFun) (void* ui_interface, const char* key, const char* value)
+    ctypedef struct MetaGlue:
+        void* metaInterface
+        metaDeclareFun declare
+
 cdef extern from "faust/dsp/libfaust-signal-c.h":
     ctypedef struct CTree
     ctypedef CTree* Signal
