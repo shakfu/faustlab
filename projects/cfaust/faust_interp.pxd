@@ -1,4 +1,7 @@
 
+cdef extern from "faust/dsp/libfaust.h":
+    void freeCMemory(void* ptr)
+
 cdef extern from "faust/dsp/libfaust-signal-c.h":
     ctypedef struct CTree
     ctypedef CTree* Signal

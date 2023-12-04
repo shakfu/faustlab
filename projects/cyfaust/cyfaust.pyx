@@ -253,7 +253,7 @@ cdef class InterpreterDspFactory:
         """Write a Faust DSP factory into a bitcode string."""
         return fi.writeInterpreterDSPFactoryToBitcode(self.ptr).decode()
 
-    def write_to_bitcode_file(self, bit_code_path: str) -> str:
+    def write_to_bitcode_file(self, bit_code_path: str) -> bool:
         """Write a Faust DSP factory into a bitcode file."""
         return fi.writeInterpreterDSPFactoryToBitcodeFile(
             self.ptr, bit_code_path.encode('utf8'))

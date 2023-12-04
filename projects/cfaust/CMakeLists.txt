@@ -9,7 +9,7 @@ add_library(
 )
 
 add_custom_command(
-    OUTPUT ${PROJECT_NAME}
+    OUTPUT ${PROJECT_SRC}
     COMMAND cythonize -3 cfaust.pyx
     WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
     DEPENDS cfaust.pyx
