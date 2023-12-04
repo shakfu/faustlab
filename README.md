@@ -1,16 +1,29 @@
 # faustlab
 
-A exploratory project to wrap the Faust *interpreter* for use by python via the following wrapping frameworks using the RtAudio cross-platform audio driver:
+An exploratory project to wrap the Faust *interpreter* for use by python via the following wrapping frameworks using the RtAudio cross-platform audio driver:
 
-- [ ] cfaust:   cython      (faust c   interface)
-- [x] cyfaust:  cython      (faust c++ interface)
-- [x] nanobind: nanobind    (faust c++ interface)
-- [x] pyfaust:  pybind11    (faust c++ interface)
+- cfaust:   cython      (faust c   interface)
+- cyfaust:  cython      (faust c++ interface)
+- nanobind: nanobind    (faust c++ interface)
+- pyfaust:  pybind11    (faust c++ interface)
 
-A tick in the box means that the respective wrapper code has passed a minimal functional test to produce audio given a faust dsp file.
+## Current Status
+
+All of the above subprojects pass a minimal functional test which produces noise given a faust dsp file (`noise.dsp`).
+
+CAVEAT: the code is currently only in a proof of concept stage and is likely to contain a variety of bug, memory leaks and other irritants...
 
 ## Usage
 
+Reequires:
+
+- `cmake` (main buildsystem)
+
+- `make` (build frontend)
+
+- `python3` with dev libraries installed
+
+Tested only on macOS x86_64 and arm64 system
 
 1. `./scripts/setup.sh`
 
@@ -21,4 +34,15 @@ A tick in the box means that the respective wrapper code has passed a minimal fu
 2. `make`
     
     - will build all variants {cython, pybind11, nanobind}
+
+3. `make test` will test all of the externals for audio or individual via:
+
+    `make test_cyfaust` or
+    
+    `make test_cfaust` or
+
+    `make test_pyfaust` or
+
+    `make test_nanofaust`
+
 
