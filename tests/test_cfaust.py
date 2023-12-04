@@ -1,3 +1,5 @@
+import time
+
 import cfaust
 
 
@@ -37,12 +39,12 @@ def test_audio():
     
     dsp.build_default_user_interface()
 
-    # audio = cfaust.RtAudioDriver(48000, 256)
+    audio = cfaust.RtAudioDriver(48000, 256)
 
-    # audio.init(dsp)
+    audio.init(dsp)
 
-    # audio.start()
-    # time.sleep(1)
+    audio.start()
+    time.sleep(1)
     # audio.stop() # not needed here
 
 

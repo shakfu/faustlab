@@ -326,3 +326,52 @@ cdef void compute_interpreter_dsp_instance(fi.interpreter_dsp* dsp, int count, f
     fi.computeCInterpreterDSPInstance(dsp, count, input, output)
 
 
+
+## ---------------------------------------------------------------------------
+## faust/audio/rtaudio-dsp
+
+cdef class RtAudioDriver:
+    """faust audio driver using rtaudio cross-platform lib."""
+    cdef fi.rtaudio *ptr
+    cdef bint ptr_owner
+
+    def __dealloc__(self):
+        if self.ptr and self.ptr_owner:
+            del self.ptr
+            self.ptr = NULL
+
+    def __cinit__(self, int srate, int bsize):
+        self.ptr = new fi.rtaudio(srate, bsize)
+        self.ptr_owner = True
+
+    def set_dsp(self, dsp: InterpreterDsp):
+        self.ptr.setDsp(<fi.dsp*>dsp.ptr)
+
+    def init(self, dsp: InterpreterDsp) -> bool:
+        """initialize with dsp instance."""
+        name = "RtAudioDriver".encode('utf8')
+        if self.ptr.init(name, dsp.get_numinputs(), dsp.get_numoutputs()):
+            self.set_dsp(dsp)
+            return True
+        return False
+
+    def start(self):
+        if not self.ptr.start():
+            print("RtAudioDriver: could not start")
+
+    def stop(self):
+        self.ptr.stop()
+
+    def get_buffersize(self):
+        return self.ptr.getBufferSize()
+
+    def get_samplerate(self):
+        return self.ptr.getSampleRate()
+
+    def get_numinputs(self):
+        return self.ptr.getNumInputs()
+
+    def get_numoutputs(self):
+        return self.ptr.getNumOutputs()
+
+

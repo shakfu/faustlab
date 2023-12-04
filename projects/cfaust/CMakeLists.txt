@@ -6,6 +6,7 @@ set(PROJECT_PYX ${CMAKE_CURRENT_SOURCE_DIR}/cfaust.pyx)
 add_library( 
     ${PROJECT_NAME}
     MODULE
+    ${RTAUDIO_SRC}
     ${PROJECT_SRC}
 )
 
@@ -84,6 +85,7 @@ target_link_libraries(
     PUBLIC
     ${Python_LIBRARIES}
     "$<$<PLATFORM_ID:Darwin>:-ldl>"
+    ${RTAUDIO_LINK_LIBS}
     ${FAUST_STATICLIB}
 )
 
