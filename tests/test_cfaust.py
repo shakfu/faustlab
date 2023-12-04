@@ -35,8 +35,7 @@ def test_audio():
     # ui = pyfaust.PrintUI()
     # dsp.build_user_interface(ui)
     
-    # bypass
-    # dsp.build_default_user_interface()
+    dsp.build_default_user_interface()
 
     # audio = cfaust.RtAudioDriver(48000, 256)
 

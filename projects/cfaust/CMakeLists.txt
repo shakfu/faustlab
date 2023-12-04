@@ -1,6 +1,7 @@
 set(PROJECT_NAME cfaust)
 
 set(PROJECT_SRC ${CMAKE_CURRENT_SOURCE_DIR}/cfaust.cpp)
+set(PROJECT_PYX ${CMAKE_CURRENT_SOURCE_DIR}/cfaust.pyx)
 
 add_library( 
     ${PROJECT_NAME}
@@ -10,15 +11,15 @@ add_library(
 
 add_custom_command(
     OUTPUT ${PROJECT_SRC}
-    COMMAND cythonize -3 cfaust.pyx
+    COMMAND cythonize -3 ${PROJECT_PYX}
     WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
-    DEPENDS cfaust.pyx
+    DEPENDS ${PROJECT_PYX}
     COMMENT "Generating cfaust.cpp"
 )
 
 add_custom_target(
     cfaust_c
-    DEPENDS cfaust.pyx
+    DEPENDS ${PROJECT_PYX}
 )
 
 add_dependencies(

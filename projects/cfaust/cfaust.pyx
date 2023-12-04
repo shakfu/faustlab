@@ -214,9 +214,12 @@ cdef class InterpreterDsp:
         fi.instanceClearCInterpreterDSPInstance(self.ptr)
 
     def build_default_user_interface(self):
-        cdef fi.PrintCUI interface
         fi.buildUserInterfaceCInterpreterDSPInstance(
-            self.ptr, <fi.UIGlue*>&interface)
+            self.ptr, <fi.UIGlue*>&fi.uglue)
+
+        # cdef fi.PrintCUI interface
+        # fi.buildUserInterfaceCInterpreterDSPInstance(
+        #     self.ptr, <fi.UIGlue*>&interface)
 
     cdef void build_user_interface(self, fi.UIGlue* interface):
         fi.buildUserInterfaceCInterpreterDSPInstance(self.ptr, interface)
