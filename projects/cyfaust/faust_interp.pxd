@@ -1,6 +1,8 @@
 from libcpp.string cimport string
 from libcpp.vector cimport vector
 
+from faust_box cimport Box, Signal, tvec
+
 cdef extern from "faust/gui/CInterface.h":
     ctypedef float FAUSTFLOAT
     ctypedef struct UIGlue
@@ -42,11 +44,11 @@ cdef extern from "faust/dsp/libfaust.h":
     bint generateAuxFilesFromFile(const string& filename, int argc, const char* argv[], string& error_msg)
     bint generateAuxFilesFromString(const string& name_app, const string& dsp_content, int argc, const char* argv[], string& error_msg)
 
-cdef extern from "faust/dsp/libfaust-signal.h":
-    cdef cppclass CTree
-    ctypedef vector[CTree*] tvec
-    ctypedef CTree* Signal
-    ctypedef CTree* Box
+# cdef extern from "faust/dsp/libfaust-signal.h":
+#     cdef cppclass CTree
+#     ctypedef vector[CTree*] tvec
+#     ctypedef CTree* Signal
+#     ctypedef CTree* Box
 
 
 

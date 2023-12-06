@@ -5,6 +5,7 @@ from libcpp.string cimport string
 from libcpp.vector cimport vector
 
 cimport faust_interp as fi
+cimport faust_box as fb
 
 
 ## ---------------------------------------------------------------------------
@@ -41,14 +42,14 @@ cdef class ParamArray:
 
 cdef class SignalVector:
     """wraps tvec: a std::vector<CTree*>"""
-    cdef fi.tvec* ptr
+    cdef fb.tvec* ptr
     cdef bint ptr_owner
 
     def __cinit__(self):
-        self.ptr = new fi.tvec()
+        self.ptr = new fb.tvec()
         self.ptr_owner = False
 
-    cdef add(self, fi.Signal sig):
+    cdef add(self, fb.Signal sig):
         self.ptr.push_back(sig)
 
 
@@ -298,7 +299,7 @@ cdef class InterpreterDspFactory:
         return factory
 
     # @staticmethod
-    # def from_signals(str name_app, fi.tvec signals, *args) -> InterpreterDspFactory:
+    # def from_signals(str name_app, fb.tvec signals, *args) -> InterpreterDspFactory:
     #     """Create a Faust DSP factory from a vector of output signals."""
     #     cdef string error_msg
     #     error_msg.reserve(4096)
@@ -319,7 +320,7 @@ cdef class InterpreterDspFactory:
     #     return factory
 
     # @staticmethod
-    # def from_boxes(str name_app, fi.Box box, *args) -> InterpreterDspFactory:
+    # def from_boxes(str name_app, fb.Box box, *args) -> InterpreterDspFactory:
     #     """Create a Faust DSP factory from a box expression."""
     #     cdef string error_msg
     #     error_msg.reserve(4096)
@@ -511,5 +512,538 @@ cdef fi.interpreter_dsp_factory* create_interpreter_dsp_factory_from_boxes(
     """Create a Faust DSP factory from a box expression."""
     return fi.createInterpreterDSPFactoryFromBoxes(
         name_app, box, argc, argv, error_msg)
+
+## ---------------------------------------------------------------------------
+## faust/dsp/libfaust-box
+
+cdef print_box(fb.Box box, bint shared, int max_size):
+    """Print a box."""
+    return fb.printBox(box, shared, max_size)
+
+cdef print_signal(fb.Signal sig, bint shared, int max_size):
+    """Print a signal."""
+    return fb.printSignal(sig, shared, max_size)
+
+cdef bint get_def_mame_roperty(fb.Box b, fb.Box& id):
+    return fb.getDefNameProperty(b, id)
+
+cdef string extract_name(fb.Box full_label):
+    return fb.extractName(full_label)
+
+cdef void create_lib_context():
+    fb.createLibContext()
+
+cdef void destroy_lib_context():
+    fb.destroyLibContext()
+
+cdef bint is_nil(fb.Box b):
+    return fb.isNil(b)
+
+cdef const char* tree2str(fb.Box b):
+    return fb.tree2str(b)
+
+cdef int tree2int(fb.Box b):
+    return fb.tree2int(b)
+
+cdef void* get_user_data(fb.Box b):
+    return fb.getUserData(b)
+
+cdef fb.Box box_int(int n):
+    return fb.boxInt(n)
+
+cdef fb.Box box_real(double n):
+    return fb.boxReal(n)
+
+cdef fb.Box box_wire():
+    return fb.boxWire()
+
+cdef fb.Box box_cut():
+    return fb.boxCut()
+
+cdef fb.Box box_seq(fb.Box x, fb.Box y):
+    return fb.boxSeq(x, y)
+
+cdef fb.Box box_par(fb.Box x, fb.Box y):
+    return fb.boxPar(x, y)
+
+cdef fb.Box box_par3(fb.Box x, fb.Box y, fb.Box z):
+    return fb.boxPar3(x, y, z)
+
+cdef fb.Box box_par4(fb.Box a, fb.Box b, fb.Box c, fb.Box d):
+    return fb.boxPar4(a, b, c, d)
+
+cdef fb.Box box_par5(fb.Box a, fb.Box b, fb.Box c, fb.Box d, fb.Box e):
+    return fb.boxPar5(a, b, c, d, e)
+
+cdef fb.Box box_split(fb.Box x, fb.Box y):
+    return fb.boxSplit(x, y)
+
+cdef fb.Box box_merge(fb.Box x, fb.Box y):
+    return fb.boxMerge(x, y)
+
+cdef fb.Box box_rec(fb.Box x, fb.Box y):
+    return fb.boxRec(x, y)
+
+cdef fb.Box box_route(fb.Box n, fb.Box m, fb.Box r):
+    return fb.boxRoute(n, m, r)
+
+cdef fb.Box box_delay_():
+    return fb.boxDelay()
+
+cdef fb.Box box_delay(fb.Box b, fb.Box del_):
+    return fb.boxDelay(b, del_)
+
+cdef fb.Box box_int_cast(fb.Box b):
+    return fb.boxIntCast(b)
+
+cdef fb.Box box_int_cast_():
+    return fb.boxIntCast()
+
+cdef fb.Box box_float_cast(fb.Box b):
+    return fb.boxFloatCast(b)
+
+cdef fb.Box box_float_cast_():
+    return fb.boxFloatCast()
+
+cdef fb.Box box_read_only_table(fb.Box n, fb.Box init, fb.Box ridx):
+    return fb.boxReadOnlyTable(n, init, ridx)
+
+cdef fb.Box box_read_only_table_():
+    return fb.boxReadOnlyTable()
+
+cdef fb.Box box_write_read_table(fb.Box n, fb.Box init, fb.Box widx, fb.Box wsig, fb.Box ridx):
+    return fb.boxWriteReadTable(n, init, widx, wsig, ridx)
+
+cdef fb.Box box_write_read_table_(f):
+    return fb.boxWriteReadTable()
+
+cdef fb.Box box_waveform(const fb.tvec& wf):
+    return fb.boxWaveform(wf)
+
+cdef fb.Box box_soundfile(const string& label, fb.Box chan):
+    return fb.boxSoundfile(label, chan)
+
+cdef fb.Box box_soundfile_with_part(const string& label, fb.Box chan, fb.Box part, fb.Box ridx):
+    return fb.boxSoundfile(label, chan, part, ridx)
+
+cdef fb.Box box_select2(fb.Box selector, fb.Box b1, fb.Box b2):
+    return fb.boxSelect2(selector, b1, b2)
+
+cdef fb.Box box_select3(fb.Box selector, fb.Box b1, fb.Box b2, fb.Box b3):
+    return fb.boxSelect3(selector, b1, b2, b3)
+
+cdef fb.Box box_f_const(fb.SType type, const string& name, const string& file):
+    return fb.boxFConst(type, name, file)
+
+cdef fb.Box box_f_var(fb.SType type, const string& name, const string& file):
+    return fb.boxFVar(type, name, file)
+
+cdef fb.Box box_bin_op(fb.SOperator op):
+    return fb.boxBinOp(op)
+
+cdef fb.Box box_bin_op_with_box(fb.SOperator op, fb.Box b1, fb.Box b2):
+    return fb.boxBinOp(op, b1, b2)
+
+cdef fb.Box box_add(fb.Box b1, fb.Box b2):
+    return fb.boxAdd(b1, b2)
+
+cdef fb.Box box_sub(fb.Box b1, fb.Box b2):
+    return fb.boxSub(b1, b2)
+
+cdef fb.Box box_mul(fb.Box b1, fb.Box b2):
+    return fb.boxMul(b1, b2)
+
+cdef fb.Box box_div(fb.Box b1, fb.Box b2):
+    return fb.boxDiv(b1, b2)
+
+cdef fb.Box box_rem(fb.Box b1, fb.Box b2):
+    return fb.boxRem(b1, b2)
+
+cdef fb.Box box_left_shift(fb.Box b1, fb.Box b2):
+    return fb.boxLeftShift(b1, b2)
+
+cdef fb.Box box_l_right_shift(fb.Box b1, fb.Box b2):
+    return fb.boxLRightShift(b1, b2)
+
+cdef fb.Box box_a_right_shift(fb.Box b1, fb.Box b2):
+    return fb.boxARightShift(b1, b2)
+
+cdef fb.Box box_gt(fb.Box b1, fb.Box b2):
+    return fb.boxGT(b1, b2)
+
+cdef fb.Box box_lt(fb.Box b1, fb.Box b2):
+    return fb.boxLT(b1, b2)
+
+cdef fb.Box box_ge(fb.Box b1, fb.Box b2):
+    return fb.boxGE(b1, b2)
+
+cdef fb.Box box_le(fb.Box b1, fb.Box b2):
+    return fb.boxLE(b1, b2)
+
+cdef fb.Box box_eq(fb.Box b1, fb.Box b2):
+    return fb.boxEQ(b1, b2)
+
+cdef fb.Box box_ne(fb.Box b1, fb.Box b2):
+    return fb.boxNE(b1, b2)
+
+cdef fb.Box box_and(fb.Box b1, fb.Box b2):
+    return fb.boxAND(b1, b2)
+
+cdef fb.Box box_or(fb.Box b1, fb.Box b2):
+    return fb.boxOR(b1, b2)
+
+cdef fb.Box box_xor(fb.Box b1, fb.Box b2):
+    return fb.boxXOR(b1, b2)
+
+cdef fb.Box box_abs(fb.Box x):
+    return fb.boxAbs(x)
+
+cdef fb.Box box_acos(fb.Box x):
+    return fb.boxAcos(x)
+
+cdef fb.Box box_tan(fb.Box x):
+    return fb.boxTan(x)
+
+cdef fb.Box box_sqrt(fb.Box x):
+    return fb.boxSqrt(x)
+
+cdef fb.Box box_sin(fb.Box x):
+    return fb.boxSin(x)
+
+cdef fb.Box box_rint(fb.Box x):
+    return fb.boxRint(x)
+
+cdef fb.Box box_round(fb.Box x):
+    return fb.boxRound(x)
+
+cdef fb.Box box_log(fb.Box x):
+    return fb.boxLog(x)
+
+cdef fb.Box box_log10(fb.Box x):
+    return fb.boxLog10(x)
+
+cdef fb.Box box_floor(fb.Box x):
+    return fb.boxFloor(x)
+
+cdef fb.Box box_exp(fb.Box x):
+    return fb.boxExp(x)
+
+cdef fb.Box box_exp10(fb.Box x):
+    return fb.boxExp10(x)
+
+cdef fb.Box box_cos(fb.Box x):
+    return fb.boxCos(x)
+
+cdef fb.Box box_ceil(fb.Box x):
+    return fb.boxCeil(x)
+
+cdef fb.Box box_atan(fb.Box x):
+    return fb.boxAtan(x)
+
+cdef fb.Box box_asin(fb.Box x):
+    return fb.boxAsin(x)
+
+cdef fb.Box box_remainder(fb.Box b1, fb.Box b2):
+    return fb.boxRemainder(b1, b2)
+
+cdef fb.Box box_pow(fb.Box b1, fb.Box b2):
+    return fb.boxPow(b1, b2)
+
+cdef fb.Box box_min(fb.Box b1, fb.Box b2):
+    return fb.boxMin(b1, b2)
+
+cdef fb.Box box_max(fb.Box b1, fb.Box b2):
+    return fb.boxMax(b1, b2)
+
+cdef fb.Box box_fmod(fb.Box b1, fb.Box b2):
+    return fb.boxFmod(b1, b2)
+
+cdef fb.Box box_atan2(fb.Box b1, fb.Box b2):
+    return fb.boxAtan2(b1, b2)
+
+cdef fb.Box box_button(const string& label):
+    return fb.boxButton(label)
+
+cdef fb.Box box_checkbox(const string& label):
+    return fb.boxCheckbox(label)
+
+cdef fb.Box box_v_slider(const string& label, fb.Box init, fb.Box min, fb.Box max, fb.Box step):
+    return fb.boxVSlider(label, init, min, max, step)
+
+cdef fb.Box box_h_slider(const string& label, fb.Box init, fb.Box min, fb.Box max, fb.Box step):
+    return fb.boxHSlider(label, init, min, max, step)
+
+cdef fb.Box box_num_entry(const string& label, fb.Box init, fb.Box min, fb.Box max, fb.Box step):
+    return fb.boxNumEntry(label, init, min, max, step)
+
+cdef fb.Box box_v_bargraph(const string& label, fb.Box min, fb.Box max):
+    return fb.boxVBargraph(label, min, max)
+
+cdef fb.Box box_v_bargraph2(const string& label, fb.Box min, fb.Box max, fb.Box x):
+    return fb.boxVBargraph(label, min, max, x)
+
+cdef fb.Box box_h_bargraph(const string& label, fb.Box min, fb.Box max):
+    return fb.boxHBargraph(label, min, max)
+
+cdef fb.Box box_h_bargraph2(const string& label, fb.Box min, fb.Box max, fb.Box x):
+    return fb.boxHBargraph(label, min, max, x)
+
+cdef fb.Box box_v_group(const string& label, fb.Box group):
+    return fb.boxVGroup(label, group)
+
+cdef fb.Box box_h_group(const string& label, fb.Box group):
+    return fb.boxHGroup(label, group)
+
+cdef fb.Box box_t_group(const string& label, fb.Box group):
+    return fb.boxTGroup(label, group)
+
+cdef fb.Box box_attach(fb.Box b1, fb.Box b2):
+    return fb.boxAttach(b1, b2)
+
+cdef fb.Box box_prim2(fb.prim2 foo):
+    return fb.boxPrim2(foo)
+
+cdef bint is_box_abstr(fb.Box t):
+    return fb.isBoxAbstr(t)
+
+cdef bint is_box_abstr_(fb.Box t, fb.Box& x, fb.Box& y):
+    return fb.isBoxAbstr(t, x, y)
+
+cdef bint is_box_access(fb.Box t, fb.Box& exp, fb.Box& id):
+    return fb.isBoxAccess(t, exp, id)
+
+cdef bint is_box_appl(fb.Box t):
+    return fb.isBoxAppl(t)
+
+cdef bint is_box_appl_(fb.Box t, fb.Box& x, fb.Box& y):
+    return fb.isBoxAppl(t, x, y)
+
+cdef bint is_box_button(fb.Box b):
+    return fb.isBoxButton(b)
+
+cdef bint is_box_button_(fb.Box b, fb.Box& lbl):
+    return fb.isBoxButton(b, lbl)
+
+cdef bint is_box_case(fb.Box b):
+    return fb.isBoxCase(b)
+
+cdef bint is_box_case_(fb.Box b, fb.Box& rules):
+    return fb.isBoxCase(b, rules)
+
+cdef bint is_box_checkbox(fb.Box b):
+    return fb.isBoxCheckbox(b)
+
+cdef bint is_box_checkbox_(fb.Box b, fb.Box& lbl):
+    return fb.isBoxCheckbox(b, lbl)
+
+cdef bint is_box_component(fb.Box b, fb.Box& filename):
+    return fb.isBoxComponent(b, filename)
+
+cdef bint is_box_cut(fb.Box t):
+    return fb.isBoxCut(t)
+
+cdef bint is_box_environment(fb.Box b):
+    return fb.isBoxEnvironment(b)
+
+cdef bint is_box_error(fb.Box t):
+    return fb.isBoxError(t)
+
+cdef bint is_box_f_const_(fb.Box b):
+    return fb.isBoxFConst(b)
+
+cdef bint is_box_f_const(fb.Box b, fb.Box& type, fb.Box& name, fb.Box& file):
+    return fb.isBoxFConst(b, type, name, file)
+
+cdef bint is_box_f_fun_(fb.Box b):
+    return fb.isBoxFFun(b)
+
+cdef bint is_box_f_fun(fb.Box b, fb.Box& ff):
+    return fb.isBoxFFun(b, ff)
+
+cdef bint is_box_f_var_(fb.Box b):
+    return fb.isBoxFVar(b)
+
+cdef bint is_box_f_var(fb.Box b, fb.Box& type, fb.Box& name, fb.Box& file):
+    return fb.isBoxFVar(b, type, name, file)
+
+cdef bint is_box_h_bargraph_(fb.Box b):
+    return fb.isBoxHBargraph(b)
+
+cdef bint is_box_h_bargraph(fb.Box b, fb.Box& lbl, fb.Box& min, fb.Box& max):
+    return fb.isBoxHBargraph(b, lbl, min, max)
+
+cdef bint is_box_h_group_(fb.Box b):
+    return fb.isBoxHGroup(b)
+
+cdef bint is_box_h_group(fb.Box b, fb.Box& lbl, fb.Box& x):
+    return fb.isBoxHGroup(b, lbl, x)
+
+cdef bint is_box_h_slider_(fb.Box b):
+    return fb.isBoxHSlider(b)
+
+cdef bint is_box_h_slider(fb.Box b, fb.Box& lbl, fb.Box& cur, fb.Box& min, fb.Box& max, fb.Box& step):
+    return fb.isBoxHSlider(b, lbl, cur, min, max, step)
+
+cdef bint is_box_ident_(fb.Box t):
+    return fb.isBoxIdent(t)
+
+cdef bint is_box_ident(fb.Box t, const char** str):
+    return fb.isBoxIdent(t, str)
+
+cdef bint is_box_inputs(fb.Box t, fb.Box& x):
+    return fb.isBoxInputs(t, x)
+
+cdef bint is_box_int_(fb.Box t):
+    return fb.isBoxInt(t)
+
+cdef bint is_box_int(fb.Box t, int* i):
+    return fb.isBoxInt(t, i)
+
+cdef bint is_box_i_par(fb.Box t, fb.Box& x, fb.Box& y, fb.Box& z):
+    return fb.isBoxIPar(t, x, y, z)
+
+cdef bint is_box_i_prod(fb.Box t, fb.Box& x, fb.Box& y, fb.Box& z):
+    return fb.isBoxIProd(t, x, y, z)
+
+cdef bint is_box_i_seq(fb.Box t, fb.Box& x, fb.Box& y, fb.Box& z):
+    return fb.isBoxISeq(t, x, y, z)
+
+cdef bint is_box_i_sum(fb.Box t, fb.Box& x, fb.Box& y, fb.Box& z):
+    return fb.isBoxISum(t, x, y, z)
+
+cdef bint is_box_library(fb.Box b, fb.Box& filename):
+    return fb.isBoxLibrary(b, filename)
+
+cdef bint is_box_merge(fb.Box t, fb.Box& x, fb.Box& y):
+    return fb.isBoxMerge(t, x, y)
+
+cdef bint is_box_metadata(fb.Box b, fb.Box& exp, fb.Box& mdlist):
+    return fb.isBoxMetadata(b, exp, mdlist)
+
+cdef bint is_box_num_entry_(fb.Box b):
+    return fb.isBoxNumEntry(b)
+
+cdef bint is_box_num_entry(fb.Box b, fb.Box& lbl, fb.Box& cur, fb.Box& min_, fb.Box& max_, fb.Box& step):
+    return fb.isBoxNumEntry(b, lbl, cur, min_, max_, step)
+
+cdef bint is_box_outputs(fb.Box t, fb.Box& x):
+    return fb.isBoxOutputs(t, x)
+
+cdef bint is_box_par(fb.Box t, fb.Box& x, fb.Box& y):
+    return fb.isBoxPar(t, x, y)
+
+cdef bint is_box_prim0(fb.Box b):
+    return fb.isBoxPrim0(b)
+
+cdef bint is_box_prim1(fb.Box b):
+    return fb.isBoxPrim1(b)
+
+cdef bint is_box_prim2(fb.Box b):
+    return fb.isBoxPrim2(b)
+
+cdef bint is_box_prim3(fb.Box b):
+    return fb.isBoxPrim3(b)
+
+cdef bint is_box_prim4(fb.Box b):
+    return fb.isBoxPrim4(b)
+
+cdef bint is_box_prim5(fb.Box b):
+    return fb.isBoxPrim5(b)
+
+cdef bint is_box_prim0_(fb.Box b, fb.prim0* p):
+    return fb.isBoxPrim0(b, p)
+
+cdef bint is_box_prim1_(fb.Box b, fb.prim1* p):
+    return fb.isBoxPrim1(b, p)
+
+cdef bint is_box_prim2_(fb.Box b, fb.prim2* p):
+    return fb.isBoxPrim2(b, p)
+
+cdef bint is_box_prim3_(fb.Box b, fb.prim3* p):
+    return fb.isBoxPrim3(b, p)
+
+cdef bint is_box_prim4_(fb.Box b, fb.prim4* p):
+    return fb.isBoxPrim4(b, p)
+
+cdef bint is_box_prim5_(fb.Box b, fb.prim5* p):
+    return fb.isBoxPrim5(b, p)
+
+cdef bint is_box_real_(fb.Box t):
+    return fb.isBoxReal(t)
+
+cdef bint is_box_real(fb.Box t, double* r):
+    return fb.isBoxReal(t, r)
+
+cdef bint is_box_rec(fb.Box t, fb.Box& x, fb.Box& y):
+    return fb.isBoxRec(t, x, y)
+
+cdef bint is_box_route(fb.Box b, fb.Box& n, fb.Box& m, fb.Box& r):
+    return fb.isBoxRoute(b, n, m, r)
+
+cdef bint is_box_seq(fb.Box t, fb.Box& x, fb.Box& y):
+    return fb.isBoxSeq(t, x, y)
+
+cdef bint is_box_slot(fb.Box t):
+    return fb.isBoxSlot(t)
+
+cdef bint is_box_soundfile_(fb.Box b):
+    return fb.isBoxSoundfile(b)
+
+cdef bint is_box_soundfile(fb.Box b, fb.Box& label, fb.Box& chan):
+    return fb.isBoxSoundfile(b, label, chan)
+
+cdef bint is_box_split(fb.Box t, fb.Box& x, fb.Box& y):
+    return fb.isBoxSplit(t, x, y)
+
+cdef bint is_box_symbolic_(fb.Box t):
+    return fb.isBoxSymbolic(t)
+
+cdef bint is_box_symbolic(fb.Box t, fb.Box& slot, fb.Box& body):
+    return fb.isBoxSymbolic(t, slot, body)
+
+cdef bint is_box_t_group_(fb.Box b):
+    return fb.isBoxTGroup(b)
+
+cdef bint is_box_t_group(fb.Box b, fb.Box& lbl, fb.Box& x):
+    return fb.isBoxTGroup(b, lbl, x)
+
+cdef bint is_box_v_bargraph_(fb.Box b):
+    return fb.isBoxVBargraph(b)
+
+cdef bint is_box_v_bargraph(fb.Box b, fb.Box& lbl, fb.Box& min, fb.Box& max):
+    return fb.isBoxVBargraph(b, lbl, min, max)
+
+cdef bint is_box_v_group_(fb.Box b):
+    return fb.isBoxVGroup(b)
+
+cdef bint is_box_v_group(fb.Box b, fb.Box& lbl, fb.Box& x):
+    return fb.isBoxVGroup(b, lbl, x)
+
+cdef bint is_box_v_slider_(fb.Box b):
+    return fb.isBoxVSlider(b)
+
+cdef bint is_box_v_slider(fb.Box b, fb.Box& lbl, fb.Box& cur, fb.Box& min, fb.Box& max, fb.Box& step):
+    return fb.isBoxVSlider(b, lbl, cur, min, max, step)
+
+cdef bint is_box_waveform(fb.Box b):
+    return fb.isBoxWaveform(b)
+
+cdef bint is_box_wire(fb.Box t):
+    return fb.isBoxWire(t)
+
+cdef bint is_box_with_local_def(fb.Box t, fb.Box& body, fb.Box& ldef):
+    return fb.isBoxWithLocalDef(t, body, ldef)
+
+cdef fb.Box dsp_to_boxes(const string& name_app, const string& dsp_content, int argc, const char* argv[], int* inputs, int* outputs, string& error_msg):
+    return fb.DSPToBoxes(name_app, dsp_content, argc, argv, inputs, outputs, error_msg)
+
+cdef bint get_box_type(fb.Box box, int* inputs, int* outputs):
+    return fb.getBoxType(box, inputs, outputs)
+
+cdef fb.tvec boxes_to_signals(fb.Box box, string& error_msg):
+    return fb.boxesToSignals(box, error_msg)
+
+cdef fb.string create_source_from_boxes(const string& name_app, fb.Box box, const string& lang, int argc, const char* argv[], string& error_msg):
+    return fb.createSourceFromBoxes(name_app, box, lang, argc, argv, error_msg)
 
 
