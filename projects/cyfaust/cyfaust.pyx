@@ -516,6 +516,106 @@ cdef fi.interpreter_dsp_factory* create_interpreter_dsp_factory_from_boxes(
 ## ---------------------------------------------------------------------------
 ## faust/dsp/libfaust-box
 
+cdef class Box:
+    """faust Box wrapper.
+    
+    Box box = boxPar(boxInt(7), boxReal(3.14));
+    """
+    cdef fb.Box ptr
+
+    # def __dealloc__(self):
+    #     if self.ptr and self.ptr_owner:
+    #         del self.ptr
+    #         self.ptr = NULL
+
+    def __cinit__(self):
+        self.ptr = NULL
+
+    @staticmethod
+    def from_int(int value) -> Box:
+        """Create box from int"""
+        cdef fb.Box b = fb.boxInt(value)
+        return Box.from_ptr(b)
+
+    @staticmethod
+    def from_float(float value) -> Box:
+        """Create box from float"""
+        cdef fb.Box b = fb.boxReal(value)
+        return Box.from_ptr(b)
+
+    @staticmethod
+    cdef Box from_ptr(fb.Box ptr, bint ptr_owner=False):
+        """Wrap external factory from pointer"""
+        cdef Box box = Box.__new__(Box)
+        box.ptr = ptr
+        return box
+
+    def __add__(self, Box other):
+        """Add this box with another."""
+        cdef fb.Box b = fb.boxAdd(self.ptr, other.ptr)
+        return Box.from_ptr(b)
+
+    def __radd__(self, Box other):
+        """Reverse Add this box with another."""
+        cdef fb.Box b = fb.boxAdd(self.ptr, other.ptr)
+        return Box.from_ptr(b)
+
+    def __sub__(self, Box other):
+        """Subtract this box from another."""
+        cdef fb.Box b = fb.boxSub(self.ptr, other.ptr)
+        return Box.from_ptr(b)
+
+    def __rsub__(self, Box other):
+        """Subtract this box from another."""
+        cdef fb.Box b = fb.boxSub(self.ptr, other.ptr)
+        return Box.from_ptr(b)
+
+    def __mul__(self, Box other):
+        """Multiply this box from another."""
+        cdef fb.Box b = fb.boxMul(self.ptr, other.ptr)
+        return Box.from_ptr(b)
+
+    def __rmul__(self, Box other):
+        """Multiply this box from another."""
+        cdef fb.Box b = fb.boxMul(self.ptr, other.ptr)
+        return Box.from_ptr(b)
+
+    def __div__(self, Box other):
+        """Divide this box with another."""
+        cdef fb.Box b = fb.boxDiv(self.ptr, other.ptr)
+        return Box.from_ptr(b)
+
+    def __rdiv__(self, Box other):
+        """Divide this box with another."""
+        cdef fb.Box b = fb.boxDiv(self.ptr, other.ptr)
+        return Box.from_ptr(b)
+
+    def __eq__(self, Box other):
+        """Compare for equality with another box."""
+        cdef fb.Box b = fb.boxEQ(self.ptr, other.ptr)
+        return Box.from_ptr(b)
+
+    def __gt__(self, Box other):
+        """Is this box greater than another box."""
+        cdef fb.Box b = fb.boxGT(self.ptr, other.ptr)
+        return Box.from_ptr(b)
+
+    def __ge__(self, Box other):
+        """Is this box greater than or equal from another box."""
+        cdef fb.Box b = fb.boxGE(self.ptr, other.ptr)
+        return Box.from_ptr(b)
+
+    def __lt__(self, Box other):
+        """Is this box lesser than another box."""
+        cdef fb.Box b = fb.boxLT(self.ptr, other.ptr)
+        return Box.from_ptr(b)
+
+    def __le__(self, Box other):
+        """Is this box lesser than or equal from another box."""
+        cdef fb.Box b = fb.boxLE(self.ptr, other.ptr)
+        return Box.from_ptr(b)
+
+
 cdef print_box(fb.Box box, bint shared, int max_size):
     """Print a box."""
     return fb.printBox(box, shared, max_size)
@@ -524,136 +624,192 @@ cdef print_signal(fb.Signal sig, bint shared, int max_size):
     """Print a signal."""
     return fb.printSignal(sig, shared, max_size)
 
-cdef bint get_def_mame_roperty(fb.Box b, fb.Box& id):
+cdef bint get_def_mame_property(fb.Box b, fb.Box& id):
+    """Indicates the identifier (if any) the expression was a definition of."""
     return fb.getDefNameProperty(b, id)
 
 cdef string extract_name(fb.Box full_label):
+    """Extract the name from a label."""
     return fb.extractName(full_label)
 
-cdef void create_lib_context():
+def create_lib_context():
+    """Create global compilation context, has to be done first."""
     fb.createLibContext()
 
-cdef void destroy_lib_context():
+def destroy_lib_context():
+    """Destroy global compilation context, has to be done last."""
     fb.destroyLibContext()
 
 cdef bint is_nil(fb.Box b):
+    """Check if a box is nil."""
     return fb.isNil(b)
 
 cdef const char* tree2str(fb.Box b):
+    """Convert a box (such as the label of a UI) to a string."""
     return fb.tree2str(b)
 
 cdef int tree2int(fb.Box b):
+    """If t has a node of type int, return it. Otherwise error."""
     return fb.tree2int(b)
 
 cdef void* get_user_data(fb.Box b):
+    """Return the xtended type of a box."""
     return fb.getUserData(b)
 
 cdef fb.Box box_int(int n):
+    """Constant integer : for all t, x(t) = n."""
     return fb.boxInt(n)
 
 cdef fb.Box box_real(double n):
+    """Constant real : for all t, x(t) = n."""
     return fb.boxReal(n)
 
 cdef fb.Box box_wire():
+    """The identity box, copy its input to its output."""
     return fb.boxWire()
 
 cdef fb.Box box_cut():
+    """The cut box, to "stop"/terminate a signal."""
     return fb.boxCut()
 
 cdef fb.Box box_seq(fb.Box x, fb.Box y):
+    """The sequential composition of two blocks (e.g., A:B) expects: outputs(A)=inputs(B)."""
     return fb.boxSeq(x, y)
 
 cdef fb.Box box_par(fb.Box x, fb.Box y):
+    """The parallel composition of two blocks (e.g., A,B)."""
     return fb.boxPar(x, y)
 
 cdef fb.Box box_par3(fb.Box x, fb.Box y, fb.Box z):
+    """The parallel composition of three blocks (e.g., A,B,C)."""
     return fb.boxPar3(x, y, z)
 
 cdef fb.Box box_par4(fb.Box a, fb.Box b, fb.Box c, fb.Box d):
+    """The parallel composition of four blocks (e.g., A,B,C,D)."""
     return fb.boxPar4(a, b, c, d)
 
 cdef fb.Box box_par5(fb.Box a, fb.Box b, fb.Box c, fb.Box d, fb.Box e):
+    """The parallel composition of five blocks (e.g., A,B,C,D,E)."""
     return fb.boxPar5(a, b, c, d, e)
 
 cdef fb.Box box_split(fb.Box x, fb.Box y):
+    """The split composition (e.g., A<:B) operator is used to distribute
+    the outputs of A to the inputs of B.
+    """
     return fb.boxSplit(x, y)
 
 cdef fb.Box box_merge(fb.Box x, fb.Box y):
+    """The merge composition (e.g., A:>B) is the dual of the split composition."""
     return fb.boxMerge(x, y)
 
 cdef fb.Box box_rec(fb.Box x, fb.Box y):
+    """The recursive composition (e.g., A~B) is used to create cycles in the 
+    block-diagram in order to express recursive computations.
+    """
     return fb.boxRec(x, y)
 
 cdef fb.Box box_route(fb.Box n, fb.Box m, fb.Box r):
+    """The route primitive facilitates the routing of signals in Faust."""
     return fb.boxRoute(n, m, r)
 
 cdef fb.Box box_delay_():
+    """Create a delayed box."""
     return fb.boxDelay()
 
 cdef fb.Box box_delay(fb.Box b, fb.Box del_):
+    """Create a delayed box."""
     return fb.boxDelay(b, del_)
 
 cdef fb.Box box_int_cast(fb.Box b):
+    """Create a casted box."""
     return fb.boxIntCast(b)
 
 cdef fb.Box box_int_cast_():
+    """Create a casted box."""
     return fb.boxIntCast()
 
 cdef fb.Box box_float_cast(fb.Box b):
+    """Create a casted box."""
     return fb.boxFloatCast(b)
 
 cdef fb.Box box_float_cast_():
+    """Create a casted box."""
     return fb.boxFloatCast()
 
 cdef fb.Box box_read_only_table(fb.Box n, fb.Box init, fb.Box ridx):
+    """Create a read only table."""
     return fb.boxReadOnlyTable(n, init, ridx)
 
 cdef fb.Box box_read_only_table_():
+    """Create a read only table."""
     return fb.boxReadOnlyTable()
 
 cdef fb.Box box_write_read_table(fb.Box n, fb.Box init, fb.Box widx, fb.Box wsig, fb.Box ridx):
+    """Create a read/write table."""
     return fb.boxWriteReadTable(n, init, widx, wsig, ridx)
 
 cdef fb.Box box_write_read_table_(f):
+    """Create a read/write table."""
     return fb.boxWriteReadTable()
 
 cdef fb.Box box_waveform(const fb.tvec& wf):
+    """Create a waveform."""
     return fb.boxWaveform(wf)
 
 cdef fb.Box box_soundfile(const string& label, fb.Box chan):
+    """Create a soundfile block."""
     return fb.boxSoundfile(label, chan)
 
-cdef fb.Box box_soundfile_with_part(const string& label, fb.Box chan, fb.Box part, fb.Box ridx):
+cdef fb.Box box_soundfile_(const string& label, fb.Box chan, fb.Box part, fb.Box ridx):
+    """Create a soundfile block."""
     return fb.boxSoundfile(label, chan, part, ridx)
 
 cdef fb.Box box_select2(fb.Box selector, fb.Box b1, fb.Box b2):
+    """Create a selector between two boxes."""
     return fb.boxSelect2(selector, b1, b2)
 
+cdef fb.Box box_select2_():
+    """Create a selector between two boxes."""
+    return fb.boxSelect2()
+
 cdef fb.Box box_select3(fb.Box selector, fb.Box b1, fb.Box b2, fb.Box b3):
+    """Create a selector between three boxes."""
     return fb.boxSelect3(selector, b1, b2, b3)
 
+cdef fb.Box box_select3_():
+    """Create a selector between three boxes."""
+    return fb.boxSelect3()
+
 cdef fb.Box box_f_const(fb.SType type, const string& name, const string& file):
+    """Create a foreign constant box."""
     return fb.boxFConst(type, name, file)
 
 cdef fb.Box box_f_var(fb.SType type, const string& name, const string& file):
+    """Create a foreign variable box."""
     return fb.boxFVar(type, name, file)
 
 cdef fb.Box box_bin_op(fb.SOperator op):
+    """Generic binary mathematical functions."""
     return fb.boxBinOp(op)
 
 cdef fb.Box box_bin_op_with_box(fb.SOperator op, fb.Box b1, fb.Box b2):
+    """Generic binary mathematical functions."""
     return fb.boxBinOp(op, b1, b2)
 
 cdef fb.Box box_add(fb.Box b1, fb.Box b2):
+    """Add two boxes."""
     return fb.boxAdd(b1, b2)
 
 cdef fb.Box box_sub(fb.Box b1, fb.Box b2):
+    """Subtract two boxes."""
     return fb.boxSub(b1, b2)
 
 cdef fb.Box box_mul(fb.Box b1, fb.Box b2):
+    """Multiply two boxes."""
     return fb.boxMul(b1, b2)
 
 cdef fb.Box box_div(fb.Box b1, fb.Box b2):
+    """Divide two boxes."""
     return fb.boxDiv(b1, b2)
 
 cdef fb.Box box_rem(fb.Box b1, fb.Box b2):
@@ -669,21 +825,27 @@ cdef fb.Box box_a_right_shift(fb.Box b1, fb.Box b2):
     return fb.boxARightShift(b1, b2)
 
 cdef fb.Box box_gt(fb.Box b1, fb.Box b2):
+    """Greater than"""
     return fb.boxGT(b1, b2)
 
 cdef fb.Box box_lt(fb.Box b1, fb.Box b2):
+    """Lesser than"""
     return fb.boxLT(b1, b2)
 
 cdef fb.Box box_ge(fb.Box b1, fb.Box b2):
+    """Greater than or equal"""
     return fb.boxGE(b1, b2)
 
 cdef fb.Box box_le(fb.Box b1, fb.Box b2):
+    """Lesser than or equal"""
     return fb.boxLE(b1, b2)
 
 cdef fb.Box box_eq(fb.Box b1, fb.Box b2):
+    """Equals"""
     return fb.boxEQ(b1, b2)
 
 cdef fb.Box box_ne(fb.Box b1, fb.Box b2):
+    """Not Equals"""
     return fb.boxNE(b1, b2)
 
 cdef fb.Box box_and(fb.Box b1, fb.Box b2):
@@ -762,42 +924,55 @@ cdef fb.Box box_atan2(fb.Box b1, fb.Box b2):
     return fb.boxAtan2(b1, b2)
 
 cdef fb.Box box_button(const string& label):
+    """Create a button box."""
     return fb.boxButton(label)
 
 cdef fb.Box box_checkbox(const string& label):
+    """Create a checkbox box."""
     return fb.boxCheckbox(label)
 
 cdef fb.Box box_v_slider(const string& label, fb.Box init, fb.Box min, fb.Box max, fb.Box step):
+    """Create a verical slider box."""
     return fb.boxVSlider(label, init, min, max, step)
 
 cdef fb.Box box_h_slider(const string& label, fb.Box init, fb.Box min, fb.Box max, fb.Box step):
+    """Create a horizontal slider box."""
     return fb.boxHSlider(label, init, min, max, step)
 
 cdef fb.Box box_num_entry(const string& label, fb.Box init, fb.Box min, fb.Box max, fb.Box step):
+    """Create a numeric entry box."""
     return fb.boxNumEntry(label, init, min, max, step)
 
 cdef fb.Box box_v_bargraph(const string& label, fb.Box min, fb.Box max):
+    """Create a vertical bargraph box."""
     return fb.boxVBargraph(label, min, max)
 
 cdef fb.Box box_v_bargraph2(const string& label, fb.Box min, fb.Box max, fb.Box x):
+    """Create a vertical bargraph box."""
     return fb.boxVBargraph(label, min, max, x)
 
 cdef fb.Box box_h_bargraph(const string& label, fb.Box min, fb.Box max):
+    """Create a horizontal bargraph box."""
     return fb.boxHBargraph(label, min, max)
 
 cdef fb.Box box_h_bargraph2(const string& label, fb.Box min, fb.Box max, fb.Box x):
+    """Create a horizontal bargraph box."""
     return fb.boxHBargraph(label, min, max, x)
 
 cdef fb.Box box_v_group(const string& label, fb.Box group):
+    """Create a vertical group box."""
     return fb.boxVGroup(label, group)
 
 cdef fb.Box box_h_group(const string& label, fb.Box group):
+    """Create a horizontal group box."""
     return fb.boxHGroup(label, group)
 
 cdef fb.Box box_t_group(const string& label, fb.Box group):
+    """Create a tab group box."""
     return fb.boxTGroup(label, group)
 
 cdef fb.Box box_attach(fb.Box b1, fb.Box b2):
+    """Create an attach box."""
     return fb.boxAttach(b1, b2)
 
 cdef fb.Box box_prim2(fb.prim2 foo):
@@ -1035,15 +1210,19 @@ cdef bint is_box_with_local_def(fb.Box t, fb.Box& body, fb.Box& ldef):
     return fb.isBoxWithLocalDef(t, body, ldef)
 
 cdef fb.Box dsp_to_boxes(const string& name_app, const string& dsp_content, int argc, const char* argv[], int* inputs, int* outputs, string& error_msg):
+    """Compile a DSP source code as a string in a flattened box."""
     return fb.DSPToBoxes(name_app, dsp_content, argc, argv, inputs, outputs, error_msg)
 
 cdef bint get_box_type(fb.Box box, int* inputs, int* outputs):
+    """Return the number of inputs and outputs of a box."""
     return fb.getBoxType(box, inputs, outputs)
 
 cdef fb.tvec boxes_to_signals(fb.Box box, string& error_msg):
+    """Compile a box expression in a list of signals in normal form."""
     return fb.boxesToSignals(box, error_msg)
 
 cdef fb.string create_source_from_boxes(const string& name_app, fb.Box box, const string& lang, int argc, const char* argv[], string& error_msg):
+    """Create source code in a target language from a box expression."""
     return fb.createSourceFromBoxes(name_app, box, lang, argc, argv, error_msg)
 
 

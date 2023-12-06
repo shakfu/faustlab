@@ -13,15 +13,7 @@ All of the above implementations pass a minimal functional test which produces a
 
 The `cyfaust` implementation also includes `faust_box.pxd` and the beginnings of an attempt to wrap the faust box api.
 
-CAVEAT: project code is currently only at a proof of concept stage and is likely to contain a variety of bugs, memory leaks and other irritants...
-
-**Isn't it redundant to do the same thing four different ways?**
-
-Probably, but it proved to be a nice way to learn the faust interpreter api and also learn about the idiosyncracies and strengths and weaknesses of each wrapper framework.
-
-**What else did you learn?**
-
-Faust is c++ centric so it's best not to use the c-api if you can avoid it.
+CAVEAT: this project's code is currently only at a proof of concept stage and is likely to contain a variety of bugs, memory leaks and other irritants...
 
 ## Usage
 
@@ -54,6 +46,16 @@ Tested only on macOS x86_64 and arm64 system
     `make test_pyfaust` or
 
     `make test_nanofaust`
+
+## Faq
+
+**Isn't it redundant to do the same thing four different ways?**
+
+Probably, but it proved to be a nice way to learn the faust interpreter api and also learn about the idiosyncracies, strengths and weaknesses of each wrapper framework.
+
+**What else did you learn?**
+
+Faust is c++ centric so it's best not to use the c-api if you can avoid it.
 
 
 ## Prior Art of Faust + Python
