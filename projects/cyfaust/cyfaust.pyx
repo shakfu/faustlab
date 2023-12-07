@@ -319,26 +319,26 @@ cdef class InterpreterDspFactory:
     #         return
     #     return factory
 
-    # @staticmethod
-    # def from_boxes(str name_app, fb.Box box, *args) -> InterpreterDspFactory:
-    #     """Create a Faust DSP factory from a box expression."""
-    #     cdef string error_msg
-    #     error_msg.reserve(4096)
-    #     cdef InterpreterDspFactory factory = InterpreterDspFactory.__new__(
-    #         InterpreterDspFactory)
-    #     cdef ParamArray params = ParamArray(args)
-    #     factory.ptr_owner = True
-    #     factory.ptr = <fi.interpreter_dsp_factory*>fi.createInterpreterDSPFactoryFromBoxes(
-    #         name_app.encode('utf8'),
-    #         box,
-    #         params.argc,
-    #         params.argv,
-    #         error_msg,
-    #     )
-    #     if not error_msg.empty():
-    #         print(error_msg.decode())
-    #         return
-    #     return factory
+    @staticmethod
+    def from_boxes(str name_app, Box box, *args) -> InterpreterDspFactory:
+        """Create a Faust DSP factory from a box expression."""
+        cdef string error_msg
+        error_msg.reserve(4096)
+        cdef InterpreterDspFactory factory = InterpreterDspFactory.__new__(
+            InterpreterDspFactory)
+        cdef ParamArray params = ParamArray(args)
+        factory.ptr_owner = True
+        factory.ptr = <fi.interpreter_dsp_factory*>fi.createInterpreterDSPFactoryFromBoxes(
+            name_app.encode('utf8'),
+            box.ptr,
+            params.argc,
+            params.argv,
+            error_msg,
+        )
+        if not error_msg.empty():
+            print(error_msg.decode())
+            return
+        return factory
 
     @staticmethod
     def from_bitcode_file(str bit_code_path) -> InterpreterDspFactory:
@@ -506,27 +506,19 @@ cdef fi.interpreter_dsp_factory* create_interpreter_dsp_factory_from_signals(
     return fi.createInterpreterDSPFactoryFromSignals(
         name_app, signals, argc, argv, error_msg)
 
-cdef fi.interpreter_dsp_factory* create_interpreter_dsp_factory_from_boxes(
-        const string& name_app, fi.Box box, int argc, const char* argv[], 
-        string& error_msg):
-    """Create a Faust DSP factory from a box expression."""
-    return fi.createInterpreterDSPFactoryFromBoxes(
-        name_app, box, argc, argv, error_msg)
-
 ## ---------------------------------------------------------------------------
 ## faust/dsp/libfaust-box
 
+class box_context:
+    def __enter__(self):
+        fb.createLibContext()
+    def __exit__(self, type, value, traceback):
+        fb.destroyLibContext()
+
 cdef class Box:
     """faust Box wrapper.
-    
-    Box box = boxPar(boxInt(7), boxReal(3.14));
     """
     cdef fb.Box ptr
-
-    # def __dealloc__(self):
-    #     if self.ptr and self.ptr_owner:
-    #         del self.ptr
-    #         self.ptr = NULL
 
     def __cinit__(self):
         self.ptr = NULL
@@ -550,13 +542,34 @@ cdef class Box:
         box.ptr = ptr
         return box
 
+    def create_source(self, name_app: str, lang, *args) -> str:
+        """Create source code in a target language from a box expression."""
+        cdef string error_msg
+        error_msg.reserve(4096)
+        cdef ParamArray params = ParamArray(args)
+        cdef string src = fb.createSourceFromBoxes(
+            name_app,
+            self.ptr,
+            lang,
+            params.argc,
+            params.argv,
+            error_msg)
+        if error_msg.empty():
+            print(error_msg.decode())
+            return
+        return src.decode()
+
+    def print(self, shared: bool = False, max_size: int = 256):
+        """Print this box."""
+        print(fb.printBox(self.ptr, shared, max_size).decode())
+
     def __add__(self, Box other):
-        """Add this box with another."""
+        """Add this box to another."""
         cdef fb.Box b = fb.boxAdd(self.ptr, other.ptr)
         return Box.from_ptr(b)
 
     def __radd__(self, Box other):
-        """Reverse Add this box with another."""
+        """Reverse add this box to another."""
         cdef fb.Box b = fb.boxAdd(self.ptr, other.ptr)
         return Box.from_ptr(b)
 
@@ -571,12 +584,12 @@ cdef class Box:
         return Box.from_ptr(b)
 
     def __mul__(self, Box other):
-        """Multiply this box from another."""
+        """Multiply this box with another."""
         cdef fb.Box b = fb.boxMul(self.ptr, other.ptr)
         return Box.from_ptr(b)
 
     def __rmul__(self, Box other):
-        """Multiply this box from another."""
+        """Reverse multiply this box with another."""
         cdef fb.Box b = fb.boxMul(self.ptr, other.ptr)
         return Box.from_ptr(b)
 
@@ -586,13 +599,18 @@ cdef class Box:
         return Box.from_ptr(b)
 
     def __rdiv__(self, Box other):
-        """Divide this box with another."""
+        """Reverse divide this box with another."""
         cdef fb.Box b = fb.boxDiv(self.ptr, other.ptr)
         return Box.from_ptr(b)
 
     def __eq__(self, Box other):
         """Compare for equality with another box."""
         cdef fb.Box b = fb.boxEQ(self.ptr, other.ptr)
+        return Box.from_ptr(b)
+
+    def __ne__(self, Box other):
+        """Assert this box is not equal with another box."""
+        cdef fb.Box b = fb.boxNE(self.ptr, other.ptr)
         return Box.from_ptr(b)
 
     def __gt__(self, Box other):
@@ -615,16 +633,201 @@ cdef class Box:
         cdef fb.Box b = fb.boxLE(self.ptr, other.ptr)
         return Box.from_ptr(b)
 
+    def __and__(self, Box other):
+        """logical and with another box"""
+        cdef fb.Box b = fb.boxAND(self.ptr, other.ptr)
+        return Box.from_ptr(b)
 
-cdef print_box(fb.Box box, bint shared, int max_size):
-    """Print a box."""
-    return fb.printBox(box, shared, max_size)
+    def __or__(self, Box other):
+        """logical or with another box"""
+        cdef fb.Box b = fb.boxOR(self.ptr, other.ptr)
+        return Box.from_ptr(b)
 
-cdef print_signal(fb.Signal sig, bint shared, int max_size):
+    def __xor__(self, Box other):
+        """logical xor with another box"""
+        cdef fb.Box b = fb.boxXOR(self.ptr, other.ptr)
+        return Box.from_ptr(b)
+
+    def to_string(self):
+        """Convert this box tree (such as the label of a UI) to a string."""
+        return fb.tree2str(self.ptr).decode()
+
+    def to_int(self):
+        """If this box tree has a node of type int, return it, otherwise error."""
+        return fb.tree2int(self.ptr).decode()
+
+    def abs(self) -> Box: 
+        cdef fb.Box b = fb.boxAbs(self.ptr)
+        return Box.from_ptr(b)
+
+    def acos(self) -> Box: 
+        cdef fb.Box b = fb.boxAcos(self.ptr)
+        return Box.from_ptr(b)
+
+    def tan(self) -> Box: 
+        cdef fb.Box b = fb.boxTan(self.ptr)
+        return Box.from_ptr(b)
+
+    def sqrt(self) -> Box: 
+        cdef fb.Box b = fb.boxSqrt(self.ptr)
+        return Box.from_ptr(b)
+
+    def sin(self) -> Box: 
+        cdef fb.Box b = fb.boxSin(self.ptr)
+        return Box.from_ptr(b)
+
+    def rint(self) -> Box: 
+        cdef fb.Box b = fb.boxRint(self.ptr)
+        return Box.from_ptr(b)
+
+    def round(self) -> Box: 
+        cdef fb.Box b = fb.boxRound(self.ptr)
+        return Box.from_ptr(b)
+
+    def log(self) -> Box: 
+        cdef fb.Box b = fb.boxLog(self.ptr)
+        return Box.from_ptr(b)
+
+    def log10(self) -> Box: 
+        cdef fb.Box b = fb.boxLog10(self.ptr)
+        return Box.from_ptr(b)
+
+    def floor(self) -> Box: 
+        cdef fb.Box b = fb.boxFloor(self.ptr)
+        return Box.from_ptr(b)
+
+    def exp(self) -> Box: 
+        cdef fb.Box b = fb.boxExp(self.ptr)
+        return Box.from_ptr(b)
+
+    def exp10(self) -> Box: 
+        cdef fb.Box b = fb.boxExp10(self.ptr)
+        return Box.from_ptr(b)
+
+    def cos(self) -> Box: 
+        cdef fb.Box b = fb.boxCos(self.ptr)
+        return Box.from_ptr(b)
+
+    def ceil(self) -> Box: 
+        cdef fb.Box b = fb.boxCeil(self.ptr)
+        return Box.from_ptr(b)
+
+    def atan(self) -> Box: 
+        cdef fb.Box b = fb.boxAtan(self.ptr)
+        return Box.from_ptr(b)
+
+    def asin(self) -> Box: 
+        cdef fb.Box b = fb.boxAsin(self.ptr)
+        return Box.from_ptr(b)
+
+    def is_nil(self) -> bool:
+        """Check if a box is nil."""
+        return fb.isNil(self.ptr)
+
+    def is_box_abstr(self) -> bool:
+        return fb.isBoxAbstr(self.ptr)
+
+    def is_box_appl(self) -> bool:
+        return fb.isBoxAppl(self.ptr)
+
+    def is_box_button(self) -> bool:
+        return fb.isBoxButton(self.ptr)
+
+    def is_box_case(self) -> bool:
+        return fb.isBoxCase(self.ptr)
+
+    def is_box_checkbox(self) -> bool:
+        return fb.isBoxCheckbox(self.ptr)
+
+    def is_box_cut(self) -> bool:
+        return fb.isBoxCut(self.ptr)
+
+    def is_box_environment(self) -> bool:
+        return fb.isBoxEnvironment(self.ptr)
+
+    def is_box_error(self) -> bool:
+        return fb.isBoxError(self.ptr)
+
+    def is_box_f_const(self) -> bool:
+        return fb.isBoxFConst(self.ptr)
+
+    def is_box_f_fun(self) -> bool:
+        return fb.isBoxFFun(self.ptr)
+
+    def is_box_f_var_(self) -> bool:
+        return fb.isBoxFVar(self.ptr)
+
+    def is_box_h_bargraph(self) -> bool:
+        return fb.isBoxHBargraph(self.ptr)
+
+    def is_box_h_group(self) -> bool:
+        return fb.isBoxHGroup(self.ptr)
+
+    def is_box_h_slider(self) -> bool:
+        return fb.isBoxHSlider(self.ptr)
+
+    def is_box_ident(self) -> bool:
+        return fb.isBoxIdent(self.ptr)
+
+    def is_box_int(self) -> bool:
+        return fb.isBoxInt(self.ptr)
+
+    def is_box_num_entry(self) -> bool:
+        return fb.isBoxNumEntry(self.ptr)
+
+    def is_box_prim0(self) -> bool:
+        return fb.isBoxPrim0(self.ptr)
+
+    def is_box_prim1(self) -> bool:
+        return fb.isBoxPrim1(self.ptr)
+
+    def is_box_prim2(self) -> bool:
+        return fb.isBoxPrim2(self.ptr)
+
+    def is_box_prim3(self) -> bool:
+        return fb.isBoxPrim3(self.ptr)
+
+    def is_box_prim4(self) -> bool:
+        return fb.isBoxPrim4(self.ptr)
+
+    def is_box_prim5(self) -> bool:
+        return fb.isBoxPrim5(self.ptr)
+
+    def is_box_real_(self) -> bool:
+        return fb.isBoxReal(self.ptr)
+
+    def is_box_slot(self) -> bool:
+        return fb.isBoxSlot(self.ptr)
+
+    def is_box_soundfile(self) -> bool:
+        return fb.isBoxSoundfile(self.ptr)
+
+    def is_box_symbolic(self) -> bool:
+        return fb.isBoxSymbolic(self.ptr)
+
+    def is_box_t_group(self) -> bool:
+        return fb.isBoxTGroup(self.ptr)
+
+    def is_box_v_group(self) -> bool:
+        return fb.isBoxVGroup(self.ptr)
+
+    def is_box_v_slider(self) -> bool:
+        return fb.isBoxVSlider(self.ptr)
+
+    def is_box_waveform(self) -> bool:
+        return fb.isBoxWaveform(self.ptr)
+
+    def is_box_wire(self) -> bool:
+        return fb.isBoxWire(self.ptr)
+
+
+
+
+cdef string print_signal(fb.Signal sig, bint shared, int max_size):
     """Print a signal."""
     return fb.printSignal(sig, shared, max_size)
 
-cdef bint get_def_mame_property(fb.Box b, fb.Box& id):
+cdef bint get_def_name_property(fb.Box b, fb.Box& id):
     """Indicates the identifier (if any) the expression was a definition of."""
     return fb.getDefNameProperty(b, id)
 
@@ -640,20 +843,9 @@ def destroy_lib_context():
     """Destroy global compilation context, has to be done last."""
     fb.destroyLibContext()
 
-cdef bint is_nil(fb.Box b):
-    """Check if a box is nil."""
-    return fb.isNil(b)
-
-cdef const char* tree2str(fb.Box b):
-    """Convert a box (such as the label of a UI) to a string."""
-    return fb.tree2str(b)
-
-cdef int tree2int(fb.Box b):
-    """If t has a node of type int, return it. Otherwise error."""
-    return fb.tree2int(b)
 
 cdef void* get_user_data(fb.Box b):
-    """Return the xtended type of a box."""
+    """Return the extended type of a box."""
     return fb.getUserData(b)
 
 cdef fb.Box box_int(int n):
@@ -796,21 +988,6 @@ cdef fb.Box box_bin_op_with_box(fb.SOperator op, fb.Box b1, fb.Box b2):
     """Generic binary mathematical functions."""
     return fb.boxBinOp(op, b1, b2)
 
-cdef fb.Box box_add(fb.Box b1, fb.Box b2):
-    """Add two boxes."""
-    return fb.boxAdd(b1, b2)
-
-cdef fb.Box box_sub(fb.Box b1, fb.Box b2):
-    """Subtract two boxes."""
-    return fb.boxSub(b1, b2)
-
-cdef fb.Box box_mul(fb.Box b1, fb.Box b2):
-    """Multiply two boxes."""
-    return fb.boxMul(b1, b2)
-
-cdef fb.Box box_div(fb.Box b1, fb.Box b2):
-    """Divide two boxes."""
-    return fb.boxDiv(b1, b2)
 
 cdef fb.Box box_rem(fb.Box b1, fb.Box b2):
     return fb.boxRem(b1, b2)
@@ -824,86 +1001,54 @@ cdef fb.Box box_l_right_shift(fb.Box b1, fb.Box b2):
 cdef fb.Box box_a_right_shift(fb.Box b1, fb.Box b2):
     return fb.boxARightShift(b1, b2)
 
-cdef fb.Box box_gt(fb.Box b1, fb.Box b2):
-    """Greater than"""
-    return fb.boxGT(b1, b2)
 
-cdef fb.Box box_lt(fb.Box b1, fb.Box b2):
-    """Lesser than"""
-    return fb.boxLT(b1, b2)
+# cdef fb.Box box_abs(fb.Box x):
+#     return fb.boxAbs(x)
 
-cdef fb.Box box_ge(fb.Box b1, fb.Box b2):
-    """Greater than or equal"""
-    return fb.boxGE(b1, b2)
+# cdef fb.Box box_acos(fb.Box x):
+#     return fb.boxAcos(x)
 
-cdef fb.Box box_le(fb.Box b1, fb.Box b2):
-    """Lesser than or equal"""
-    return fb.boxLE(b1, b2)
+# cdef fb.Box box_tan(fb.Box x):
+#     return fb.boxTan(x)
 
-cdef fb.Box box_eq(fb.Box b1, fb.Box b2):
-    """Equals"""
-    return fb.boxEQ(b1, b2)
+# cdef fb.Box box_sqrt(fb.Box x):
+#     return fb.boxSqrt(x)
 
-cdef fb.Box box_ne(fb.Box b1, fb.Box b2):
-    """Not Equals"""
-    return fb.boxNE(b1, b2)
+# cdef fb.Box box_sin(fb.Box x):
+#     return fb.boxSin(x)
 
-cdef fb.Box box_and(fb.Box b1, fb.Box b2):
-    return fb.boxAND(b1, b2)
+# cdef fb.Box box_rint(fb.Box x):
+#     return fb.boxRint(x)
 
-cdef fb.Box box_or(fb.Box b1, fb.Box b2):
-    return fb.boxOR(b1, b2)
+# cdef fb.Box box_round(fb.Box x):
+#     return fb.boxRound(x)
 
-cdef fb.Box box_xor(fb.Box b1, fb.Box b2):
-    return fb.boxXOR(b1, b2)
+# cdef fb.Box box_log(fb.Box x):
+#     return fb.boxLog(x)
 
-cdef fb.Box box_abs(fb.Box x):
-    return fb.boxAbs(x)
+# cdef fb.Box box_log10(fb.Box x):
+#     return fb.boxLog10(x)
 
-cdef fb.Box box_acos(fb.Box x):
-    return fb.boxAcos(x)
+# cdef fb.Box box_floor(fb.Box x):
+#     return fb.boxFloor(x)
 
-cdef fb.Box box_tan(fb.Box x):
-    return fb.boxTan(x)
+# cdef fb.Box box_exp(fb.Box x):
+#     return fb.boxExp(x)
 
-cdef fb.Box box_sqrt(fb.Box x):
-    return fb.boxSqrt(x)
+# cdef fb.Box box_exp10(fb.Box x):
+#     return fb.boxExp10(x)
 
-cdef fb.Box box_sin(fb.Box x):
-    return fb.boxSin(x)
+# cdef fb.Box box_cos(fb.Box x):
+#     return fb.boxCos(x)
 
-cdef fb.Box box_rint(fb.Box x):
-    return fb.boxRint(x)
+# cdef fb.Box box_ceil(fb.Box x):
+#     return fb.boxCeil(x)
 
-cdef fb.Box box_round(fb.Box x):
-    return fb.boxRound(x)
+# cdef fb.Box box_atan(fb.Box x):
+#     return fb.boxAtan(x)
 
-cdef fb.Box box_log(fb.Box x):
-    return fb.boxLog(x)
-
-cdef fb.Box box_log10(fb.Box x):
-    return fb.boxLog10(x)
-
-cdef fb.Box box_floor(fb.Box x):
-    return fb.boxFloor(x)
-
-cdef fb.Box box_exp(fb.Box x):
-    return fb.boxExp(x)
-
-cdef fb.Box box_exp10(fb.Box x):
-    return fb.boxExp10(x)
-
-cdef fb.Box box_cos(fb.Box x):
-    return fb.boxCos(x)
-
-cdef fb.Box box_ceil(fb.Box x):
-    return fb.boxCeil(x)
-
-cdef fb.Box box_atan(fb.Box x):
-    return fb.boxAtan(x)
-
-cdef fb.Box box_asin(fb.Box x):
-    return fb.boxAsin(x)
+# cdef fb.Box box_asin(fb.Box x):
+#     return fb.boxAsin(x)
 
 cdef fb.Box box_remainder(fb.Box b1, fb.Box b2):
     return fb.boxRemainder(b1, b2)
@@ -978,35 +1123,20 @@ cdef fb.Box box_attach(fb.Box b1, fb.Box b2):
 cdef fb.Box box_prim2(fb.prim2 foo):
     return fb.boxPrim2(foo)
 
-cdef bint is_box_abstr(fb.Box t):
-    return fb.isBoxAbstr(t)
-
 cdef bint is_box_abstr_(fb.Box t, fb.Box& x, fb.Box& y):
     return fb.isBoxAbstr(t, x, y)
 
 cdef bint is_box_access(fb.Box t, fb.Box& exp, fb.Box& id):
     return fb.isBoxAccess(t, exp, id)
 
-cdef bint is_box_appl(fb.Box t):
-    return fb.isBoxAppl(t)
-
 cdef bint is_box_appl_(fb.Box t, fb.Box& x, fb.Box& y):
     return fb.isBoxAppl(t, x, y)
-
-cdef bint is_box_button(fb.Box b):
-    return fb.isBoxButton(b)
 
 cdef bint is_box_button_(fb.Box b, fb.Box& lbl):
     return fb.isBoxButton(b, lbl)
 
-cdef bint is_box_case(fb.Box b):
-    return fb.isBoxCase(b)
-
 cdef bint is_box_case_(fb.Box b, fb.Box& rules):
     return fb.isBoxCase(b, rules)
-
-cdef bint is_box_checkbox(fb.Box b):
-    return fb.isBoxCheckbox(b)
 
 cdef bint is_box_checkbox_(fb.Box b, fb.Box& lbl):
     return fb.isBoxCheckbox(b, lbl)
@@ -1014,62 +1144,32 @@ cdef bint is_box_checkbox_(fb.Box b, fb.Box& lbl):
 cdef bint is_box_component(fb.Box b, fb.Box& filename):
     return fb.isBoxComponent(b, filename)
 
-cdef bint is_box_cut(fb.Box t):
-    return fb.isBoxCut(t)
-
 cdef bint is_box_environment(fb.Box b):
     return fb.isBoxEnvironment(b)
-
-cdef bint is_box_error(fb.Box t):
-    return fb.isBoxError(t)
-
-cdef bint is_box_f_const_(fb.Box b):
-    return fb.isBoxFConst(b)
 
 cdef bint is_box_f_const(fb.Box b, fb.Box& type, fb.Box& name, fb.Box& file):
     return fb.isBoxFConst(b, type, name, file)
 
-cdef bint is_box_f_fun_(fb.Box b):
-    return fb.isBoxFFun(b)
-
 cdef bint is_box_f_fun(fb.Box b, fb.Box& ff):
     return fb.isBoxFFun(b, ff)
-
-cdef bint is_box_f_var_(fb.Box b):
-    return fb.isBoxFVar(b)
 
 cdef bint is_box_f_var(fb.Box b, fb.Box& type, fb.Box& name, fb.Box& file):
     return fb.isBoxFVar(b, type, name, file)
 
-cdef bint is_box_h_bargraph_(fb.Box b):
-    return fb.isBoxHBargraph(b)
-
 cdef bint is_box_h_bargraph(fb.Box b, fb.Box& lbl, fb.Box& min, fb.Box& max):
     return fb.isBoxHBargraph(b, lbl, min, max)
-
-cdef bint is_box_h_group_(fb.Box b):
-    return fb.isBoxHGroup(b)
 
 cdef bint is_box_h_group(fb.Box b, fb.Box& lbl, fb.Box& x):
     return fb.isBoxHGroup(b, lbl, x)
 
-cdef bint is_box_h_slider_(fb.Box b):
-    return fb.isBoxHSlider(b)
-
 cdef bint is_box_h_slider(fb.Box b, fb.Box& lbl, fb.Box& cur, fb.Box& min, fb.Box& max, fb.Box& step):
     return fb.isBoxHSlider(b, lbl, cur, min, max, step)
-
-cdef bint is_box_ident_(fb.Box t):
-    return fb.isBoxIdent(t)
 
 cdef bint is_box_ident(fb.Box t, const char** str):
     return fb.isBoxIdent(t, str)
 
 cdef bint is_box_inputs(fb.Box t, fb.Box& x):
     return fb.isBoxInputs(t, x)
-
-cdef bint is_box_int_(fb.Box t):
-    return fb.isBoxInt(t)
 
 cdef bint is_box_int(fb.Box t, int* i):
     return fb.isBoxInt(t, i)
@@ -1095,9 +1195,6 @@ cdef bint is_box_merge(fb.Box t, fb.Box& x, fb.Box& y):
 cdef bint is_box_metadata(fb.Box b, fb.Box& exp, fb.Box& mdlist):
     return fb.isBoxMetadata(b, exp, mdlist)
 
-cdef bint is_box_num_entry_(fb.Box b):
-    return fb.isBoxNumEntry(b)
-
 cdef bint is_box_num_entry(fb.Box b, fb.Box& lbl, fb.Box& cur, fb.Box& min_, fb.Box& max_, fb.Box& step):
     return fb.isBoxNumEntry(b, lbl, cur, min_, max_, step)
 
@@ -1106,24 +1203,6 @@ cdef bint is_box_outputs(fb.Box t, fb.Box& x):
 
 cdef bint is_box_par(fb.Box t, fb.Box& x, fb.Box& y):
     return fb.isBoxPar(t, x, y)
-
-cdef bint is_box_prim0(fb.Box b):
-    return fb.isBoxPrim0(b)
-
-cdef bint is_box_prim1(fb.Box b):
-    return fb.isBoxPrim1(b)
-
-cdef bint is_box_prim2(fb.Box b):
-    return fb.isBoxPrim2(b)
-
-cdef bint is_box_prim3(fb.Box b):
-    return fb.isBoxPrim3(b)
-
-cdef bint is_box_prim4(fb.Box b):
-    return fb.isBoxPrim4(b)
-
-cdef bint is_box_prim5(fb.Box b):
-    return fb.isBoxPrim5(b)
 
 cdef bint is_box_prim0_(fb.Box b, fb.prim0* p):
     return fb.isBoxPrim0(b, p)
@@ -1143,9 +1222,6 @@ cdef bint is_box_prim4_(fb.Box b, fb.prim4* p):
 cdef bint is_box_prim5_(fb.Box b, fb.prim5* p):
     return fb.isBoxPrim5(b, p)
 
-cdef bint is_box_real_(fb.Box t):
-    return fb.isBoxReal(t)
-
 cdef bint is_box_real(fb.Box t, double* r):
     return fb.isBoxReal(t, r)
 
@@ -1158,53 +1234,26 @@ cdef bint is_box_route(fb.Box b, fb.Box& n, fb.Box& m, fb.Box& r):
 cdef bint is_box_seq(fb.Box t, fb.Box& x, fb.Box& y):
     return fb.isBoxSeq(t, x, y)
 
-cdef bint is_box_slot(fb.Box t):
-    return fb.isBoxSlot(t)
-
-cdef bint is_box_soundfile_(fb.Box b):
-    return fb.isBoxSoundfile(b)
-
 cdef bint is_box_soundfile(fb.Box b, fb.Box& label, fb.Box& chan):
     return fb.isBoxSoundfile(b, label, chan)
 
 cdef bint is_box_split(fb.Box t, fb.Box& x, fb.Box& y):
     return fb.isBoxSplit(t, x, y)
 
-cdef bint is_box_symbolic_(fb.Box t):
-    return fb.isBoxSymbolic(t)
-
 cdef bint is_box_symbolic(fb.Box t, fb.Box& slot, fb.Box& body):
     return fb.isBoxSymbolic(t, slot, body)
-
-cdef bint is_box_t_group_(fb.Box b):
-    return fb.isBoxTGroup(b)
 
 cdef bint is_box_t_group(fb.Box b, fb.Box& lbl, fb.Box& x):
     return fb.isBoxTGroup(b, lbl, x)
 
-cdef bint is_box_v_bargraph_(fb.Box b):
-    return fb.isBoxVBargraph(b)
-
 cdef bint is_box_v_bargraph(fb.Box b, fb.Box& lbl, fb.Box& min, fb.Box& max):
     return fb.isBoxVBargraph(b, lbl, min, max)
-
-cdef bint is_box_v_group_(fb.Box b):
-    return fb.isBoxVGroup(b)
 
 cdef bint is_box_v_group(fb.Box b, fb.Box& lbl, fb.Box& x):
     return fb.isBoxVGroup(b, lbl, x)
 
-cdef bint is_box_v_slider_(fb.Box b):
-    return fb.isBoxVSlider(b)
-
 cdef bint is_box_v_slider(fb.Box b, fb.Box& lbl, fb.Box& cur, fb.Box& min, fb.Box& max, fb.Box& step):
     return fb.isBoxVSlider(b, lbl, cur, min, max, step)
-
-cdef bint is_box_waveform(fb.Box b):
-    return fb.isBoxWaveform(b)
-
-cdef bint is_box_wire(fb.Box t):
-    return fb.isBoxWire(t)
 
 cdef bint is_box_with_local_def(fb.Box t, fb.Box& body, fb.Box& ldef):
     return fb.isBoxWithLocalDef(t, body, ldef)
@@ -1221,7 +1270,7 @@ cdef fb.tvec boxes_to_signals(fb.Box box, string& error_msg):
     """Compile a box expression in a list of signals in normal form."""
     return fb.boxesToSignals(box, error_msg)
 
-cdef fb.string create_source_from_boxes(const string& name_app, fb.Box box, const string& lang, int argc, const char* argv[], string& error_msg):
+cdef string create_source_from_boxes(const string& name_app, fb.Box box, const string& lang, int argc, const char* argv[], string& error_msg):
     """Create source code in a target language from a box expression."""
     return fb.createSourceFromBoxes(name_app, box, lang, argc, argv, error_msg)
 
