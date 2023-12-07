@@ -515,6 +515,7 @@ class box_context:
     def __exit__(self, type, value, traceback):
         fb.destroyLibContext()
 
+
 cdef class Box:
     """faust Box wrapper.
     """
@@ -522,6 +523,13 @@ cdef class Box:
 
     def __cinit__(self):
         self.ptr = NULL
+
+    @staticmethod
+    cdef Box from_ptr(fb.Box ptr, bint ptr_owner=False):
+        """Wrap external factory from pointer"""
+        cdef Box box = Box.__new__(Box)
+        box.ptr = ptr
+        return box
 
     @staticmethod
     def from_int(int value) -> Box:
@@ -534,13 +542,6 @@ cdef class Box:
         """Create box from float"""
         cdef fb.Box b = fb.boxReal(value)
         return Box.from_ptr(b)
-
-    @staticmethod
-    cdef Box from_ptr(fb.Box ptr, bint ptr_owner=False):
-        """Wrap external factory from pointer"""
-        cdef Box box = Box.__new__(Box)
-        box.ptr = ptr
-        return box
 
     def create_source(self, name_app: str, lang, *args) -> str:
         """Create source code in a target language from a box expression."""
@@ -821,6 +822,45 @@ cdef class Box:
         return fb.isBoxWire(self.ptr)
 
 
+cdef class Int(Box):
+
+    def __cinit__(self, int value):
+        self.ptr = <fb.Box>fb.boxInt(value)
+
+    @staticmethod
+    cdef Int from_ptr(fb.Box ptr, bint ptr_owner=False):
+        """Wrap external factory from pointer"""
+        cdef Int box = Int.__new__(Int)
+        box.ptr = ptr
+        return box
+
+
+# cdef class Int:
+#     cdef fb.Box ptr
+
+#     def __cinit__(self, int value):
+#         self.ptr = <fb.Box>fb.boxInt(value)
+
+#     @staticmethod
+#     cdef Int from_ptr(fb.Box ptr, bint ptr_owner=False):
+#         """Wrap external factory from pointer"""
+#         cdef Int box = Int.__new__(Int)
+#         box.ptr = ptr
+#         return box
+
+#     def print(self, shared: bool = False, max_size: int = 256):
+#         """Print this box."""
+#         print(fb.printBox(self.ptr, shared, max_size).decode())
+
+#     def __add__(self, Box other):
+#         """Add this box to another."""
+#         cdef fb.Box b = fb.boxAdd(self.ptr, other.ptr)
+#         return Box.from_ptr(b)
+
+#     def __radd__(self, Box other):
+#         """Reverse add this box to another."""
+#         cdef fb.Box b = fb.boxAdd(self.ptr, other.ptr)
+#         return Box.from_ptr(b)
 
 
 cdef string print_signal(fb.Signal sig, bint shared, int max_size):
