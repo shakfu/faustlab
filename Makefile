@@ -54,33 +54,25 @@ test_audio:
 # 	@/tmp/audio-test tests/test_faust_interp/foo.dsp
 
 
-test: test_cyfaust test_cfaust test_pyfaust test_nanofaust
+test: test_cyfaust test_cfaust test_pyfaust test_nanofaust prep_tests
 	@echo "DONE"
 
-
-test_cyfaust: cmake
-	@echo "testing cyfaust"
+build/noise.dsp:
 	@cp tests/noise.dsp ./build/
-	@cp tests/test_cyfaust.py ./build/
-	@cd build && python3 test_cyfaust.py
 
-test_cfaust: cmake
-	@echo "testing cfaust"
-	@cp tests/noise.dsp ./build/
-	@cp tests/test_cfaust.py ./build/
-	@cd build && python3 test_cfaust.py
+prep_tests: build/noise.dsp
 
-test_pyfaust: cmake
-	@echo "testing pyfaust"
-	@cp tests/noise.dsp ./build/
-	@cp tests/test_pyfaust.py ./build/
-	@cd build && python3 test_pyfaust.py
+test_cyfaust: cmake prep_tests
+	@python3 tests/test_cyfaust.py
 
-test_nanofaust: cmake
-	@echo "testing nanofaust"
-	@cp tests/noise.dsp ./build/
-	@cp tests/test_nanofaust.py ./build/
-	@cd build && python3 test_nanofaust.py
+test_cfaust: cmake prep_tests
+	@python3 tests/test_cfaust.py
+
+test_pyfaust: cmake prep_tests
+	@python3 tests/test_pyfaust.py
+
+test_nanofaust: cmake prep_tests
+	@python3 tests/test_nanofaust.py
 
 clean:
 	@rm projects/cyfaust/cyfaust.cpp

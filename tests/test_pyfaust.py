@@ -1,6 +1,11 @@
-import time
+import os, sys
+BUILD_PATH = os.path.join(os.path.dirname(os.path.dirname(__file__)), 'build')
+os.chdir(BUILD_PATH); sys.path.insert(0, BUILD_PATH)
 
+import time
 import pyfaust
+
+from testutils import print_section
 
 def test_pyfaust():
     print("faust version:", pyfaust.get_version())
@@ -36,4 +41,5 @@ def test_pyfaust():
 
 
 if __name__ == '__main__':
+    print_section("testing pyfaust")
     test_pyfaust()

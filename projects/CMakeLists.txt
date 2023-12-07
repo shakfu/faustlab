@@ -1,5 +1,6 @@
 find_package(Python 3.8 COMPONENTS Interpreter Development Development.Module REQUIRED)
 
+if(DEBUG)
 message(STATUS "Python_FOUND: ${Python_FOUND}")
 message(STATUS "Python_Development_FOUND: ${Python_Development_FOUND}")
 message(STATUS "Python_Development.Embed_FOUND: ${Python_Development.Embed_FOUND}")
@@ -28,6 +29,7 @@ message(STATUS "Python_VERSION: ${Python_VERSION}")
 message(STATUS "Python_VERSION_MAJOR: ${Python_VERSION_MAJOR}")
 message(STATUS "Python_VERSION_MINOR: ${Python_VERSION_MINOR}")
 message(STATUS "Python_VERSION_PATCH: ${Python_VERSION_PATCH}")
+endif()
 
 # common variables
 
