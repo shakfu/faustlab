@@ -62,7 +62,7 @@ def generate_sha1(data: str) -> str:
     """Generate SHA1 key from a string."""
     return fi.generateSHA1(data.encode('utf8')).decode()
 
-def expand_dsp_from_file(filename: str, *args) -> (str, str):
+def expand_dsp_from_file(filename: str, *args) -> tuple(str, str):
     """Expand dsp in a file into a self-contained dsp string.
     
     Returns sha key for expanded dsp string and expanded dsp string

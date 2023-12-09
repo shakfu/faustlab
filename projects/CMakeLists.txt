@@ -57,8 +57,6 @@ set(RTAUDIO_COMPILE_DEFS
 )
 
 
-
-
 if(Python_FOUND)
 	add_subdirectory(cfaust)
 	add_subdirectory(cyfaust)
