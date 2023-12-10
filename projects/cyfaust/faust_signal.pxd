@@ -89,7 +89,7 @@ cdef extern from "faust/dsp/libfaust-signal.h":
 
     Signal sigInput(int idx)
 
-    Signal sigDelay(Signal s, Signal del)
+    Signal sigDelay(Signal s, Signal delay)
 
     Signal sigDelay1(Signal s)
 
