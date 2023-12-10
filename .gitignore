@@ -1,3 +1,5 @@
+.vscode
+
 bin/faust
 bin/faust-config
 bin/faustpath
