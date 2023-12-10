@@ -9,11 +9,11 @@ A cython c++ wrapper for the faust interpreter.
 ```
 cyfaust
 	__init__.py
-	_faust_interp.so
-	_faust_box.so
-	_faust_signal.so
+	cyfaust.so
 	faust_interp.pxd
 	faust_box.pxd
+	faust_box.pxi
 	faust_signal.pxd
+	faust_signal.pxi
 ```
 
