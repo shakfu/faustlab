@@ -1,5 +1,71 @@
 
 
+class signal_context:
+    def __enter__(self):
+        fb.createLibContext()
+    def __exit__(self, type, value, traceback):
+        fb.destroyLibContext()
+
+
+cdef class Signal:
+    """faust Signal wrapper.
+    """
+    cdef fs.Signal ptr
+
+    def __cinit__(self):
+        self.ptr = NULL
+
+    @staticmethod
+    cdef Signal from_ptr(fs.Signal ptr, bint ptr_owner=False):
+        """Wrap Signal from pointer"""
+        cdef Signal sig = Signal.__new__(Signal)
+        sig.ptr = ptr
+        return sig
+
+    @staticmethod
+    def from_int(int value) -> Signal:
+        """Create signal from int"""
+        cdef fs.Signal b = fs.sigInt(value)
+        return Signal.from_ptr(b)
+
+    @staticmethod
+    def from_float(float value) -> Signal:
+        """Create signal from float"""
+        cdef fs.Signal b = fs.sigReal(value)
+        return Signal.from_ptr(b)
+
+    # def create_source(self, name_app: str, lang, *args) -> str:
+    #     """Create source code in a target language from a signal expression."""
+    #     cdef string error_msg
+    #     error_msg.reserve(4096)
+    #     cdef ParamArray params = ParamArray(args)
+    #     cdef string src = fs.createSourceFromSignals(
+    #         name_app,
+    #         self.ptr,
+    #         lang,
+    #         params.argc,
+    #         params.argv,
+    #         error_msg)
+    #     if error_msg.empty():
+    #         print(error_msg.decode())
+    #         return
+    #     return src.decode()
+
+    def print(self, shared: bool = False, max_size: int = 256):
+        """Print this signal."""
+        print(fs.printSignal(self.ptr, shared, max_size).decode())
+
+    def __add__(self, Signal other):
+        """Add this signal to another."""
+        cdef fs.Signal b = fs.sigAdd(self.ptr, other.ptr)
+        return Signal.from_ptr(b)
+
+    def __radd__(self, Signal other):
+        """Reverse add this signal to another."""
+        cdef fs.Signal b = fs.sigAdd(self.ptr, other.ptr)
+        return Signal.from_ptr(b)
+
+
 ## ---------------------------------------------------------------------------
 ## faust/dsp/libfaust-signal
 
