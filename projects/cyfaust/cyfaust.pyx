@@ -41,17 +41,17 @@ cdef class ParamArray:
             free(self.argv)
 
 
-cdef class SignalVector:
-    """wraps tvec: a std::vector<CTree*>"""
-    cdef fs.tvec* ptr
-    cdef bint ptr_owner
+# cdef class SignalVector:
+#     """wraps tvec: a std::vector<CTree*>"""
+#     cdef fs.tvec *ptr
+#     cdef bint ptr_owner
 
-    def __cinit__(self):
-        self.ptr = new fs.tvec()
-        self.ptr_owner = False
+#     def __cinit__(self):
+#         self.ptr = new fs.tvec()
+#         self.ptr_owner = False
 
-    cdef add(self, fs.Signal sig):
-        self.ptr.push_back(sig)
+#     cdef add(self, fs.Signal sig):
+#         self.ptr.push_back(sig)
 
 
 
@@ -319,6 +319,29 @@ cdef class InterpreterDspFactory:
     #         print(error_msg.decode())
     #         return
     #     return factory
+
+    @staticmethod
+    def from_signals(str name_app, Signal signals, *args) -> InterpreterDspFactory:
+        """Create a Faust DSP factory from a vector of output signals."""
+        cdef string error_msg
+        cdef fs.tvec sigvec
+        error_msg.reserve(4096)
+        cdef InterpreterDspFactory factory = InterpreterDspFactory.__new__(
+            InterpreterDspFactory)
+        cdef ParamArray params = ParamArray(args)
+        sigvec.push_back(<fs.Signal>signals.ptr)
+        factory.ptr_owner = True
+        factory.ptr = <fi.interpreter_dsp_factory*>fi.createInterpreterDSPFactoryFromSignals(
+            name_app.encode('utf8'),
+            sigvec,
+            params.argc,
+            params.argv,
+            error_msg,
+        )
+        if not error_msg.empty():
+            print(error_msg.decode())
+            return
+        return factory
 
     @staticmethod
     def from_boxes(str name_app, Box box, *args) -> InterpreterDspFactory:
