@@ -142,6 +142,20 @@ cdef class Box:
         cdef fb.Box b = fb.boxXOR(self.ptr, other.ptr)
         return Box.from_ptr(b)
 
+    def __lshift__(self, Box other):
+        """bitwise left-shift"""
+        cdef fb.Box b = fb.boxLeftShift(self.ptr, other.ptr)
+        return Box.from_ptr(b)
+
+    def __rshift__(self, Box other):
+        """bitwise right-shift"""
+        cdef fb.Box b = fb.boxLRightShift(self.ptr, other.ptr)
+        return Box.from_ptr(b)
+
+    # TODO: ???
+    # Box boxARightShift()
+    # Box boxARightShift(Box b1, Box b2)
+
     def to_string(self):
         """Convert this box tree (such as the label of a UI) to a string."""
         return fb.tree2str(self.ptr).decode()

@@ -41,20 +41,40 @@ cdef class ParamArray:
             free(self.argv)
 
 
-# cdef class SignalVector:
-#     """wraps tvec: a std::vector<CTree*>"""
-#     cdef fs.tvec *ptr
-#     cdef bint ptr_owner
+cdef class SignalVector:
+    """wraps tvec: a std::vector<CTree*>"""
+    cdef vector[fs.Signal] ptr
+    cdef bint ptr_owner
 
-#     def __cinit__(self):
-#         self.ptr = new fs.tvec()
-#         self.ptr_owner = False
+    def __cinit__(self):
+        self.ptr_owner = False
 
-#     cdef add(self, fs.Signal sig):
-#         self.ptr.push_back(sig)
+    def __iter__(self):
+        for i in self.ptr:
+            yield Signal.from_ptr(i)
 
+    cdef add_ptr(self, fs.Signal sig):
+        self.ptr.push_back(sig)
 
+    def add(self, Signal sig):
+        self.ptr.push_back(sig.ptr)
 
+    def create_source(self, name_app: str, lang, *args) -> str:
+        """Create source code in a target language from a signal expression."""
+        cdef string error_msg
+        error_msg.reserve(4096)
+        cdef ParamArray params = ParamArray(args)
+        cdef string src = fs.createSourceFromSignals(
+            name_app,
+            self.ptr,
+            lang,
+            params.argc,
+            params.argv,
+            error_msg)
+        if error_msg.empty():
+            print(error_msg.decode())
+            return
+        return src.decode()
 
 ## ---------------------------------------------------------------------------
 ## faust/dsp/libfaust
@@ -299,41 +319,20 @@ cdef class InterpreterDspFactory:
             return
         return factory
 
-    # @staticmethod
-    # def from_signals(str name_app, fs.tvec signals, *args) -> InterpreterDspFactory:
-    #     """Create a Faust DSP factory from a vector of output signals."""
-    #     cdef string error_msg
-    #     error_msg.reserve(4096)
-    #     cdef InterpreterDspFactory factory = InterpreterDspFactory.__new__(
-    #         InterpreterDspFactory)
-    #     cdef ParamArray params = ParamArray(args)
-    #     factory.ptr_owner = True
-    #     factory.ptr = <fi.interpreter_dsp_factory*>fi.createInterpreterDSPFactoryFromSignals(
-    #         name_app.encode('utf8'),
-    #         signals,
-    #         params.argc,
-    #         params.argv,
-    #         error_msg,
-    #     )
-    #     if not error_msg.empty():
-    #         print(error_msg.decode())
-    #         return
-    #     return factory
-
     @staticmethod
-    def from_signals(str name_app, Signal signals, *args) -> InterpreterDspFactory:
+    def from_signals(str name_app, SignalVector signals, *args) -> InterpreterDspFactory:
         """Create a Faust DSP factory from a vector of output signals."""
         cdef string error_msg
-        cdef fs.tvec sigvec
+        # cdef fs.tvec sigvec
         error_msg.reserve(4096)
         cdef InterpreterDspFactory factory = InterpreterDspFactory.__new__(
             InterpreterDspFactory)
         cdef ParamArray params = ParamArray(args)
-        sigvec.push_back(<fs.Signal>signals.ptr)
+        # sigvec.push_back(<fs.Signal>signals.ptr)
         factory.ptr_owner = True
         factory.ptr = <fi.interpreter_dsp_factory*>fi.createInterpreterDSPFactoryFromSignals(
             name_app.encode('utf8'),
-            sigvec,
+            <fs.tvec>signals.ptr,
             params.argc,
             params.argv,
             error_msg,
@@ -342,7 +341,7 @@ cdef class InterpreterDspFactory:
             print(error_msg.decode())
             return
         return factory
-
+    
     @staticmethod
     def from_boxes(str name_app, Box box, *args) -> InterpreterDspFactory:
         """Create a Faust DSP factory from a box expression."""
@@ -585,22 +584,24 @@ cdef class Signal:
         cdef fs.Signal s = fs.sigReal(value)
         return Signal.from_ptr(s)
 
-    # def create_source(self, name_app: str, lang, *args) -> str:
-    #     """Create source code in a target language from a signal expression."""
-    #     cdef string error_msg
-    #     error_msg.reserve(4096)
-    #     cdef ParamArray params = ParamArray(args)
-    #     cdef string src = fs.createSourceFromSignals(
-    #         name_app,
-    #         self.ptr,
-    #         lang,
-    #         params.argc,
-    #         params.argv,
-    #         error_msg)
-    #     if error_msg.empty():
-    #         print(error_msg.decode())
-    #         return
-    #     return src.decode()
+    def create_source(self, name_app: str, lang, *args) -> str:
+        """Create source code in a target language from a signal expression."""
+        cdef fs.tvec signals
+        cdef string error_msg
+        error_msg.reserve(4096)
+        signals.push_back(self.ptr)
+        cdef ParamArray params = ParamArray(args)
+        cdef string src = fs.createSourceFromSignals(
+            name_app,
+            signals,
+            lang,
+            params.argc,
+            params.argv,
+            error_msg)
+        if error_msg.empty():
+            print(error_msg.decode())
+            return
+        return src.decode()
 
     def print(self, shared: bool = False, max_size: int = 256):
         """Print this signal."""
@@ -699,14 +700,24 @@ cdef class Signal:
         cdef fs.Signal s = fs.sigXOR(self.ptr, other.ptr)
         return Signal.from_ptr(s)
 
+    # TODO: check sigRem = modulo if this is correct
+    def __mod__(self, Signal other):
+        """modulo of other Signal"""
+        cdef fs.Signal s = fs.sigRem(self.ptr, other.ptr)
+        return Signal.from_ptr(s)
+
     # cdef fs.Signal sig_rem(fs.Signal x, fs.Signal y):
     #     return fs.sigRem(x, y)
 
-    # cdef fs.Signal sig_left_shift(fs.Signal x, fs.Signal y):
-    #     return fs.sigLeftShift(x, y)
+    def __lshift__(self, Signal other):
+        """bitwise left-shift"""
+        cdef fs.Signal s = fs.sigLeftShift(self.ptr, other.ptr)
+        return Signal.from_ptr(s)
 
-    # cdef fs.Signal sig_l_right_shift(fs.Signal x, fs.Signal y):
-    #     return fs.sigLRightShift(x, y)
+    def __rshift__(self, Signal other):
+        """bitwise right-shift"""
+        cdef fs.Signal s = fs.sigLRightShift(self.ptr, other.ptr)
+        return Signal.from_ptr(s)
 
     def abs(self) -> Signal:
         cdef fs.Signal s = fs.sigAbs(self.ptr)
