@@ -76,6 +76,39 @@ cdef class SignalVector:
             return
         return src.decode()
 
+
+cdef class Interval:
+    """wraps fs.Interval struct/class"""
+    cdef fs.Interval *ptr
+
+    def __dealloc__(self):
+        if self.ptr:
+            del self.ptr
+
+    def __cinit__(self, double lo, double hi, int lsb):
+        self.ptr = new fs.Interval(lo, hi, lsb)
+
+    @staticmethod
+    cdef Interval from_ptr(fs.Interval* ptr):
+        """Wrap Interval from pointer"""
+        cdef Interval ival = Interval.__new__(Interval)
+        ival.ptr = ptr
+        return ival
+
+    @property
+    def low(self) -> float:
+        return self.ptr.fLo
+
+    @property
+    def high(self) -> float:
+        return self.ptr.fHi
+
+    @property
+    def lsb(self) -> float:
+        return self.ptr.fLSB
+
+
+
 ## ---------------------------------------------------------------------------
 ## faust/dsp/libfaust
 
@@ -559,6 +592,7 @@ cdef class Signal:
 
     @staticmethod
     cdef Signal from_ptr(fs.Signal ptr, bint ptr_owner=False):
+
         """Wrap Signal from pointer"""
         cdef Signal sig = Signal.__new__(Signal)
         sig.ptr = ptr
@@ -611,13 +645,18 @@ cdef class Signal:
         """Print this signal."""
         print(fs.printSignal(self.ptr, shared, max_size).decode())
 
-    def ffname(Signal s) -> str:
+    def ffname(self, Signal s) -> str:
         """Return the name parameter of a foreign function."""
-        return fs.ffname(s.ptr).decode()
+        return fs.ffname(self.ptr).decode()
 
-    def ffarity(Signal s) -> int:
+    def ffarity(self, Signal s) -> int:
         """Return the arity of a foreign function."""
-        return fs.ffarity(s.ptr)
+        return fs.ffarity(self.ptr)
+
+    # def get_interval(self) -> Interval:
+    #     """Get the signal interval."""
+    #     cdef fs.Interval ival = <fs.Interval>fs.getSigInterval(self.ptr)
+    #     return Interval.from_ptr(&ival)
 
     def __add__(self, Signal other):
         """Add this signal to another."""
@@ -840,9 +879,9 @@ cdef class Signal:
         cdef fs.Signal t0 = NULL
         return fs.isSigOutput(self.ptr, &i, t0)
 
-
-# cdef bint is_sig_delay1(fs.Signal t, fs.Signal& t0):
-#     return fs.isSigDelay1(t, t0)
+    def is_delay(self) -> bool:
+        cdef fs.Signal t0 = NULL
+        return fs.isSigDelay1(self.ptr, t0)
 
 # cdef bint is_sig_delay(fs.Signal t, fs.Signal& t0, fs.Signal& t1):
 #     return fs.isSigDelay(t, t0, t1)

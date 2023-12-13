@@ -2,7 +2,7 @@
 
 An exploratory project to wrap the [Faust](https://github.com/grame-cncm/faust) *interpreter* and the [RtAudio](https://github.com/thestk/rtaudio) cross-platform audio driver for use by python code.
 
-The objective is to end up with a minimal self-contained cross-platform extension.
+The objective is to end up with a minimal, self-contained, cross-platform extension.
 
 To get there, there will be several implementations using different wrapping frameworks (cython, pybind11, and nanobind) which can eventually be compared for code size,  binary size, performnance, etc.
 

@@ -59,10 +59,11 @@ cdef extern from "faust/dsp/libfaust-signal.h":
     # Print the signal
     string printSignal(Signal sig, bint shared, int max_size)
 
-    
-
 
     cdef cppclass Interval:
+        double fLo
+        double fHi
+        int fLSB
         Interval(double lo, double hi, int lsb)
         Interval(int lsb)
 
