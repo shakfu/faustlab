@@ -323,12 +323,10 @@ cdef class InterpreterDspFactory:
     def from_signals(str name_app, SignalVector signals, *args) -> InterpreterDspFactory:
         """Create a Faust DSP factory from a vector of output signals."""
         cdef string error_msg
-        # cdef fs.tvec sigvec
         error_msg.reserve(4096)
         cdef InterpreterDspFactory factory = InterpreterDspFactory.__new__(
             InterpreterDspFactory)
         cdef ParamArray params = ParamArray(args)
-        # sigvec.push_back(<fs.Signal>signals.ptr)
         factory.ptr_owner = True
         factory.ptr = <fi.interpreter_dsp_factory*>fi.createInterpreterDSPFactoryFromSignals(
             name_app.encode('utf8'),
@@ -584,6 +582,12 @@ cdef class Signal:
         cdef fs.Signal s = fs.sigReal(value)
         return Signal.from_ptr(s)
 
+    @staticmethod
+    def from_soundfile(str label) -> Signal:
+        """Create signal from soundfile."""
+        cdef fs.Signal s = fs.sigSoundfile(label.encode("utf8"))
+        return Signal.from_ptr(s)
+
     def create_source(self, name_app: str, lang, *args) -> str:
         """Create source code in a target language from a signal expression."""
         cdef fs.tvec signals
@@ -778,6 +782,174 @@ cdef class Signal:
     def asin(self) -> Signal:
         cdef fs.Signal s = fs.sigAsin(self.ptr)
         return Signal.from_ptr(s)
+
+    def delay(self, Signal d) -> Signal:
+        cdef fs.Signal s = fs.sigDelay(self.ptr, d.ptr)
+        return Signal.from_ptr(s)
+
+    def int_cast(self) -> Signal:
+        cdef fs.Signal s = fs.sigIntCast(self.ptr)
+        return Signal.from_ptr(s)
+
+    def float_cast(self) -> Signal:
+        cdef fs.Signal s = fs.sigFloatCast(self.ptr)
+        return Signal.from_ptr(s)
+
+    def recursion(self) -> Signal:
+        cdef fs.Signal s = fs.sigRecursion(self.ptr)
+        return Signal.from_ptr(s)
+
+    def remainder(self, Signal y) -> Signal:
+        cdef fs.Signal s = fs.sigRemainder(self.ptr, y.ptr)        
+        return Signal.from_ptr(s)
+
+    def pow(self, Signal y) -> Signal:
+        cdef fs.Signal s = fs.sigPow(self.ptr, y.ptr)        
+        return Signal.from_ptr(s)
+
+    def min(self, Signal y) -> Signal:
+        cdef fs.Signal s = fs.sigMin(self.ptr, y.ptr)        
+        return Signal.from_ptr(s)
+
+    def max(self, Signal y) -> Signal:
+        cdef fs.Signal s = fs.sigMax(self.ptr, y.ptr)        
+        return Signal.from_ptr(s)
+
+    def fmod(self, Signal y) -> Signal:
+        cdef fs.Signal s = fs.sigFmod(self.ptr, y.ptr)        
+        return Signal.from_ptr(s)
+
+    def atan(self, Signal y) -> Signal:
+        cdef fs.Signal s = fs.sigAtan2(self.ptr, y.ptr)        
+        return Signal.from_ptr(s)
+
+    def is_int(self) -> bool:
+        cdef int i
+        return fs.isSigInt(self.ptr, &i)
+
+    def is_float(self) -> bool:
+        cdef double f
+        return fs.isSigReal(self.ptr, &f)
+
+    def is_input(self) -> bool:
+        cdef int i
+        return fs.isSigInput(self.ptr, &i)
+
+    def is_output(self) -> bool:
+        cdef int i
+        cdef fs.Signal t0 = NULL
+        return fs.isSigOutput(self.ptr, &i, t0)
+
+
+# cdef bint is_sig_delay1(fs.Signal t, fs.Signal& t0):
+#     return fs.isSigDelay1(t, t0)
+
+# cdef bint is_sig_delay(fs.Signal t, fs.Signal& t0, fs.Signal& t1):
+#     return fs.isSigDelay(t, t0, t1)
+
+# cdef bint is_sig_prefix(fs.Signal t, fs.Signal& t0, fs.Signal& t1):
+#     return fs.isSigPrefix(t, t0, t1)
+
+# cdef bint is_sig_rd_tbl(fs.Signal s, fs.Signal& t, fs.Signal& i):
+#     return fs.isSigRDTbl(s, t, i)
+
+# cdef bint is_sig_wr_tbl(fs.Signal u, fs.Signal& id, fs.Signal& t, fs.Signal& i, fs.Signal& s):
+#     return fs.isSigWRTbl(u, id, t, i, s)
+
+# cdef bint is_sig_gen(fs.Signal t, fs.Signal& x):
+#     return fs.isSigGen(t, x)
+
+# cdef bint is_sig_doc_constant_tbl(fs.Signal t, fs.Signal& n, fs.Signal& sig):
+#     return fs.isSigDocConstantTbl(t, n, sig)
+
+# cdef bint is_sig_doc_write_tbl(fs.Signal t, fs.Signal& n, fs.Signal& sig, fs.Signal& widx, fs.Signal& wsig):
+#     return fs.isSigDocWriteTbl(t, n, sig, widx, wsig)
+
+# cdef bint is_sig_doc_access_tbl(fs.Signal t, fs.Signal& tbl, fs.Signal& ridx):
+#     return fs.isSigDocAccessTbl(t, tbl, ridx)
+
+# cdef bint is_sig_select2(fs.Signal t, fs.Signal& selector, fs.Signal& s1, fs.Signal& s2):
+#     return fs.isSigSelect2(t, selector, s1, s2)
+
+# cdef bint is_sig_assert_bounds(fs.Signal t, fs.Signal& s1, fs.Signal& s2, fs.Signal& s3):
+#     return fs.isSigAssertBounds(t, s1, s2, s3)
+
+# cdef bint is_sig_highest(fs.Signal t, fs.Signal& s):
+#     return fs.isSigHighest(t, s)
+
+# cdef bint is_sig_lowest(fs.Signal t, fs.Signal& s):
+#     return fs.isSigLowest(t, s)
+
+# cdef bint is_sig_bin_op(fs.Signal s, int* op, fs.Signal& x, fs.Signal& y):
+#     return fs.isSigBinOp(s, op, x, y)
+
+# cdef bint is_sig_f_fun(fs.Signal s, fs.Signal& ff, fs.Signal& largs):
+#     return fs.isSigFFun(s, ff, largs)
+
+# cdef bint is_sig_f_const(fs.Signal s, fs.Signal& type, fs.Signal& name, fs.Signal& file):
+#     return fs.isSigFConst(s, type, name, file)
+
+# cdef bint is_sig_f_var(fs.Signal s, fs.Signal& type, fs.Signal& name, fs.Signal& file):
+#     return fs.isSigFVar(s, type, name, file)
+
+# cdef bint is_proj(fs.Signal s, int* i, fs.Signal& rgroup):
+#     return fs.isProj(s, i, rgroup)
+
+# cdef bint is_rec(fs.Signal s, fs.Signal& var, fs.Signal& body):
+#     return fs.isRec(s, var, body)
+
+# cdef bint is_sig_int_cast(fs.Signal s, fs.Signal& x):
+#     return fs.isSigIntCast(s, x)
+
+# cdef bint is_sig_float_cast(fs.Signal s, fs.Signal& x):
+#     return fs.isSigFloatCast(s, x)
+
+# cdef bint is_sig_button(fs.Signal s, fs.Signal& lbl):
+#     return fs.isSigButton(s, lbl)
+
+# cdef bint is_sig_checkbox(fs.Signal s, fs.Signal& lbl):
+#     return fs.isSigCheckbox(s, lbl)
+
+# cdef bint is_sig_waveform(fs.Signal s):
+#     return fs.isSigWaveform(s)
+
+# cdef bint is_sig_h_slider(fs.Signal s, fs.Signal& lbl, fs.Signal& init, fs.Signal& min, fs.Signal& max, fs.Signal& step):
+#     return fs.isSigHSlider(s, lbl, init, min, max, step)
+
+# cdef bint is_sig_v_slider(fs.Signal s, fs.Signal& lbl, fs.Signal& init, fs.Signal& min, fs.Signal& max, fs.Signal& step):
+#     return fs.isSigVSlider(s, lbl, init, min, max, step)
+
+# cdef bint is_sig_num_entry(fs.Signal s, fs.Signal& lbl, fs.Signal& init, fs.Signal& min, fs.Signal& max, fs.Signal& step):
+#     return fs.isSigNumEntry(s, lbl, init, min, max, step)
+
+# cdef bint is_sig_h_bargraph(fs.Signal s, fs.Signal& lbl, fs.Signal& min, fs.Signal& max, fs.Signal& x):
+#     return fs.isSigHBargraph(s, lbl, min, max, x)
+
+# cdef bint is_sig_v_bargraph(fs.Signal s, fs.Signal& lbl, fs.Signal& min, fs.Signal& max, fs.Signal& x):
+#     return fs.isSigVBargraph(s, lbl, min, max, x)
+
+# cdef bint is_sig_attach(fs.Signal s, fs.Signal& s0, fs.Signal& s1):
+#     return fs.isSigAttach(s, s0, s1)
+
+# cdef bint is_sig_enable(fs.Signal s, fs.Signal& s0, fs.Signal& s1):
+#     return fs.isSigEnable(s, s0, s1)
+
+# cdef bint is_sig_control(fs.Signal s, fs.Signal& s0, fs.Signal& s1):
+#     return fs.isSigControl(s, s0, s1)
+
+# cdef bint is_sig_soundfile(fs.Signal s, fs.Signal& label):
+#     return fs.isSigSoundfile(s, label)
+
+# cdef bint is_sig_soundfile_length(fs.Signal s, fs.Signal& sf, fs.Signal& part):
+#     return fs.isSigSoundfileLength(s, sf, part)
+
+# cdef bint is_sig_soundfile_rate(fs.Signal s, fs.Signal& sf, fs.Signal& part):
+#     return fs.isSigSoundfileRate(s, sf, part)
+
+# cdef bint is_sig_soundfile_buffer(fs.Signal s, fs.Signal& sf, fs.Signal& chan, fs.Signal& part, fs.Signal& ridx):
+#     return fs.isSigSoundfileBuffer(s, sf, chan, part, ridx)
+
+
 
 
 
