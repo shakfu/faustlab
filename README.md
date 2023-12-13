@@ -1,17 +1,24 @@
 # faustlab
 
-An exploratory project to wrap the [Faust](https://github.com/grame-cncm/faust) *interpreter* for use by python via the following wrapping frameworks using the [RtAudio](https://github.com/thestk/rtaudio) cross-platform audio driver:
+An exploratory project to wrap the [Faust](https://github.com/grame-cncm/faust) *interpreter* and the [RtAudio](https://github.com/thestk/rtaudio) cross-platform audio driver for use by python code.
 
-- cfaust:   cython      (faust c   interface)
-- cyfaust:  cython      (faust c++ interface)
-- nanobind: nanobind    (faust c++ interface)
-- pyfaust:  pybind11    (faust c++ interface)
+The objective is to end up with a minimal self-contained cross-platform extension.
+
+To get there, there will be several implementations using different wrapping frameworks (cython, pybind11, and nanobind) which can eventually be compared for code size,  binary size, performnance, etc.
 
 ## Current Status
 
+| subproject   | framework  | api   |  audio test | interp api    | box api    | signal api |
+| :---         | :---       | :---: |     :---:   |    :---:      | :---:      | :---:      |
+| cyfaust      | cython     | c++   |      yes    |     90%       | 70%        | 60%        |
+| cfaust       | cython     | c     |      yes    |     80%       |            |            |
+| nanofaust    | nanobind   | c++   |      yes    |     80%       |            |            |
+| pyfaust      | pybind11   | c++   |      yes    |     80%       |            |            |
+
+
 All of the above implementations pass a minimal functional test which produces audio given a faust dsp file (`noise.dsp`).
 
-The `cyfaust` implementation also includes `faust_box.pxd` and the beginnings of an attempt to wrap the faust box api.
+The `cyfaust` implementation also includes `faust_box.pxd`, `faust_signal.pxd` and the beginnings of an attempt to wrap both the faust box api and the faust signal api.
 
 CAVEAT: this project's code is currently only at a proof of concept stage and is likely to contain a variety of bugs, memory leaks and other irritants...
 
@@ -25,7 +32,7 @@ Reequires:
 
 - `python3` with dev libraries installed
 
-Tested only on macOS x86_64 and arm64 system
+Developed and tested only on macOS x86_64 and arm64 for the time being.
 
 1. `./scripts/setup.sh`
 
@@ -47,11 +54,12 @@ Tested only on macOS x86_64 and arm64 system
 
     `make test_nanofaust`
 
-## Faq
+## FAQ
 
 **Isn't it redundant to do the same thing four different ways?**
 
 Probably, but it proved to be a nice way to learn the faust interpreter api and also learn about the idiosyncracies, strengths and weaknesses of each wrapper framework.
+
 
 **What else did you learn?**
 
