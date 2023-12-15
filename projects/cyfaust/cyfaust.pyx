@@ -592,7 +592,6 @@ cdef class Signal:
 
     @staticmethod
     cdef Signal from_ptr(fs.Signal ptr, bint ptr_owner=False):
-
         """Wrap Signal from pointer"""
         cdef Signal sig = Signal.__new__(Signal)
         sig.ptr = ptr
@@ -620,6 +619,51 @@ cdef class Signal:
     def from_soundfile(str label) -> Signal:
         """Create signal from soundfile."""
         cdef fs.Signal s = fs.sigSoundfile(label.encode("utf8"))
+        return Signal.from_ptr(s)
+
+    @staticmethod
+    def from_button(str label) -> Signal:
+        """Create a button signal."""
+        cdef fs.Signal s = fs.sigButton(label.encode('utf8'))
+        return Signal.from_ptr(s)
+
+    @staticmethod
+    def from_checkbox(str label) -> Signal:
+        """Create a checkbox signal."""
+        cdef fs.Signal s = fs.sigCheckbox(label.encode('utf8'))
+        return Signal.from_ptr(s)
+
+    @staticmethod
+    def from_vslider(str label, float init, float min, float max, float step) -> Signal:
+        """Create a vertical slider signal."""
+        cdef fs.Signal s = fs.sigVSlider(
+            label.encode('utf8'), 
+            fs.sigReal(init), 
+            fs.sigReal(min),
+            fs.sigReal(max), 
+            fs.sigReal(step))
+        return Signal.from_ptr(s)
+
+    @staticmethod
+    def from_hslider(str label, float init, float min, float max, float step) -> Signal:
+        """Create a horizontal slider signal."""
+        cdef fs.Signal s = fs.sigHSlider(
+            label.encode('utf8'), 
+            fs.sigReal(init), 
+            fs.sigReal(min),
+            fs.sigReal(max), 
+            fs.sigReal(step))
+        return Signal.from_ptr(s)
+
+    @staticmethod
+    def from_numentry(str label, float init, float min, float max, float step) -> Signal:
+        """Create a num entry signal."""
+        cdef fs.Signal s = fs.sigNumEntry(
+            label.encode('utf8'), 
+            fs.sigReal(init), 
+            fs.sigReal(min),
+            fs.sigReal(max), 
+            fs.sigReal(step))
         return Signal.from_ptr(s)
 
     def create_source(self, name_app: str, lang, *args) -> str:
@@ -658,42 +702,72 @@ cdef class Signal:
     #     cdef fs.Interval ival = <fs.Interval>fs.getSigInterval(self.ptr)
     #     return Interval.from_ptr(&ival)
 
-    def __add__(self, Signal other):
+    def attach(self, Signal other) -> Signal:
+        """Create an attached signal from another signal
+        
+        The attach primitive takes two input signals and produces 
+        one output signal which is a copy of the first input.
+
+        The role of attach is to force the other input signal to be 
+        compiled with this one.
+        """
+        cdef fs.Signal s = fs.sigAttach(self.ptr, other.ptr)
+        return Signal.from_ptr(s)
+
+    def vbargraph(self, str label, float min, float max) -> Signal:
+        """Create a vertical bargraph signal from this signal"""
+        cdef fs.Signal s = fs.sigVBargraph(
+            label.encode('utf8'), 
+            fs.sigReal(min),
+            fs.sigReal(max), 
+            self.ptr)
+        return Signal.from_ptr(s)
+
+    def hbargraph(self, str label, float min, float max) -> Signal:
+        """Create a horizontal bargraph signal from this signal"""
+        cdef fs.Signal s = fs.sigHBargraph(
+            label.encode('utf8'), 
+            fs.sigReal(min),
+            fs.sigReal(max), 
+            self.ptr)
+        return Signal.from_ptr(s)
+
+    def __add__(self, Signal other) -> Signal:
         """Add this signal to another."""
         cdef fs.Signal b = fs.sigAdd(self.ptr, other.ptr)
         return Signal.from_ptr(b)
 
-    def __radd__(self, Signal other):
+    def __radd__(self, Signal other) -> Signal:
         """Reverse add this signal to another."""
         cdef fs.Signal b = fs.sigAdd(self.ptr, other.ptr)
         return Signal.from_ptr(b)
 
-    def __sub__(self, Signal other):
+    def __sub__(self, Signal other) -> Signal:
         """Subtract this box from another."""
         cdef fs.Signal s = fs.sigSub(self.ptr, other.ptr)
         return Signal.from_ptr(s)
 
-    def __rsub__(self, Signal other):
+    def __rsub__(self, Signal other) -> Signal:
         """Subtract this box from another."""
         cdef fs.Signal s = fs.sigSub(self.ptr, other.ptr)
         return Signal.from_ptr(s)
 
-    def __mul__(self, Signal other):
+    def __mul__(self, Signal other) -> Signal:
         """Multiply this box with another."""
         cdef fs.Signal s = fs.sigMul(self.ptr, other.ptr)
         return Signal.from_ptr(s)
 
-    def __rmul__(self, Signal other):
+    def __rmul__(self, Signal other) -> Signal:
         """Reverse multiply this box with another."""
         cdef fs.Signal s = fs.sigMul(self.ptr, other.ptr)
         return Signal.from_ptr(s)
 
-    def __div__(self, Signal other):
+    def __div__(self, Signal other) -> Signal:
         """Divide this box with another."""
         cdef fs.Signal s = fs.sigDiv(self.ptr, other.ptr)
         return Signal.from_ptr(s)
 
-    def __rdiv__(self, Signal other):
+    def __rdiv__(self, Signal other) -> Signal:
         """Reverse divide this box with another."""
         cdef fs.Signal s = fs.sigDiv(self.ptr, other.ptr)
         return Signal.from_ptr(s)
@@ -822,9 +896,13 @@ cdef class Signal:
         cdef fs.Signal s = fs.sigAsin(self.ptr)
         return Signal.from_ptr(s)
 
-    def delay(self, Signal d) -> Signal:
-        cdef fs.Signal s = fs.sigDelay(self.ptr, d.ptr)
+    def delay(self, int d) -> Signal:
+        cdef fs.Signal s = fs.sigDelay(self.ptr, fs.sigInt(d))
         return Signal.from_ptr(s)
+
+    # def delay(self, Signal d) -> Signal:
+    #     cdef fs.Signal s = fs.sigDelay(self.ptr, d.ptr)
+    #     return Signal.from_ptr(s)
 
     def int_cast(self) -> Signal:
         cdef fs.Signal s = fs.sigIntCast(self.ptr)
@@ -1076,6 +1154,10 @@ cdef class Signal:
 ## faust/dsp/libfaust-signal
 
 
+
+
+
+
 cdef fs.Signal sig_delay(fs.Signal s, fs.Signal d):
     return fs.sigDelay(s, d)
 
@@ -1124,46 +1206,119 @@ cdef fs.Signal sig_f_var(fs.SType type, const string& name, const string& file):
 cdef fs.Signal sig_bin_op(fs.SOperator op, fs.Signal x, fs.Signal y):
     return fs.sigBinOp(op, x, y)
 
+cdef fs.Signal sig_self():
+    """Create a recursive signal inside the sigRecursion expression.
 
+    return the recursive signal.
+    """
+    return fs.sigSelf()
+
+cdef fs.Signal sig_recursion(fs.Signal s):
+    """Create a recursive signal. 
+
+    Use sigSelf() to refer to the recursive signal 
+    inside the sigRecursion expression.
+    """
+    return fs.sigRecursion(s)
 
 
 cdef fs.Signal sig_self_n(int id):
+    """Create a recursive signal inside the sigRecursionN expression.
+
+    id - the recursive signal index (starting from 0, up to the number
+         of outputs signals in the recursive block).
+
+    return the list of signals with recursions.
+    """
     return fs.sigSelfN(id)
 
 cdef fs.tvec sig_recursion_n(const fs.tvec& rf):
+    """Create a recursive block of signals.
+
+    Use sigSelfN() to refer to the recursive signal
+    inside the sigRecursionN expression.
+    """
     return fs.sigRecursionN(rf)
 
+
 cdef fs.Signal sig_button(const string& label):
+    """Create a button signal."""
     return fs.sigButton(label)
 
 cdef fs.Signal sig_checkbox(const string& label):
+    """Create a checkbox signal."""
     return fs.sigCheckbox(label)
 
-cdef fs.Signal sig_v_slider(const string& label, fs.Signal init, fs.Signal min, fs.Signal max, fs.Signal step):
-    return fs.sigVSlider(label, init, min, max, step)
 
-cdef fs.Signal sig_h_slider(const string& label, fs.Signal init, fs.Signal min, fs.Signal max, fs.Signal step):
-    return fs.sigHSlider(label, init, min, max, step)
+def sig_vslider(str label, float init, float min, float max, float step) -> Signal:
+    """Create a vertical slider signal."""
+    cdef fs.Signal s = fs.sigVSlider(
+        label.encode('utf8'), 
+        fs.sigReal(init), 
+        fs.sigReal(min),
+        fs.sigReal(max), 
+        fs.sigReal(step))
+    return Signal.from_ptr(s)
 
-cdef fs.Signal sig_num_entry(const string& label, fs.Signal init, fs.Signal min, fs.Signal max, fs.Signal step):
-    return fs.sigNumEntry(label, init, min, max, step)
+def sig_hslider(str label, float init, float min, float max, float step) -> Signal:
+    """Create a horizontal slider signal."""
+    cdef fs.Signal s = fs.sigHSlider(
+        label.encode('utf8'), 
+        fs.sigReal(init), 
+        fs.sigReal(min),
+        fs.sigReal(max), 
+        fs.sigReal(step))
+    return Signal.from_ptr(s)
 
-cdef fs.Signal sig_v_bargraph(const string& label, fs.Signal min, fs.Signal max, fs.Signal s):
-    return fs.sigVBargraph(label, min, max, s)
+def sig_numentry(str label, float init, float min, float max, float step) -> Signal:
+    """Create a num entry signal."""
+    cdef fs.Signal s = fs.sigNumEntry(
+        label.encode('utf8'), 
+        fs.sigReal(init),
+        fs.sigReal(min),
+        fs.sigReal(max),
+        fs.sigReal(step))
+    return Signal.from_ptr(s)
 
-cdef fs.Signal sig_h_bargraph(const string& label, fs.Signal min, fs.Signal max, fs.Signal s):
-    return fs.sigHBargraph(label, min, max, s)
+def sig_vbargraph(str label, float min, float max, Signal s) -> Signal:
+    """Create a vertical bargraph signal."""
+    cdef fs.Signal _s = fs.sigVBargraph(
+        label.encode('utf8'), 
+        fs.sigReal(min),
+        fs.sigReal(max),
+        s.ptr)
+    return Signal.from_ptr(_s)
+
+def sig_hbargraph(str label, float min, float max, Signal s) -> Signal:
+    """Create a horizontal bargraph signal."""
+    cdef fs.Signal _s = fs.sigHBargraph(
+        label.encode('utf8'), 
+        fs.sigReal(min),
+        fs.sigReal(max),
+        s.ptr)
+    return Signal.from_ptr(_s)
 
 cdef fs.Signal sig_attach(fs.Signal s1, fs.Signal s2):
+    """Create an attach signal.
+    
+    The attach primitive takes two input signals and produces 
+    one output signal which is a copy of the first input.
+
+    The role of attach is to forc3 its second input signal to be 
+    compiled with the first one.
+    """
     return fs.sigAttach(s1, s2)
 
 cdef fs.Signal simplify_to_normal_form(fs.Signal s):
+    """Simplify a signal to its normal form."""
     return fs.simplifyToNormalForm(s)
 
 cdef fs.tvec simplify_to_normal_form2(fs.tvec siglist):
+    """Simplify a signal list to its normal form."""
     return fs.simplifyToNormalForm2(siglist)
 
 cdef string create_source_from_signals(const string& name_app, fs.tvec osigs, const string& lang, int argc, const char* argv[], string& error_msg):
+    """Create source code in a target language from a vector of output signals."""
     return fs.createSourceFromSignals(name_app, osigs, lang, argc, argv, error_msg)
 
 
