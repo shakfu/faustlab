@@ -10,7 +10,7 @@ To get there, there will be several implementations using different wrapping fra
 
 | subproject   | framework  | api   |  audio test | interp api    | box api    | signal api |
 | :---         | :---       | :---: |     :---:   |    :---:      | :---:      | :---:      |
-| cyfaust      | cython     | c++   |      yes    |     90%       | 70%        | 60%        |
+| cyfaust      | cython     | c++   |      yes    |     90%       | 70%        | 80%        |
 | cfaust       | cython     | c     |      yes    |     80%       |            |            |
 | nanofaust    | nanobind   | c++   |      yes    |     80%       |            |            |
 | pyfaust      | pybind11   | c++   |      yes    |     80%       |            |            |
