@@ -831,30 +831,77 @@ def box_write_read_table(Box n, Box init, Box widx, Box wsig, Box ridx) -> Box:
     return Box.from_ptr(b)
 
 
+def box_waveform(SignalVector wf):
+    """Create a waveform.
 
-cdef fb.Box box_waveform(const fs.tvec& wf):
-    """Create a waveform."""
-    return fb.boxWaveform(wf)
+    wf - the content of the waveform as a vector of boxInt or boxDouble boxes
 
-cdef fb.Box box_soundfile(const string& label, fb.Box chan):
-    """Create a soundfile block."""
-    return fb.boxSoundfile(label, chan)
+    returns the waveform box.
+    """
+    cdef fb.Box b = fb.boxWaveform(<const fs.tvec>wf.ptr)
+    return Box.from_ptr(b)
 
-cdef fb.Box box_soundfile_(const string& label, fb.Box chan, fb.Box part, fb.Box ridx):
-    """Create a soundfile block."""
-    return fb.boxSoundfile(label, chan, part, ridx)
 
-cdef fb.Box box_select2(fb.Box selector, fb.Box b1, fb.Box b2):
-    """Create a selector between two boxes."""
-    return fb.boxSelect2(selector, b1, b2)
+def box_soundfile(str label, Box chan) -> Box:
+    """Create a soundfile block.
 
-cdef fb.Box box_select2_():
-    """Create a selector between two boxes."""
-    return fb.boxSelect2()
+    label - of form "label[url:{'path1';'path2';'path3'}]" to describe a list of soundfiles
+    chan - the number of outputs channels, a constant numerical expression (see [1])
 
-cdef fb.Box box_select3(fb.Box selector, fb.Box b1, fb.Box b2, fb.Box b3):
-    """Create a selector between three boxes."""
-    return fb.boxSelect3(selector, b1, b2, b3)
+    returns the soundfile box.
+    """
+    cdef fb.Box b = fb.boxSoundfile(label.encode('utf8'), chan.ptr)
+    return Box.from_ptr(b)
+
+
+def box_soundfile2(str label, Box chan, Box part, Box ridx) -> Box:
+    """Create a soundfile block.
+
+    label - of form "label[url:{'path1';'path2';'path3'}]" to describe a list of soundfiles
+    chan - the number of outputs channels, a constant numerical expression (see [1])
+    part - in the [0..255] range to select a given sound number, a constant numerical expression (see [1])
+    ridx - the read index (an integer between 0 and the selected sound length)
+
+    returns the soundfile box.
+    """
+    cdef fb.Box b = fb.boxSoundfile(label.encode('utf8'), chan.ptr, part.ptr, ridx.ptr)
+    return Box.from_ptr(b)
+
+
+def box_select2(Box selector, Box b1, Box b2) -> Box:
+    """Create a selector between two boxes.
+
+    selector - when 0 at time t returns s1[t], otherwise returns s2[t]
+    s1 - first box to be selected
+    s2 - second box to be selected
+
+    returns the selected box depending of the selector value at each time t.
+    """
+    cdef fb.Box b = fb.boxSelect2(selector.ptr, b1.ptr, b2.ptr)
+    return Box.from_ptr(b)
+
+
+def box_select2_() -> Box:
+    """Create a selector between two boxes.
+
+    returns the selected box depending of the selector value at each time t.
+    """
+    cdef fb.Box b = fb.boxSelect2()
+    return Box.from_ptr(b)
+
+def box_select3(Box selector, Box b1, Box b2, Box b3) -> Box:
+    """Create a selector between three boxes.
+
+    selector - when 0 at time t returns s1[t], when 1 at time t returns s2[t], otherwise returns s3[t]
+    s1 - first box to be selected
+    s2 - second box to be selected
+    s3 - third box to be selected
+
+    returns the selected box depending of the selector value at each time t.
+    """
+    cdef fb.Box b = fb.boxSelect3(selector.ptr, b1.ptr, b2.ptr, b3.ptr)
+    return Box.from_ptr(b)
+
 
 cdef fb.Box box_select3_():
     """Create a selector between three boxes."""
