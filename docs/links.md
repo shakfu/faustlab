@@ -12,6 +12,18 @@
 
 ## cython
 
+- [cython-docs](https://cython.readthedocs.io/en/latest/index.html)
+
+	- [sharing-declarations](https://cython.readthedocs.io/en/latest/src/userguide/sharing_declarations.html)
+
+	- [source-files-and-compilation](https://cython.readthedocs.io/en/latest/src/userguide/source_files_and_compilation.html)
+
+	- [typed-memoryviews](https://cython.readthedocs.io/en/latest/src/userguide/memoryviews.html)
+
+	- [implementing the buffer protocol](https://cython.readthedocs.io/en/latest/src/userguide/buffer.html)
+
+- [Use a shared library for shared code](https://github.com/cython/cython/issues/2356)
+
 - [Wrapping C++ with Cython - intro](https://azhpushkin.me/posts/cython-cpp-intro)
 
 - [Wrapping C++ with Cython](https://dmtn-013.lsst.io)
