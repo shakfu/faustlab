@@ -782,14 +782,14 @@ def tree2str(Signal s):
     return fs.tree2str(s.ptr).decode()
 
 
-cdef void* getUserData(fs.Signal s):
-    """Return the xtended type of a signal.
+# cdef void* getUserData(fs.Signal s):
+#     """Return the xtended type of a signal.
 
-    s - the signal whose xtended type to return
+#     s - the signal whose xtended type to return
 
-    returns a pointer to xtended type if it exists, otherwise nullptr.
-    """
-    return <void*>fs.getUserData(s)
+#     returns a pointer to xtended type if it exists, otherwise nullptr.
+#     """
+#     return <void*>fs.getUserData(s)
 
 
 def xtendedArity(Signal s) -> int:

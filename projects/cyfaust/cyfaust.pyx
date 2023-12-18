@@ -554,14 +554,16 @@ def destroy_lib_context():
     """Destroy global compilation context, has to be done last."""
     fb.destroyLibContext()
 
-cdef void* get_user_data(Box b):
-    """Return the xtended type of a box.
 
-    b - the box whose xtended type to return
+# cdef void* get_user_data(Box b):
+#     """Return the xtended type of a box.
 
-    returns a pointer to xtended type if it exists, otherwise nullptr.
-    """
-    return fb.getUserData(b.ptr)
+#     b - the box whose xtended type to return
+
+#     returns a pointer to xtended type if it exists, otherwise nullptr.
+#     """
+#     return fb.getUserData(b.ptr)
+
 
 def box_is_nil(Box b) -> bool:
     """Check if a box is nil.
@@ -1315,20 +1317,8 @@ def box_attach(Box b1, Box b2) -> Box:
     return Box.from_ptr(b)
 
 
-cdef fb.Box box_prim2(fb.prim2 foo):
-    return fb.boxPrim2(foo)
-
-# def is_box_abstr(Box t) -> dict:
-#     cdef fb.Box x = NULL
-#     cdef fb.Box y = NULL
-#     if fb.isBoxAbstr(t.ptr, x, y):
-#         return dict(
-#             x=Box.from_ptr(x),
-#             y=Box.from_ptr(y),
-#         )
-#     else:
-#         return {}
-
+# cdef fb.Box box_prim2(fb.prim2 foo):
+#     return fb.boxPrim2(foo)
 
 def is_box_abstr(Box t) -> bool:
     return fb.isBoxAbstr(t.ptr)
@@ -1520,20 +1510,11 @@ def getparams_box_hslider(Box b) -> dict:
 def is_box_ident(Box t) -> bool:
     return fb.isBoxIdent(t.ptr)
 
-cdef bint is_box_ident_(fb.Box t, const char** str):
-    return fb.isBoxIdent(t, str)
+def get_box_id(Box t) -> str | None:
+    cdef const char** cstr = <const char**> malloc(1024 * sizeof(char*))
+    if fb.isBoxIdent(t.ptr, cstr):
+        return cstr[0].decode()
 
-# cdef bint is_box_ident(fb.Box t, const char** str):
-#     return fb.isBoxIdent(t, str)
-
-# def getparams_box_ident(Box t) -> dict:
-#     cdef const char** ident
-#     if fb.isBoxIdent(t.ptr, ident):
-#         return dict(
-#             ident=ident[0].decode(),
-#         )
-#     else:
-#         return {}
 
 def getparams_box_inputs(Box t) -> dict:
     cdef fb.Box x = NULL
@@ -1679,23 +1660,33 @@ def getparams_box_par(Box t) -> dict:
     else:
         return {}
 
-cdef bint is_box_prim0_(fb.Box b, fb.prim0* p):
-    return fb.isBoxPrim0(b, p)
 
-cdef bint is_box_prim1_(fb.Box b, fb.prim1* p):
-    return fb.isBoxPrim1(b, p)
 
-cdef bint is_box_prim2_(fb.Box b, fb.prim2* p):
-    return fb.isBoxPrim2(b, p)
 
-cdef bint is_box_prim3_(fb.Box b, fb.prim3* p):
-    return fb.isBoxPrim3(b, p)
+def is_box_prim0_(Box b) -> bool:
+    cdef fb.prim0 p
+    return fb.isBoxPrim0(b.ptr, &p)
 
-cdef bint is_box_prim4_(fb.Box b, fb.prim4* p):
-    return fb.isBoxPrim4(b, p)
+def is_box_prim1_(Box b) -> bool:
+    cdef fb.prim1 p
+    return fb.isBoxPrim1(b.ptr, &p)
 
-cdef bint is_box_prim5_(fb.Box b, fb.prim5* p):
-    return fb.isBoxPrim5(b, p)
+def is_box_prim2_(Box b) -> bool:
+    cdef fb.prim2 p
+    return fb.isBoxPrim2(b.ptr, &p)
+
+def is_box_prim3_(Box b) -> bool:
+    cdef fb.prim3 p
+    return fb.isBoxPrim3(b.ptr, &p)
+
+def is_box_prim4_(Box b) -> bool:
+    cdef fb.prim4 p
+    return fb.isBoxPrim4(b.ptr, &p)
+
+def is_box_prim5_(Box b) -> bool:
+    cdef fb.prim5 p
+    return fb.isBoxPrim5(b.ptr, &p)
+
 
 def is_box_prim0(Box b) -> bool:
     return fb.isBoxPrim0(b.ptr)
@@ -1715,59 +1706,7 @@ def is_box_prim4(Box b) -> bool:
 def is_box_prim5(Box b) -> bool:
     return fb.isBoxPrim5(b.ptr)
 
-# def getparams_box_prim0(Box b) -> dict:
-#     cdef prim0* p
-#     if fb.isBoxPrim0(b.ptr, p):
-#         return dict(
-#             p=Box.from_ptr(p),
-#         )
-#     else:
-#         return {}
 
-# def getparams_box_prim1(Box b) -> dict:
-#     cdef prim1* p
-#     if fb.isBoxPrim1(b.ptr, p):
-#         return dict(
-#             p=Box.from_ptr(p),
-#         )
-#     else:
-#         return {}
-
-# def getparams_box_prim2(Box b) -> dict:
-#     cdef prim2* p
-#     if fb.isBoxPrim2(b.ptr, p):
-#         return dict(
-#             p=Box.from_ptr(p),
-#         )
-#     else:
-#         return {}
-
-# def getparams_box_prim3(Box b) -> dict:
-#     cdef prim3* p
-#     if fb.isBoxPrim3(b.ptr, p):
-#         return dict(
-#             p=Box.from_ptr(p),
-#         )
-#     else:
-#         return {}
-
-# def getparams_box_prim4(Box b) -> dict:
-#     cdef prim4* p
-#     if fb.isBoxPrim4(b.ptr, p):
-#         return dict(
-#             p=Box.from_ptr(p),
-#         )
-#     else:
-#         return {}
-
-# def getparams_box_prim5(Box b) -> dict:
-#     cdef prim5* p
-#     if fb.isBoxPrim5(b.ptr, p):
-#         return dict(
-#             p=Box.from_ptr(p),
-#         )
-#     else:
-#         return {}
 
 def is_box_real(Box t) -> bool:
     return fb.isBoxReal(t.ptr)
