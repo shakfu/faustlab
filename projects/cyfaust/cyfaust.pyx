@@ -488,16 +488,22 @@ def stop_multithreaded_access_mode():
     """Stop multi-thread access mode."""
     fi.stopMTDSPFactories()
 
-## to wrap -------------------------------------------------------------------
-
-cdef fi.interpreter_dsp_factory* create_interpreter_dsp_factory_from_signals(
-        const string& name_app, fi.tvec signals, int argc, const char* argv[], 
-        string& error_msg):
+def create_interpreter_dsp_factory_from_signals(str name_app, SignalVector signals, *args) -> InterpreterDspFactory:
     """Create a Faust DSP factory from a vector of output signals."""
-    return fi.createInterpreterDSPFactoryFromSignals(
-        name_app, signals, argc, argv, error_msg)
+    cdef ParamArray params = ParamArray(args)
+    cdef string error_msg
+    error_msg.reserve(4096)
+    cdef fi.interpreter_dsp_factory *factory = fi.createInterpreterDSPFactoryFromSignals(
+        name_app.encode('utf8'),
+        <fs.tvec>signals.ptr, 
+        params.argc,
+        params.argv,
+        error_msg)
 
-
+    if not error_msg.empty():
+        print(error_msg.decode())
+        return
+    return InterpreterDspFactory.from_ptr(factory)
 
 ## ---------------------------------------------------------------------------
 ## faust/dsp/libfaust-box
@@ -1948,22 +1954,99 @@ def getparams_box_with_local_def(Box t) -> dict:
 
 
 
+def dsp_to_boxes(str name_app, str dsp_content, *args) -> Box:
+    """Compile a DSP source code as a string in a flattened box
 
-cdef fb.Box dsp_to_boxes(const string& name_app, const string& dsp_content, int argc, const char* argv[], int* inputs, int* outputs, string& error_msg):
-    """Compile a DSP source code as a string in a flattened box."""
-    return fb.DSPToBoxes(name_app, dsp_content, argc, argv, inputs, outputs, error_msg)
+    name_app - the name of the Faust program
+    dsp_content - the Faust program as a string
+    argc - the number of parameters in argv array
+    argv - the array of parameters
+    inputs - the place to return the number of inputs of the resulting box
+    outputs - the place to return the number of outputs of the resulting box
+    error_msg - the error string to be filled
 
-cdef bint get_box_type(fb.Box box, int* inputs, int* outputs):
-    """Return the number of inputs and outputs of a box."""
-    return fb.getBoxType(box, inputs, outputs)
+    returns a flattened box on success, otherwise a null pointer.
+    """
+    cdef ParamArray params = ParamArray(args)
+    cdef int inputs, outputs
+    cdef string error_msg
+    error_msg.reserve(4096)
+    cdef fb.Box b = fb.DSPToBoxes(
+        name_app.encode('utf8'),
+        dsp_content.encode('utf8'),
+        params.argc,
+        params.argv,
+        &inputs,
+        &outputs,
+        error_msg,
+    )
+    if not error_msg.empty():
+        print(error_msg.decode())
+        return
+    return Box.from_ptr(b)
 
-cdef fs.tvec boxes_to_signals(fb.Box box, string& error_msg):
-    """Compile a box expression in a list of signals in normal form."""
-    return fb.boxesToSignals(box, error_msg)
 
-cdef string create_source_from_boxes(const string& name_app, fb.Box box, const string& lang, int argc, const char* argv[], string& error_msg):
-    """Create source code in a target language from a box expression."""
-    return fb.createSourceFromBoxes(name_app, box, lang, argc, argv, error_msg)
+def get_box_type(Box b) -> tuple[int, int] | None:
+    """Return the number of inputs and outputs of a box
+
+    box - the box we want to know the number of inputs and outputs
+    inputs - the place to return the number of inputs
+    outputs - the place to return the number of outputs
+
+    returns true if type is defined, false if undefined.
+    """
+    cdef int inputs, outputs
+    if fb.getBoxType(b.ptr, &inputs, &outputs):
+        return (inputs, outputs)
+
+def boxes_to_signals(Box b) -> SignalVector | None:
+    """Compile a box expression in a list of signals in normal form
+    (see simplifyToNormalForm in libfaust-signal.h)
+
+    box - the box expression
+    error_msg - the error string to be filled
+
+    returns a list of signals in normal form on success, otherwise an empty list.
+    """
+    cdef string error_msg
+    error_msg.reserve(4096)
+    cdef fs.tvec vec = fb.boxesToSignals(b.ptr, error_msg)
+    if not error_msg.empty():
+        print(error_msg.decode())
+        return
+    return SignalVector.from_ptr(vec)
+
+
+def create_source_from_boxes(str name_app, Box box, str lang, *args) -> str:
+    """Create source code in a target language from a box expression.
+
+    name_app - the name of the Faust program
+    box - the box expression
+    lang - the target source code's language which can be one of 
+        'c', 'cpp', 'cmajor', 'codebox', 'csharp', 'dlang', 'fir', 
+        'interp', 'java', 'jax','jsfx', 'julia', 'ocpp', 'rust' or 'wast'
+        (depending of which of the corresponding backends are compiled in libfaust)
+    argc - the number of parameters in argv array
+    argv - the array of parameters
+    error_msg - the error string to be filled
+
+    returns a string of source code on success, setting error_msg on error.
+    """
+    cdef ParamArray params = ParamArray(args)
+    cdef string error_msg
+    error_msg.reserve(4096)
+    cdef string code = fb.createSourceFromBoxes(
+        name_app.encode('utf8'),
+        box.ptr,
+        lang.encode('utf8'),
+        params.argc,
+        params.argv, 
+        error_msg)
+    if not error_msg.empty():
+        print(error_msg.decode())
+        return
+    return code.decode()
+
 
 
 
