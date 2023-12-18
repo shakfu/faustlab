@@ -28,7 +28,6 @@ dir(cyfaust)
 
 # ...
 ['Box',
- 'Int',
  'InterpreterDsp',
  'InterpreterDspFactory',
  'Interval',
@@ -363,6 +362,6 @@ dir(cyfaust)
  'stop_multithreaded_access_mode',
  'tree2int',
  'tree2str',
- 'xtendedArity',
+ 'xtended_arity',
  'xtended_name']
 ```

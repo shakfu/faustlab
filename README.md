@@ -10,7 +10,7 @@ To get there, there will be several implementations using different wrapping fra
 
 | subproject   | framework  | api   |  audio test | interp api    | box api    | signal api |
 | :---         | :---       | :---: |     :---:   |    :---:      | :---:      | :---:      |
-| cyfaust      | cython     | c++   |      yes    |     90%       | 70%        | 80%        |
+| cyfaust      | cython     | c++   |      yes    |     98%       | 90%        | 90%        |
 | cfaust       | cython     | c     |      yes    |     80%       |            |            |
 | nanofaust    | nanobind   | c++   |      yes    |     80%       |            |            |
 | pyfaust      | pybind11   | c++   |      yes    |     80%       |            |            |
@@ -18,9 +18,9 @@ To get there, there will be several implementations using different wrapping fra
 
 All of the above implementations pass a minimal functional test which produces audio given a faust dsp file (`noise.dsp`).
 
-The `cyfaust` implementation also includes `faust_box.pxd`, `faust_signal.pxd` and the beginnings of an attempt to wrap both the faust box api and the faust signal api.
+The `cyfaust` implementation also includes `faust_box.pxd`, `faust_signal.pxd` and an attempt to wrap both the faust box api and the faust signal api using a dual object-oriented and functional approach. (This will likely evolve with actual usage).
 
-CAVEAT: this project's code is currently only at a proof of concept stage and is likely to contain a variety of bugs, memory leaks and other irritants...
+NOTE: this project's code is currently only at a proof of concept stage and is likely to contain a variety of bugs, memory leaks and other irritants...
 
 ## Usage
 

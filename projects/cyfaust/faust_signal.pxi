@@ -792,7 +792,7 @@ def tree2str(Signal s):
 #     return <void*>fs.getUserData(s)
 
 
-def xtendedArity(Signal s) -> int:
+def xtended_arity(Signal s) -> int:
     """Return the arity of the xtended signal.
 
     s - the xtended signal
