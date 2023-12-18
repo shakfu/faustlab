@@ -1312,87 +1312,366 @@ def box_attach(Box b1, Box b2) -> Box:
 cdef fb.Box box_prim2(fb.prim2 foo):
     return fb.boxPrim2(foo)
 
+# def is_box_abstr(Box t) -> dict:
+#     cdef fb.Box x = NULL
+#     cdef fb.Box y = NULL
+#     if fb.isBoxAbstr(t.ptr, x, y):
+#         return dict(
+#             x=Box.from_ptr(x),
+#             y=Box.from_ptr(y),
+#         )
+#     else:
+#         return {}
 
-cdef bint is_box_abstr_(fb.Box t, fb.Box& x, fb.Box& y):
-    return fb.isBoxAbstr(t, x, y)
 
-cdef bint is_box_access(fb.Box t, fb.Box& exp, fb.Box& id):
-    return fb.isBoxAccess(t, exp, id)
+def is_box_abstr(Box t) -> bool:
+    return fb.isBoxAbstr(t.ptr)
 
-cdef bint is_box_appl_(fb.Box t, fb.Box& x, fb.Box& y):
-    return fb.isBoxAppl(t, x, y)
+def getparams_box_abstr(Box t) -> dict:
+    cdef fb.Box x = NULL
+    cdef fb.Box y = NULL
+    if fb.isBoxAbstr(t.ptr, x, y):
+        return dict(
+            x=Box.from_ptr(x),
+            y=Box.from_ptr(y),
+        )
+    else:
+        return {}
 
-cdef bint is_box_button_(fb.Box b, fb.Box& lbl):
-    return fb.isBoxButton(b, lbl)
+def getparams_box_access(Box t) -> dict:
+    cdef fb.Box exp = NULL
+    cdef fb.Box id = NULL
+    if fb.isBoxAccess(t.ptr, exp, id):
+        return dict(
+            exp=Box.from_ptr(exp),
+            id=Box.from_ptr(id),
+        )
+    else:
+        return {}
 
-cdef bint is_box_case_(fb.Box b, fb.Box& rules):
-    return fb.isBoxCase(b, rules)
+def is_box_appl(Box t) -> bool:
+    return fb.isBoxAppl(t.ptr)
 
-cdef bint is_box_checkbox_(fb.Box b, fb.Box& lbl):
-    return fb.isBoxCheckbox(b, lbl)
+def getparams_box_appl(Box t) -> dict:
+    cdef fb.Box x = NULL
+    cdef fb.Box y = NULL
+    if fb.isBoxAppl(t.ptr, x, y):
+        return dict(
+            x=Box.from_ptr(x),
+            y=Box.from_ptr(y),
+        )
+    else:
+        return {}
 
-cdef bint is_box_component(fb.Box b, fb.Box& filename):
-    return fb.isBoxComponent(b, filename)
+def is_box_button(Box b) -> bool:
+    return fb.isBoxButton(b.ptr)
 
-cdef bint is_box_environment(fb.Box b):
-    return fb.isBoxEnvironment(b)
+def getparams_box_button(Box b) -> dict:
+    cdef fb.Box lbl = NULL
+    if fb.isBoxButton(b.ptr, lbl):
+        return dict(
+            lbl=Box.from_ptr(lbl),
+        )
+    else:
+        return {}
 
-cdef bint is_box_f_const(fb.Box b, fb.Box& type, fb.Box& name, fb.Box& file):
-    return fb.isBoxFConst(b, type, name, file)
+def is_box_case(Box b) -> bool:
+    return fb.isBoxCase(b.ptr)
 
-cdef bint is_box_f_fun(fb.Box b, fb.Box& ff):
-    return fb.isBoxFFun(b, ff)
+def getparams_box_case(Box b) -> dict:
+    cdef fb.Box rules = NULL
+    if fb.isBoxCase(b.ptr, rules):
+        return dict(
+            rules=Box.from_ptr(rules),
+        )
+    else:
+        return {}
 
-cdef bint is_box_f_var(fb.Box b, fb.Box& type, fb.Box& name, fb.Box& file):
-    return fb.isBoxFVar(b, type, name, file)
+def is_box_checkbox(Box b) -> bool:
+    return fb.isBoxCheckbox(b.ptr)
 
-cdef bint is_box_h_bargraph(fb.Box b, fb.Box& lbl, fb.Box& min, fb.Box& max):
-    return fb.isBoxHBargraph(b, lbl, min, max)
+def getparams_box_checkbox(Box b) -> dict:
+    cdef fb.Box lbl = NULL
+    if fb.isBoxCheckbox(b.ptr, lbl):
+        return dict(
+            lbl=Box.from_ptr(lbl),
+        )
+    else:
+        return {}
 
-cdef bint is_box_h_group(fb.Box b, fb.Box& lbl, fb.Box& x):
-    return fb.isBoxHGroup(b, lbl, x)
+def getparams_box_component(Box b) -> dict:
+    cdef fb.Box filename = NULL
+    if fb.isBoxComponent(b.ptr, filename):
+        return dict(
+            filename=Box.from_ptr(filename),
+        )
+    else:
+        return {}
 
-cdef bint is_box_h_slider(fb.Box b, fb.Box& lbl, fb.Box& cur, fb.Box& min, fb.Box& max, fb.Box& step):
-    return fb.isBoxHSlider(b, lbl, cur, min, max, step)
+def is_box_cut(Box t) -> bool:
+    return fb.isBoxCut(t.ptr)
 
-cdef bint is_box_ident(fb.Box t, const char** str):
+def is_box_environment(Box b) -> bool:
+    return fb.isBoxEnvironment(b.ptr)
+
+def is_box_error(Box t) -> bool:
+    return fb.isBoxError(t.ptr)
+
+def is_box_fconst(Box b) -> bool:
+    return fb.isBoxFConst(b.ptr)
+
+def getparams_box_fconst(Box b) -> dict:
+    cdef fb.Box type = NULL
+    cdef fb.Box name = NULL
+    cdef fb.Box file = NULL
+    if fb.isBoxFConst(b.ptr, type, name, file):
+        return dict(
+            type=Box.from_ptr(type),
+            name=Box.from_ptr(name),
+            file=Box.from_ptr(file),
+        )
+    else:
+        return {}
+
+def is_box_ffun(Box b) -> bool:
+    return fb.isBoxFFun(b.ptr)
+
+def getparams_box_ffun(Box b) -> dict:
+    cdef fb.Box ff = NULL
+    if fb.isBoxFFun(b.ptr, ff):
+        return dict(
+            ff=Box.from_ptr(ff),
+        )
+    else:
+        return {}
+
+def is_box_fvar(Box b) -> bool:
+    return fb.isBoxFVar(b.ptr)
+
+def getparams_box_fvar(Box b) -> dict:
+    cdef fb.Box type = NULL
+    cdef fb.Box name = NULL
+    cdef fb.Box file = NULL
+    if fb.isBoxFVar(b.ptr, type, name, file):
+        return dict(
+            type=Box.from_ptr(type),
+            name=Box.from_ptr(name),
+            file=Box.from_ptr(file),
+        )
+    else:
+        return {}
+
+def is_box_hbargraph(Box b) -> bool:
+    return fb.isBoxHBargraph(b.ptr)
+
+def getparams_box_hbargraph(Box b) -> dict:
+    cdef fb.Box lbl = NULL
+    cdef fb.Box min = NULL
+    cdef fb.Box max = NULL
+    if fb.isBoxHBargraph(b.ptr, lbl, min, max):
+        return dict(
+            lbl=Box.from_ptr(lbl),
+            min=Box.from_ptr(min),
+            max=Box.from_ptr(max),
+        )
+    else:
+        return {}
+
+def is_box_hgroup(Box b) -> bool:
+    return fb.isBoxHGroup(b.ptr)
+
+def getparams_box_hgroup(Box b) -> dict:
+    cdef fb.Box lbl = NULL
+    cdef fb.Box x = NULL
+    if fb.isBoxHGroup(b.ptr, lbl, x):
+        return dict(
+            lbl=Box.from_ptr(lbl),
+            x=Box.from_ptr(x),
+        )
+    else:
+        return {}
+
+def is_box_hslider(Box b) -> bool:
+    return fb.isBoxHSlider(b.ptr)
+
+def getparams_box_hslider(Box b) -> dict:
+    cdef fb.Box lbl = NULL
+    cdef fb.Box cur = NULL
+    cdef fb.Box min = NULL
+    cdef fb.Box max = NULL
+    cdef fb.Box step = NULL
+    if fb.isBoxHSlider(b.ptr, lbl, cur, min, max, step):
+        return dict(
+            lbl=Box.from_ptr(lbl),
+            cur=Box.from_ptr(cur),
+            min=Box.from_ptr(min),
+            max=Box.from_ptr(max),
+            step=Box.from_ptr(step),
+        )
+    else:
+        return {}
+
+def is_box_ident(Box t) -> bool:
+    return fb.isBoxIdent(t.ptr)
+
+cdef bint is_box_ident_(fb.Box t, const char** str):
     return fb.isBoxIdent(t, str)
 
-cdef bint is_box_inputs(fb.Box t, fb.Box& x):
-    return fb.isBoxInputs(t, x)
+# cdef bint is_box_ident(fb.Box t, const char** str):
+#     return fb.isBoxIdent(t, str)
 
-cdef bint is_box_int(fb.Box t, int* i):
-    return fb.isBoxInt(t, i)
+# def getparams_box_ident(Box t) -> dict:
+#     cdef const char** ident
+#     if fb.isBoxIdent(t.ptr, ident):
+#         return dict(
+#             ident=ident[0].decode(),
+#         )
+#     else:
+#         return {}
 
-cdef bint is_box_i_par(fb.Box t, fb.Box& x, fb.Box& y, fb.Box& z):
-    return fb.isBoxIPar(t, x, y, z)
+def getparams_box_inputs(Box t) -> dict:
+    cdef fb.Box x = NULL
+    if fb.isBoxInputs(t.ptr, x):
+        return dict(
+            x=Box.from_ptr(x),
+        )
+    else:
+        return {}
 
-cdef bint is_box_i_prod(fb.Box t, fb.Box& x, fb.Box& y, fb.Box& z):
-    return fb.isBoxIProd(t, x, y, z)
+def is_box_int(Box t) -> bool:
+    return fb.isBoxInt(t.ptr)
 
-cdef bint is_box_i_seq(fb.Box t, fb.Box& x, fb.Box& y, fb.Box& z):
-    return fb.isBoxISeq(t, x, y, z)
+def getparams_box_int(Box t) -> dict:
+    cdef int i = 0
+    if fb.isBoxInt(t.ptr, &i):
+        return dict(
+            i=i,
+        )
+    else:
+        return {}
 
-cdef bint is_box_i_sum(fb.Box t, fb.Box& x, fb.Box& y, fb.Box& z):
-    return fb.isBoxISum(t, x, y, z)
+def getparams_box_ipar(Box t) -> dict:
+    cdef fb.Box x = NULL
+    cdef fb.Box y = NULL
+    cdef fb.Box z = NULL
+    if fb.isBoxIPar(t.ptr, x, y, z):
+        return dict(
+            x=Box.from_ptr(x),
+            y=Box.from_ptr(y),
+            z=Box.from_ptr(z),
+        )
+    else:
+        return {}
 
-cdef bint is_box_library(fb.Box b, fb.Box& filename):
-    return fb.isBoxLibrary(b, filename)
+def getparams_box_iprod(Box t) -> dict:
+    cdef fb.Box x = NULL
+    cdef fb.Box y = NULL
+    cdef fb.Box z = NULL
+    if fb.isBoxIProd(t.ptr, x, y, z):
+        return dict(
+            x=Box.from_ptr(x),
+            y=Box.from_ptr(y),
+            z=Box.from_ptr(z),
+        )
+    else:
+        return {}
 
-cdef bint is_box_merge(fb.Box t, fb.Box& x, fb.Box& y):
-    return fb.isBoxMerge(t, x, y)
+def getparams_box_iseq(Box t) -> dict:
+    cdef fb.Box x = NULL
+    cdef fb.Box y = NULL
+    cdef fb.Box z = NULL
+    if fb.isBoxISeq(t.ptr, x, y, z):
+        return dict(
+            x=Box.from_ptr(x),
+            y=Box.from_ptr(y),
+            z=Box.from_ptr(z),
+        )
+    else:
+        return {}
 
-cdef bint is_box_metadata(fb.Box b, fb.Box& exp, fb.Box& mdlist):
-    return fb.isBoxMetadata(b, exp, mdlist)
+def getparams_box_isum(Box t) -> dict:
+    cdef fb.Box x = NULL
+    cdef fb.Box y = NULL
+    cdef fb.Box z = NULL
+    if fb.isBoxISum(t.ptr, x, y, z):
+        return dict(
+            x=Box.from_ptr(x),
+            y=Box.from_ptr(y),
+            z=Box.from_ptr(z),
+        )
+    else:
+        return {}
 
-cdef bint is_box_num_entry(fb.Box b, fb.Box& lbl, fb.Box& cur, fb.Box& min_, fb.Box& max_, fb.Box& step):
-    return fb.isBoxNumEntry(b, lbl, cur, min_, max_, step)
+def getparams_box_library(Box b) -> dict:
+    cdef fb.Box filename = NULL
+    if fb.isBoxLibrary(b.ptr, filename):
+        return dict(
+            filename=Box.from_ptr(filename),
+        )
+    else:
+        return {}
 
-cdef bint is_box_outputs(fb.Box t, fb.Box& x):
-    return fb.isBoxOutputs(t, x)
+def getparams_box_merge(Box t) -> dict:
+    cdef fb.Box x = NULL
+    cdef fb.Box y = NULL
+    if fb.isBoxMerge(t.ptr, x, y):
+        return dict(
+            x=Box.from_ptr(x),
+            y=Box.from_ptr(y),
+        )
+    else:
+        return {}
 
-cdef bint is_box_par(fb.Box t, fb.Box& x, fb.Box& y):
-    return fb.isBoxPar(t, x, y)
+def getparams_box_metadata(Box b) -> dict:
+    cdef fb.Box exp = NULL
+    cdef fb.Box mdlist = NULL
+    if fb.isBoxMetadata(b.ptr, exp, mdlist):
+        return dict(
+            exp=Box.from_ptr(exp),
+            mdlist=Box.from_ptr(mdlist),
+        )
+    else:
+        return {}
+
+def is_box_num_entry(Box b) -> bool:
+    return fb.isBoxNumEntry(b.ptr)
+
+def getparams_box_num_entry(Box b) -> dict:
+    cdef fb.Box lbl = NULL
+    cdef fb.Box cur = NULL
+    cdef fb.Box min = NULL
+    cdef fb.Box max = NULL
+    cdef fb.Box step = NULL
+    if fb.isBoxNumEntry(b.ptr, lbl, cur, min, max, step):
+        return dict(
+            lbl=Box.from_ptr(lbl),
+            cur=Box.from_ptr(cur),
+            min=Box.from_ptr(min),
+            max=Box.from_ptr(max),
+            step=Box.from_ptr(step),
+        )
+    else:
+        return {}
+
+def getparams_box_outputs(Box t) -> dict:
+    cdef fb.Box x = NULL
+    if fb.isBoxOutputs(t.ptr, x):
+        return dict(
+            x=Box.from_ptr(x),
+        )
+    else:
+        return {}
+
+def getparams_box_par(Box t) -> dict:
+    cdef fb.Box x = NULL
+    cdef fb.Box y = NULL
+    if fb.isBoxPar(t.ptr, x, y):
+        return dict(
+            x=Box.from_ptr(x),
+            y=Box.from_ptr(y),
+        )
+    else:
+        return {}
 
 cdef bint is_box_prim0_(fb.Box b, fb.prim0* p):
     return fb.isBoxPrim0(b, p)
@@ -1412,41 +1691,263 @@ cdef bint is_box_prim4_(fb.Box b, fb.prim4* p):
 cdef bint is_box_prim5_(fb.Box b, fb.prim5* p):
     return fb.isBoxPrim5(b, p)
 
-cdef bint is_box_real(fb.Box t, double* r):
-    return fb.isBoxReal(t, r)
+def is_box_prim0(Box b) -> bool:
+    return fb.isBoxPrim0(b.ptr)
 
-cdef bint is_box_rec(fb.Box t, fb.Box& x, fb.Box& y):
-    return fb.isBoxRec(t, x, y)
+def is_box_prim1(Box b) -> bool:
+    return fb.isBoxPrim1(b.ptr)
 
-cdef bint is_box_route(fb.Box b, fb.Box& n, fb.Box& m, fb.Box& r):
-    return fb.isBoxRoute(b, n, m, r)
+def is_box_prim2(Box b) -> bool:
+    return fb.isBoxPrim2(b.ptr)
 
-cdef bint is_box_seq(fb.Box t, fb.Box& x, fb.Box& y):
-    return fb.isBoxSeq(t, x, y)
+def is_box_prim3(Box b) -> bool:
+    return fb.isBoxPrim3(b.ptr)
 
-cdef bint is_box_soundfile(fb.Box b, fb.Box& label, fb.Box& chan):
-    return fb.isBoxSoundfile(b, label, chan)
+def is_box_prim4(Box b) -> bool:
+    return fb.isBoxPrim4(b.ptr)
 
-cdef bint is_box_split(fb.Box t, fb.Box& x, fb.Box& y):
-    return fb.isBoxSplit(t, x, y)
+def is_box_prim5(Box b) -> bool:
+    return fb.isBoxPrim5(b.ptr)
 
-cdef bint is_box_symbolic(fb.Box t, fb.Box& slot, fb.Box& body):
-    return fb.isBoxSymbolic(t, slot, body)
+# def getparams_box_prim0(Box b) -> dict:
+#     cdef prim0* p
+#     if fb.isBoxPrim0(b.ptr, p):
+#         return dict(
+#             p=Box.from_ptr(p),
+#         )
+#     else:
+#         return {}
 
-cdef bint is_box_t_group(fb.Box b, fb.Box& lbl, fb.Box& x):
-    return fb.isBoxTGroup(b, lbl, x)
+# def getparams_box_prim1(Box b) -> dict:
+#     cdef prim1* p
+#     if fb.isBoxPrim1(b.ptr, p):
+#         return dict(
+#             p=Box.from_ptr(p),
+#         )
+#     else:
+#         return {}
 
-cdef bint is_box_v_bargraph(fb.Box b, fb.Box& lbl, fb.Box& min, fb.Box& max):
-    return fb.isBoxVBargraph(b, lbl, min, max)
+# def getparams_box_prim2(Box b) -> dict:
+#     cdef prim2* p
+#     if fb.isBoxPrim2(b.ptr, p):
+#         return dict(
+#             p=Box.from_ptr(p),
+#         )
+#     else:
+#         return {}
 
-cdef bint is_box_v_group(fb.Box b, fb.Box& lbl, fb.Box& x):
-    return fb.isBoxVGroup(b, lbl, x)
+# def getparams_box_prim3(Box b) -> dict:
+#     cdef prim3* p
+#     if fb.isBoxPrim3(b.ptr, p):
+#         return dict(
+#             p=Box.from_ptr(p),
+#         )
+#     else:
+#         return {}
 
-cdef bint is_box_v_slider(fb.Box b, fb.Box& lbl, fb.Box& cur, fb.Box& min, fb.Box& max, fb.Box& step):
-    return fb.isBoxVSlider(b, lbl, cur, min, max, step)
+# def getparams_box_prim4(Box b) -> dict:
+#     cdef prim4* p
+#     if fb.isBoxPrim4(b.ptr, p):
+#         return dict(
+#             p=Box.from_ptr(p),
+#         )
+#     else:
+#         return {}
 
-cdef bint is_box_with_local_def(fb.Box t, fb.Box& body, fb.Box& ldef):
-    return fb.isBoxWithLocalDef(t, body, ldef)
+# def getparams_box_prim5(Box b) -> dict:
+#     cdef prim5* p
+#     if fb.isBoxPrim5(b.ptr, p):
+#         return dict(
+#             p=Box.from_ptr(p),
+#         )
+#     else:
+#         return {}
+
+def is_box_real(Box t) -> bool:
+    return fb.isBoxReal(t.ptr)
+
+def getparams_box_real(Box t) -> dict:
+    cdef double r
+    if fb.isBoxReal(t.ptr, &r):
+        return dict(
+            r=r,
+        )
+    else:
+        return {}
+
+def getparams_box_rec(Box t) -> dict:
+    cdef fb.Box x = NULL
+    cdef fb.Box y = NULL
+    if fb.isBoxRec(t.ptr, x, y):
+        return dict(
+            x=Box.from_ptr(x),
+            y=Box.from_ptr(y),
+        )
+    else:
+        return {}
+
+def getparams_box_route(Box b) -> dict:
+    cdef fb.Box n = NULL
+    cdef fb.Box m = NULL
+    cdef fb.Box r = NULL
+    if fb.isBoxRoute(b.ptr, n, m, r):
+        return dict(
+            n=Box.from_ptr(n),
+            m=Box.from_ptr(m),
+            r=Box.from_ptr(r),
+        )
+    else:
+        return {}
+
+def getparams_box_seq(Box t) -> dict:
+    cdef fb.Box x = NULL
+    cdef fb.Box y = NULL
+    if fb.isBoxSeq(t.ptr, x, y):
+        return dict(
+            x=Box.from_ptr(x),
+            y=Box.from_ptr(y),
+        )
+    else:
+        return {}
+
+def is_box_slot(Box t) -> bool:
+    return fb.isBoxSlot(t.ptr)
+
+def getparams_box_slot(Box t) -> dict:
+    cdef int id = 0
+    if fb.isBoxSlot(t.ptr, &id):
+        return dict(
+            id=id,
+        )
+    else:
+        return {}
+
+def is_box_soundfile(Box b) -> bool:
+    return fb.isBoxSoundfile(b.ptr)
+
+def getparams_box_soundfile(Box b) -> dict:
+    cdef fb.Box label = NULL
+    cdef fb.Box chan = NULL
+    if fb.isBoxSoundfile(b.ptr, label, chan):
+        return dict(
+            label=Box.from_ptr(label),
+            chan=Box.from_ptr(chan),
+        )
+    else:
+        return {}
+
+def getparams_box_split(Box t) -> dict:
+    cdef fb.Box x = NULL
+    cdef fb.Box y = NULL
+    if fb.isBoxSplit(t.ptr, x, y):
+        return dict(
+            x=Box.from_ptr(x),
+            y=Box.from_ptr(y),
+        )
+    else:
+        return {}
+
+def is_box_symbolic(Box t) -> bool:
+    return fb.isBoxSymbolic(t.ptr)
+
+def getparams_box_symbolic(Box t) -> dict:
+    cdef fb.Box slot = NULL
+    cdef fb.Box body = NULL
+    if fb.isBoxSymbolic(t.ptr, slot, body):
+        return dict(
+            slot=Box.from_ptr(slot),
+            body=Box.from_ptr(body),
+        )
+    else:
+        return {}
+
+def is_box_t_group(Box b) -> bool:
+    return fb.isBoxTGroup(b.ptr)
+
+def getparams_box_tgroup(Box b) -> dict:
+    cdef fb.Box lbl = NULL
+    cdef fb.Box x = NULL
+    if fb.isBoxTGroup(b.ptr, lbl, x):
+        return dict(
+            lbl=Box.from_ptr(lbl),
+            x=Box.from_ptr(x),
+        )
+    else:
+        return {}
+
+def is_box_vbargraph(Box b) -> bool:
+    return fb.isBoxVBargraph(b.ptr)
+
+def getparams_box_vbargraph(Box b) -> dict:
+    cdef fb.Box lbl = NULL
+    cdef fb.Box min = NULL
+    cdef fb.Box max = NULL
+    if fb.isBoxVBargraph(b.ptr, lbl, min, max):
+        return dict(
+            lbl=Box.from_ptr(lbl),
+            min=Box.from_ptr(min),
+            max=Box.from_ptr(max),
+        )
+    else:
+        return {}
+
+def is_box_vgroup(Box b) -> bool:
+    return fb.isBoxVGroup(b.ptr)
+
+def getparams_box_vgroup(Box b) -> dict:
+    cdef fb.Box lbl = NULL
+    cdef fb.Box x = NULL
+    if fb.isBoxVGroup(b.ptr, lbl, x):
+        return dict(
+            lbl=Box.from_ptr(lbl),
+            x=Box.from_ptr(x),
+        )
+    else:
+        return {}
+
+def is_box_vslider(Box b) -> bool:
+    return fb.isBoxVSlider(b.ptr)
+
+def getparams_box_vslider(Box b) -> dict:
+    cdef fb.Box lbl = NULL
+    cdef fb.Box cur = NULL
+    cdef fb.Box min = NULL
+    cdef fb.Box max = NULL
+    cdef fb.Box step = NULL
+    if fb.isBoxVSlider(b.ptr, lbl, cur, min, max, step):
+        return dict(
+            lbl=Box.from_ptr(lbl),
+            cur=Box.from_ptr(cur),
+            min=Box.from_ptr(min),
+            max=Box.from_ptr(max),
+            step=Box.from_ptr(step),
+        )
+    else:
+        return {}
+
+def is_box_waveform(Box b) -> bool:
+    return fb.isBoxWaveform(b.ptr)
+
+def is_box_wire(Box t) -> bool:
+    return fb.isBoxWire(t.ptr)
+
+def getparams_box_with_local_def(Box t) -> dict:
+    cdef fb.Box body = NULL
+    cdef fb.Box ldef = NULL
+    if fb.isBoxWithLocalDef(t.ptr, body, ldef):
+        return dict(
+            body=Box.from_ptr(body),
+            ldef=Box.from_ptr(ldef),
+        )
+    else:
+        return {}
+
+
+
+
+
+
+
 
 cdef fb.Box dsp_to_boxes(const string& name_app, const string& dsp_content, int argc, const char* argv[], int* inputs, int* outputs, string& error_msg):
     """Compile a DSP source code as a string in a flattened box."""
