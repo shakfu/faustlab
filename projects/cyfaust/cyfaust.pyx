@@ -889,6 +889,7 @@ def box_select2_() -> Box:
     cdef fb.Box b = fb.boxSelect2()
     return Box.from_ptr(b)
 
+
 def box_select3(Box selector, Box b1, Box b2, Box b3) -> Box:
     """Create a selector between three boxes.
 
@@ -902,161 +903,415 @@ def box_select3(Box selector, Box b1, Box b2, Box b3) -> Box:
     cdef fb.Box b = fb.boxSelect3(selector.ptr, b1.ptr, b2.ptr, b3.ptr)
     return Box.from_ptr(b)
 
+def box_fconst(fb.SType type, str name, str file) -> Box:
+    """Create a foreign constant box.
 
-cdef fb.Box box_select3_():
-    """Create a selector between three boxes."""
-    return fb.boxSelect3()
+    type - the foreign constant type of SType
+    name - the foreign constant name
+    file - the include file where the foreign constant is defined
 
-cdef fb.Box box_f_const(fb.SType type, const string& name, const string& file):
-    """Create a foreign constant box."""
-    return fb.boxFConst(type, name, file)
+    returns the foreign constant box.
+    """
+    cdef fb.Box b = fb.boxFConst(type, name, file)
+    return Box.from_ptr(b)
 
-cdef fb.Box box_f_var(fb.SType type, const string& name, const string& file):
-    """Create a foreign variable box."""
-    return fb.boxFVar(type, name, file)
+def box_fvar(fb.SType type, str name, str file) -> Box:
+    """Create a foreign variable box.
 
-cdef fb.Box box_bin_op(fb.SOperator op):
-    """Generic binary mathematical functions."""
-    return fb.boxBinOp(op)
+    type - the foreign variable type of SType
+    name - the foreign variable name
+    file - the include file where the foreign variable is defined
 
-cdef fb.Box box_bin_op_with_box(fb.SOperator op, fb.Box b1, fb.Box b2):
-    """Generic binary mathematical functions."""
-    return fb.boxBinOp(op, b1, b2)
+    returns the foreign variable box.
+    """
+    cdef fb.Box b = fb.boxFVar(type, name, file)
+    return Box.from_ptr(b)
+
+def box_bin_op0(fb.SOperator op) -> Box:
+    """Generic binary mathematical functions.
+
+    op - the operator in SOperator set
+
+    returns the result box of op(x,y).
+    """
+    cdef fb.Box b = fb.boxBinOp(op)
+    return Box.from_ptr(b)
+
+def box_bin_op(fb.SOperator op, Box b1, Box b2) -> Box:
+    """Generic binary mathematical functions.
+
+    op - the operator in SOperator set
+
+    returns the result box of op(x,y).
+    """
+    cdef fb.Box b = fb.boxBinOp(op, b1.ptr, b2.ptr)
+    return Box.from_ptr(b)
 
 
-cdef fb.Box box_rem(fb.Box b1, fb.Box b2):
-    return fb.boxRem(b1, b2)
-
-cdef fb.Box box_left_shift(fb.Box b1, fb.Box b2):
-    return fb.boxLeftShift(b1, b2)
-
-cdef fb.Box box_l_right_shift(fb.Box b1, fb.Box b2):
-    return fb.boxLRightShift(b1, b2)
-
-cdef fb.Box box_a_right_shift(fb.Box b1, fb.Box b2):
-    return fb.boxARightShift(b1, b2)
 
 
-# cdef fb.Box box_abs(fb.Box x):
-#     return fb.boxAbs(x)
+def box_add_op() -> Box:
+    cdef fb.Box b = fb.boxAdd()
+    return Box.from_ptr(b)
 
-# cdef fb.Box box_acos(fb.Box x):
-#     return fb.boxAcos(x)
+def box_add(Box b1, Box b2) -> Box:
+    cdef fb.Box b = fb.boxAdd(b1.ptr, b2.ptr)
+    return Box.from_ptr(b)
 
-# cdef fb.Box box_tan(fb.Box x):
-#     return fb.boxTan(x)
+def box_sub_op() -> Box:
+    cdef fb.Box b = fb.boxSub()
+    return Box.from_ptr(b)
 
-# cdef fb.Box box_sqrt(fb.Box x):
-#     return fb.boxSqrt(x)
+def box_sub(Box b1, Box b2) -> Box:
+    cdef fb.Box b = fb.boxSub(b1.ptr, b2.ptr)
+    return Box.from_ptr(b)
 
-# cdef fb.Box box_sin(fb.Box x):
-#     return fb.boxSin(x)
+def box_mul_op() -> Box:
+    cdef fb.Box b = fb.boxMul()
+    return Box.from_ptr(b)
 
-# cdef fb.Box box_rint(fb.Box x):
-#     return fb.boxRint(x)
+def box_mul(Box b1, Box b2) -> Box:
+    cdef fb.Box b = fb.boxMul(b1.ptr, b2.ptr)
+    return Box.from_ptr(b)
 
-# cdef fb.Box box_round(fb.Box x):
-#     return fb.boxRound(x)
+def box_div_op() -> Box:
+    cdef fb.Box b = fb.boxDiv()
+    return Box.from_ptr(b)
 
-# cdef fb.Box box_log(fb.Box x):
-#     return fb.boxLog(x)
+def box_div(Box b1, Box b2) -> Box:
+    cdef fb.Box b = fb.boxDiv(b1.ptr, b2.ptr)
+    return Box.from_ptr(b)
 
-# cdef fb.Box box_log10(fb.Box x):
-#     return fb.boxLog10(x)
+def box_rem_op() -> Box:
+    cdef fb.Box b = fb.boxRem()
+    return Box.from_ptr(b)
 
-# cdef fb.Box box_floor(fb.Box x):
-#     return fb.boxFloor(x)
+def box_rem(Box b1, Box b2) -> Box:
+    cdef fb.Box b = fb.boxRem(b1.ptr, b2.ptr)
+    return Box.from_ptr(b)
 
-# cdef fb.Box box_exp(fb.Box x):
-#     return fb.boxExp(x)
+def box_leftshift_op() -> Box:
+    cdef fb.Box b = fb.boxLeftShift()
+    return Box.from_ptr(b)
 
-# cdef fb.Box box_exp10(fb.Box x):
-#     return fb.boxExp10(x)
+def box_leftshift(Box b1, Box b2) -> Box:
+    cdef fb.Box b = fb.boxLeftShift(b1.ptr, b2.ptr)
+    return Box.from_ptr(b)
 
-# cdef fb.Box box_cos(fb.Box x):
-#     return fb.boxCos(x)
+def box_lrightshift_op() -> Box:
+    cdef fb.Box b = fb.boxLRightShift()
+    return Box.from_ptr(b)
 
-# cdef fb.Box box_ceil(fb.Box x):
-#     return fb.boxCeil(x)
+def box_lrightshift(Box b1, Box b2) -> Box:
+    cdef fb.Box b = fb.boxLRightShift(b1.ptr, b2.ptr)
+    return Box.from_ptr(b)
 
-# cdef fb.Box box_atan(fb.Box x):
-#     return fb.boxAtan(x)
+def box_arightshift_op() -> Box:
+    cdef fb.Box b = fb.boxARightShift()
+    return Box.from_ptr(b)
 
-# cdef fb.Box box_asin(fb.Box x):
-#     return fb.boxAsin(x)
+def box_arightshift(Box b1, Box b2) -> Box:
+    cdef fb.Box b = fb.boxARightShift(b1.ptr, b2.ptr)
+    return Box.from_ptr(b)
 
-cdef fb.Box box_remainder(fb.Box b1, fb.Box b2):
-    return fb.boxRemainder(b1, b2)
+def box_gt_op() -> Box:
+    cdef fb.Box b = fb.boxGT()
+    return Box.from_ptr(b)
 
-cdef fb.Box box_pow(fb.Box b1, fb.Box b2):
-    return fb.boxPow(b1, b2)
+def box_gt(Box b1, Box b2) -> Box:
+    cdef fb.Box b = fb.boxGT(b1.ptr, b2.ptr)
+    return Box.from_ptr(b)
 
-cdef fb.Box box_min(fb.Box b1, fb.Box b2):
-    return fb.boxMin(b1, b2)
+def box_lt_op() -> Box:
+    cdef fb.Box b = fb.boxLT()
+    return Box.from_ptr(b)
 
-cdef fb.Box box_max(fb.Box b1, fb.Box b2):
-    return fb.boxMax(b1, b2)
+def box_lt(Box b1, Box b2) -> Box:
+    cdef fb.Box b = fb.boxLT(b1.ptr, b2.ptr)
+    return Box.from_ptr(b)
 
-cdef fb.Box box_fmod(fb.Box b1, fb.Box b2):
-    return fb.boxFmod(b1, b2)
+def box_ge_op() -> Box:
+    cdef fb.Box b = fb.boxGE()
+    return Box.from_ptr(b)
 
-cdef fb.Box box_atan2(fb.Box b1, fb.Box b2):
-    return fb.boxAtan2(b1, b2)
+def box_ge(Box b1, Box b2) -> Box:
+    cdef fb.Box b = fb.boxGE(b1.ptr, b2.ptr)
+    return Box.from_ptr(b)
 
-cdef fb.Box box_button(const string& label):
-    """Create a button box."""
-    return fb.boxButton(label)
+def box_le_op() -> Box:
+    cdef fb.Box b = fb.boxLE()
+    return Box.from_ptr(b)
 
-cdef fb.Box box_checkbox(const string& label):
-    """Create a checkbox box."""
-    return fb.boxCheckbox(label)
+def box_le(Box b1, Box b2) -> Box:
+    cdef fb.Box b = fb.boxLE(b1.ptr, b2.ptr)
+    return Box.from_ptr(b)
 
-cdef fb.Box box_v_slider(const string& label, fb.Box init, fb.Box min, fb.Box max, fb.Box step):
-    """Create a verical slider box."""
-    return fb.boxVSlider(label, init, min, max, step)
+def box_eq_op() -> Box:
+    cdef fb.Box b = fb.boxEQ()
+    return Box.from_ptr(b)
 
-cdef fb.Box box_h_slider(const string& label, fb.Box init, fb.Box min, fb.Box max, fb.Box step):
-    """Create a horizontal slider box."""
-    return fb.boxHSlider(label, init, min, max, step)
+def box_eq(Box b1, Box b2) -> Box:
+    cdef fb.Box b = fb.boxEQ(b1.ptr, b2.ptr)
+    return Box.from_ptr(b)
 
-cdef fb.Box box_num_entry(const string& label, fb.Box init, fb.Box min, fb.Box max, fb.Box step):
-    """Create a numeric entry box."""
-    return fb.boxNumEntry(label, init, min, max, step)
+def box_ne_op() -> Box:
+    cdef fb.Box b = fb.boxNE()
+    return Box.from_ptr(b)
 
-cdef fb.Box box_v_bargraph(const string& label, fb.Box min, fb.Box max):
-    """Create a vertical bargraph box."""
-    return fb.boxVBargraph(label, min, max)
+def box_ne(Box b1, Box b2) -> Box:
+    cdef fb.Box b = fb.boxNE(b1.ptr, b2.ptr)
+    return Box.from_ptr(b)
 
-cdef fb.Box box_v_bargraph2(const string& label, fb.Box min, fb.Box max, fb.Box x):
-    """Create a vertical bargraph box."""
-    return fb.boxVBargraph(label, min, max, x)
+def box_and_op() -> Box:
+    cdef fb.Box b = fb.boxAND()
+    return Box.from_ptr(b)
 
-cdef fb.Box box_h_bargraph(const string& label, fb.Box min, fb.Box max):
-    """Create a horizontal bargraph box."""
-    return fb.boxHBargraph(label, min, max)
+def box_and(Box b1, Box b2) -> Box:
+    cdef fb.Box b = fb.boxAND(b1.ptr, b2.ptr)
+    return Box.from_ptr(b)
 
-cdef fb.Box box_h_bargraph2(const string& label, fb.Box min, fb.Box max, fb.Box x):
-    """Create a horizontal bargraph box."""
-    return fb.boxHBargraph(label, min, max, x)
+def box_or_op() -> Box:
+    cdef fb.Box b = fb.boxOR()
+    return Box.from_ptr(b)
 
-cdef fb.Box box_v_group(const string& label, fb.Box group):
-    """Create a vertical group box."""
-    return fb.boxVGroup(label, group)
+def box_or(Box b1, Box b2) -> Box:
+    cdef fb.Box b = fb.boxOR(b1.ptr, b2.ptr)
+    return Box.from_ptr(b)
 
-cdef fb.Box box_h_group(const string& label, fb.Box group):
-    """Create a horizontal group box."""
-    return fb.boxHGroup(label, group)
+def box_xor_op() -> Box:
+    cdef fb.Box b = fb.boxXOR()
+    return Box.from_ptr(b)
 
-cdef fb.Box box_t_group(const string& label, fb.Box group):
-    """Create a tab group box."""
-    return fb.boxTGroup(label, group)
+def box_xor(Box b1, Box b2) -> Box:
+    cdef fb.Box b = fb.boxXOR(b1.ptr, b2.ptr)
+    return Box.from_ptr(b)
 
-cdef fb.Box box_attach(fb.Box b1, fb.Box b2):
-    """Create an attach box."""
-    return fb.boxAttach(b1, b2)
+def box_remainder_op() -> Box:
+    cdef fb.Box b = fb.boxRemainder()
+    return Box.from_ptr(b)
+
+def box_remainder(Box b1, Box b2) -> Box:
+    cdef fb.Box b = fb.boxRemainder(b1.ptr, b2.ptr)
+    return Box.from_ptr(b)
+
+def box_pow_op() -> Box:
+    cdef fb.Box b = fb.boxPow()
+    return Box.from_ptr(b)
+
+def box_pow(Box b1, Box b2) -> Box:
+    cdef fb.Box b = fb.boxPow(b1.ptr, b2.ptr)
+    return Box.from_ptr(b)
+
+def box_min_op() -> Box:
+    cdef fb.Box b = fb.boxMin()
+    return Box.from_ptr(b)
+
+def box_min(Box b1, Box b2) -> Box:
+    cdef fb.Box b = fb.boxMin(b1.ptr, b2.ptr)
+    return Box.from_ptr(b)
+
+def box_max_op() -> Box:
+    cdef fb.Box b = fb.boxMax()
+    return Box.from_ptr(b)
+
+def box_max(Box b1, Box b2) -> Box:
+    cdef fb.Box b = fb.boxMax(b1.ptr, b2.ptr)
+    return Box.from_ptr(b)
+
+def box_fmod_op() -> Box:
+    cdef fb.Box b = fb.boxFmod()
+    return Box.from_ptr(b)
+
+def box_fmod(Box b1, Box b2) -> Box:
+    cdef fb.Box b = fb.boxFmod(b1.ptr, b2.ptr)
+    return Box.from_ptr(b)
+
+def box_atan2_op() -> Box:
+    cdef fb.Box b = fb.boxAtan2()
+    return Box.from_ptr(b)
+
+def box_atan2(Box b1, Box b2) -> Box:
+    cdef fb.Box b = fb.boxAtan2(b1.ptr, b2.ptr)
+    return Box.from_ptr(b)
+
+
+def box_button(str label) -> Box:
+    """Create a button box.
+
+    label - the label definition (see [2])
+
+    returns the button box.
+    """
+    cdef fb.Box b = fb.boxButton(label.encode('utf8'))
+    return Box.from_ptr(b)
+
+
+def box_checkbox(str label) -> Box:
+    """Create a checkbox box.
+
+    label - the label definition (see [2])
+
+    returns the checkbox box.
+    """
+    cdef fb.Box b = fb.boxCheckbox(label.encode('utf8'))
+    return Box.from_ptr(b)
+
+
+def box_vslider(str label, Box init, Box min, Box max, Box step) -> Box:
+    """Create a vertical slider box.
+
+    label - the label definition (see [2])
+    init - the init box, a constant numerical expression (see [1])
+    min - the min box, a constant numerical expression (see [1])
+    max - the max box, a constant numerical expression (see [1])
+    step - the step box, a constant numerical expression (see [1])
+
+    returns the vertical slider box.
+    """
+    cdef fb.Box b = fb.boxVSlider(label.encode('utf8'), init.ptr, min.ptr, max.ptr, step.ptr)
+    return Box.from_ptr(b)
+
+def box_hslider(str label, Box init, Box min, Box max, Box step) -> Box:
+    """Create an horizontal slider box.
+
+    label - the label definition (see [2])
+    init - the init box, a constant numerical expression (see [1])
+    min - the min box, a constant numerical expression (see [1])
+    max - the max box, a constant numerical expression (see [1])
+    step - the step box, a constant numerical expression (see [1])
+
+    returns the horizontal slider box.
+    """
+    cdef fb.Box b = fb.boxHSlider(label.encode('utf8'), init.ptr, min.ptr, max.ptr, step.ptr)
+    return Box.from_ptr(b)
+
+def box_numentry(str label, Box init, Box min, Box max, Box step) -> Box:
+    """Create a num entry box.
+
+    label - the label definition (see [2])
+    init - the init box, a constant numerical expression (see [1])
+    min - the min box, a constant numerical expression (see [1])
+    max - the max box, a constant numerical expression (see [1])
+    step - the step box, a constant numerical expression (see [1])
+
+    returns the num entry box.
+    """
+    cdef fb.Box b = fb.boxNumEntry(label.encode('utf8'), init.ptr, min.ptr, max.ptr, step.ptr)
+    return Box.from_ptr(b)
+
+
+def box_vbargraph(str label, Box min, Box max) -> Box:
+    """Create a vertical bargraph box.
+
+    label - the label definition (see [2])
+    min - the min box, a constant numerical expression (see [1])
+    max - the max box, a constant numerical expression (see [1])
+    x - the input box
+
+    returns the vertical bargraph box.
+    """
+    cdef fb.Box b = fb.boxVBargraph(label.encode('utf8'), min.ptr, max.ptr)
+    return Box.from_ptr(b)
+
+def box_vbargraph2(str label, Box min, Box max, Box x) -> Box:
+    """Create a vertical bargraph box.
+
+    label - the label definition (see [2])
+    min - the min box, a constant numerical expression (see [1])
+    max - the max box, a constant numerical expression (see [1])
+    x - the input box
+
+    returns the vertical bargraph box.
+    """
+    cdef fb.Box b = fb.boxVBargraph(label.encode('utf8'), min.ptr, max.ptr, x.ptr)
+    return Box.from_ptr(b)
+
+def box_hbargraph(str label, Box min, Box max) -> Box:
+    """Create a horizontal bargraph box.
+
+    label - the label definition (see [2])
+    min - the min box, a constant numerical expression (see [1])
+    max - the max box, a constant numerical expression (see [1])
+    x - the input box
+
+    returns the horizontal bargraph box.
+    """
+    cdef fb.Box b = fb.boxHBargraph(label.encode('utf8'), min.ptr, max.ptr)
+    return Box.from_ptr(b)
+
+def box_hbargraph2(str label, Box min, Box max, Box x) -> Box:
+    """Create a horizontal bargraph box.
+
+    label - the label definition (see [2])
+    min - the min box, a constant numerical expression (see [1])
+    max - the max box, a constant numerical expression (see [1])
+    x - the input box
+
+    returns the horizontal bargraph box.
+    """
+    cdef fb.Box b = fb.boxHBargraph(label.encode('utf8'), min.ptr, max.ptr, x.ptr)
+    return Box.from_ptr(b)
+
+
+def box_vgroup(str label, Box group) -> Box:
+    """Create a vertical group box.
+
+    label - the label definition (see [2])
+    group - the group to be added
+
+    returns the vertical group box.
+    """
+    cdef fb.Box b = fb.boxVGroup(label.encode('utf8'), group.ptr)
+    return Box.from_ptr(b)
+
+
+def box_hgroup(str label, Box group) -> Box:
+    """Create a horizontal group box.
+
+    label - the label definition (see [2])
+    group - the group to be added
+
+    returns the horizontal group box.
+    """
+    cdef fb.Box b = fb.boxHGroup(label.encode('utf8'), group.ptr)
+    return Box.from_ptr(b)
+
+def box_tgroup(str label, Box group) -> Box:
+    """Create a tab group box.
+
+    label - the label definition (see [2])
+    group - the group to be added
+
+    returns the tab group box.
+    """
+    cdef fb.Box b = fb.boxTGroup(label.encode('utf8'), group.ptr)
+    return Box.from_ptr(b)
+
+def box_attach_op() -> Box:
+    """Create an attach box.
+
+    returns the attach box.
+    """
+    cdef fb.Box b = fb.boxAttach()
+    return Box.from_ptr(b)
+
+
+def box_attach(Box b1, Box b2) -> Box:
+    """Create an attach box.
+
+    The attach primitive takes two input boxes and produces one output box
+    which is a copy of the first input. The role of attach is to force
+    its second input boxes to be compiled with the first one.
+
+    returns the attach box.
+    """
+    cdef fb.Box b = fb.boxAttach(b1.ptr, b2.ptr)
+    return Box.from_ptr(b)
+
 
 cdef fb.Box box_prim2(fb.prim2 foo):
     return fb.boxPrim2(foo)
+
 
 cdef bint is_box_abstr_(fb.Box t, fb.Box& x, fb.Box& y):
     return fb.isBoxAbstr(t, x, y)
