@@ -13,6 +13,9 @@ cdef class Box:
     """faust Box wrapper.
     """
     cdef fb.Box ptr
+    cdef public bint is_valid
+    cdef public int inputs
+    cdef public int outputs
 
     def __cinit__(self):
         self.ptr = NULL
@@ -227,6 +230,17 @@ cdef class Box:
     def asin(self) -> Box: 
         cdef fb.Box b = fb.boxAsin(self.ptr)
         return Box.from_ptr(b)
+
+    def is_valid(self) -> bool:
+        """Return the number of inputs and outputs of a box
+
+        box - the box we want to know the number of inputs and outputs
+        inputs - the place to return the number of inputs
+        outputs - the place to return the number of outputs
+
+        returns true if type is defined, false if undefined.
+        """
+        return fb.getBoxType(self.ptr, &self.inputs, &self.outputs)
 
     def is_nil(self) -> bool:
         """Check if a box is nil."""

@@ -4,13 +4,13 @@ An exploratory project to wrap the [Faust](https://github.com/grame-cncm/faust) 
 
 The objective is to end up with a minimal, self-contained, cross-platform extension.
 
-To get there, there will be several implementations using different wrapping frameworks (cython, pybind11, and nanobind) which can eventually be compared for code size,  binary size, performnance, etc.
+To get there, there will be several implementations using different wrapping frameworks (cython, pybind11, and nanobind) which can eventually be compared for code size, binary size, performance, etc.
 
 ## Current Status
 
 | subproject   | framework  | api   |  audio test | interp api    | box api    | signal api |
 | :---         | :---       | :---: |     :---:   |    :---:      | :---:      | :---:      |
-| cyfaust      | cython     | c++   |      yes    |     98%       | 90%        | 90%        |
+| cyfaust      | cython     | c++   |      yes    |     98%       | 85%        | 850%        |
 | cfaust       | cython     | c     |      yes    |     80%       |            |            |
 | nanofaust    | nanobind   | c++   |      yes    |     80%       |            |            |
 | pyfaust      | pybind11   | c++   |      yes    |     80%       |            |            |
@@ -18,7 +18,7 @@ To get there, there will be several implementations using different wrapping fra
 
 All of the above implementations pass a minimal functional test which produces audio given a faust dsp file (`noise.dsp`).
 
-The `cyfaust` implementation also includes `faust_box.pxd`, `faust_signal.pxd` and an attempt to wrap both the faust box api and the faust signal api using a dual object-oriented and functional approach. (This will likely evolve with actual usage).
+The `cyfaust` implementation also includes `faust_box.pxd`, `faust_signal.pxd` and an attempt to wrap both the faust box api and the faust signal api using a dual object-oriented and functional approach. (This will likely evolve with actual usage). There are a couple of basic tests for the box api in the `tests` directory.
 
 NOTE: this project's code is currently only at a proof of concept stage and is likely to contain a variety of bugs, memory leaks and other irritants...
 
@@ -68,7 +68,7 @@ Faust is c++ centric so it's best not to use the c-api if you can avoid it.
 
 ## Prior Art of Faust + Python
 
-- [DawDreamer](https://github.com/DBraun/DawDreamer) by David Braun: Digital Audio Workstation with Python; VST instruments/effects, parameter automation, FAUST, JAX, Warp Markers, and JUCE processors. Use this for actual work! (pybind11)
+- [DawDreamer](https://github.com/DBraun/DawDreamer) by David Braun: Digital Audio Workstation with Python; VST instruments/effects, parameter automation, FAUST, JAX, Warp Markers, and JUCE processors. Full-featured and well-maintained. Use this for actual work! (pybind11)
 
 - [faust_python](https://github.com/marcecj/faust_python) by Marc Joliet: A Python FAUST wrapper implemented using the CFFI. There's a more recent [fork](https://github.com/hrtlacek/faust_python]) by Patrik Lechner. (cffi)
 
