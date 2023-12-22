@@ -13,7 +13,10 @@ add_custom_command(
     OUTPUT ${PROJECT_SOURCES}
     COMMAND cythonize -3 ${PROJECT_NAME}.pyx
     WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
-    DEPENDS ${PROJECT_NAME}.pyx
+    DEPENDS 
+        ${PROJECT_NAME}.pyx 
+        ${CMAKE_CURRENT_SOURCE_DIR}/faust_box.pxi 
+        ${CMAKE_CURRENT_SOURCE_DIR}/faust_signal.pxi
     COMMENT "Generating ${PROJECT_NAME}.cpp"
 )
 
