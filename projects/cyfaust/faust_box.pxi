@@ -8,15 +8,15 @@ def box_or_int(var):
     if isinstance(var, Box):
         assert is_box_int(var), "box is not an int box"
         return var
-    raise TypeError
+    raise TypeError("argument must be an int or a boxInt")
 
 def box_or_float(var):
     if isinstance(var, float):
         return Box.from_real(var)
     elif isinstance(var, Box):
-        assert is_box_real(var), "box is not a real box"
+        assert is_box_real(var), "box is not a float box"
         return var
-    raise TypeError
+    raise TypeError("argument must be an float or a boxReal")
 
 
 class box_context:
@@ -56,28 +56,24 @@ cdef class Box:
     @staticmethod
     def from_int(int value) -> Box:
         """Create box from int"""
-        cdef fb.Box b = fb.boxInt(value)
-        return Box.from_ptr(b)
+        return box_int(value)
 
     @staticmethod
     def from_float(float value) -> Box:
         """Create box from float"""
-        cdef fb.Box b = fb.boxReal(value)
-        return Box.from_ptr(b)
+        return box_float(value)
 
     from_real = from_float
 
     @staticmethod
     def from_wire() -> Box:
         """Create box from wire box, copies its input to its output"""
-        cdef fb.Box b = fb.boxWire()
-        return Box.from_ptr(b)
+        return box_wire()
 
     @staticmethod
     def from_cut() -> Box:
         """Create box from a cut box, to stop/terminate a signal"""
-        cdef fb.Box b = fb.boxCut()
-        return Box.from_ptr(b)
+        return box_cut()
 
     @staticmethod
     def from_soundfile(label: str, output_channels: Box | int) -> Box:
@@ -91,7 +87,7 @@ cdef class Box:
     def from_readonly_table(n: Box | int, Box init, ridx: Box | int) -> Box:
         """Create a read only table.
 
-        n - the table size, a constant numerical expression (see [1])
+        n - the table size, a constant numerical expression
         init - the table content
         ridx - the read index (an int between 0 and n-1)
 
@@ -143,98 +139,79 @@ cdef class Box:
 
     def __add__(self, Box other):
         """Add this box to another."""
-        cdef fb.Box b = fb.boxAdd(self.ptr, other.ptr)
-        return Box.from_ptr(b)
+        return box_add(self, other)
 
     def __radd__(self, Box other):
         """Reverse add this box to another."""
-        cdef fb.Box b = fb.boxAdd(self.ptr, other.ptr)
-        return Box.from_ptr(b)
+        return box_add(self, other)
 
     def __sub__(self, Box other):
         """Subtract this box from another."""
-        cdef fb.Box b = fb.boxSub(self.ptr, other.ptr)
-        return Box.from_ptr(b)
+        return box_sub(self, other)
 
     def __rsub__(self, Box other):
         """Subtract this box from another."""
-        cdef fb.Box b = fb.boxSub(self.ptr, other.ptr)
-        return Box.from_ptr(b)
+        return box_sub(self, other)
 
     def __mul__(self, Box other):
         """Multiply this box with another."""
-        cdef fb.Box b = fb.boxMul(self.ptr, other.ptr)
-        return Box.from_ptr(b)
+        return box_mul(self, other)
 
     def __rmul__(self, Box other):
         """Reverse multiply this box with another."""
-        cdef fb.Box b = fb.boxMul(self.ptr, other.ptr)
-        return Box.from_ptr(b)
+        return box_mul(self, other)
 
     def __div__(self, Box other):
         """Divide this box with another."""
-        cdef fb.Box b = fb.boxDiv(self.ptr, other.ptr)
-        return Box.from_ptr(b)
+        return box_div(self, other)
 
     def __rdiv__(self, Box other):
         """Reverse divide this box with another."""
-        cdef fb.Box b = fb.boxDiv(self.ptr, other.ptr)
-        return Box.from_ptr(b)
+        return box_div(self, other)
 
     def __eq__(self, Box other):
         """Compare for equality with another box."""
-        cdef fb.Box b = fb.boxEQ(self.ptr, other.ptr)
-        return Box.from_ptr(b)
+        return box_eq(self, other)
 
     def __ne__(self, Box other):
         """Assert this box is not equal with another box."""
-        cdef fb.Box b = fb.boxNE(self.ptr, other.ptr)
-        return Box.from_ptr(b)
+        return box_ne(self, other)
 
     def __gt__(self, Box other):
         """Is this box greater than another box."""
-        cdef fb.Box b = fb.boxGT(self.ptr, other.ptr)
-        return Box.from_ptr(b)
+        return box_gt(self, other)
 
     def __ge__(self, Box other):
         """Is this box greater than or equal from another box."""
-        cdef fb.Box b = fb.boxGE(self.ptr, other.ptr)
-        return Box.from_ptr(b)
+        return box_ge(self, other)
 
     def __lt__(self, Box other):
         """Is this box lesser than another box."""
-        cdef fb.Box b = fb.boxLT(self.ptr, other.ptr)
-        return Box.from_ptr(b)
+        return box_lt(self, other)
 
     def __le__(self, Box other):
         """Is this box lesser than or equal from another box."""
-        cdef fb.Box b = fb.boxLE(self.ptr, other.ptr)
-        return Box.from_ptr(b)
+        return box_le(self, other)
 
     def __and__(self, Box other):
         """logical and with another box"""
-        cdef fb.Box b = fb.boxAND(self.ptr, other.ptr)
-        return Box.from_ptr(b)
+        return box_and(self, other)
 
     def __or__(self, Box other):
         """logical or with another box"""
-        cdef fb.Box b = fb.boxOR(self.ptr, other.ptr)
-        return Box.from_ptr(b)
+        return box_or(self, other)
 
     def __xor__(self, Box other):
         """logical xor with another box"""
-        cdef fb.Box b = fb.boxXOR(self.ptr, other.ptr)
-        return Box.from_ptr(b)
+        return box_xor(self, other)
 
     def __lshift__(self, Box other):
         """bitwise left-shift"""
-        cdef fb.Box b = fb.boxLeftShift(self.ptr, other.ptr)
-        return Box.from_ptr(b)
+        return box_leftshift(self, other)
 
     def __rshift__(self, Box other):
         """bitwise right-shift"""
-        cdef fb.Box b = fb.boxLRightShift(self.ptr, other.ptr)
-        return Box.from_ptr(b)
+        return box_lrightshift(self, other)
 
     # TODO: ???
     # Box boxARightShift()
@@ -248,7 +225,7 @@ cdef class Box:
         """If this box tree has a node of type int, return it, otherwise error."""
         return fb.tree2int(self.ptr).decode()
 
-    def abs(self) -> Box: 
+    def abs(self) -> Box:
         cdef fb.Box b = fb.boxAbs(self.ptr)
         return Box.from_ptr(b)
 
