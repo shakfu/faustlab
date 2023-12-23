@@ -108,7 +108,7 @@ cdef class Box:
 
     def print(self, shared: bool = False, max_size: int = 256):
         """Print this box."""
-        print(fb.printBox(self.ptr, shared, max_size).decode())
+        print_box(self, shared, max_size)
 
     def create_source(self, str name_app, str lang, *args) -> str:
         """Create source code in a target language from a box expression.
@@ -122,20 +122,7 @@ cdef class Box:
 
         returns a string of source code on success, printing error_msg if error.
         """
-        cdef ParamArray params = ParamArray(args)
-        cdef string error_msg
-        error_msg.reserve(4096)
-        cdef string code = fb.createSourceFromBoxes(
-            name_app.encode('utf8'),
-            self.ptr,
-            lang.encode('utf8'),
-            params.argc,
-            params.argv, 
-            error_msg)
-        if not error_msg.empty():
-            print(error_msg.decode())
-            return
-        return code.decode()
+        return create_source_from_boxes(name_app, self, lang, *args)
 
     def __add__(self, Box other):
         """Add this box to another."""
@@ -226,192 +213,167 @@ cdef class Box:
         return fb.tree2int(self.ptr).decode()
 
     def abs(self) -> Box:
-        cdef fb.Box b = fb.boxAbs(self.ptr)
-        return Box.from_ptr(b)
+        return box_abs(self)
 
-    def acos(self) -> Box: 
-        cdef fb.Box b = fb.boxAcos(self.ptr)
-        return Box.from_ptr(b)
+    def acos(self) -> Box:
+        return box_acos(self)
 
-    def tan(self) -> Box: 
-        cdef fb.Box b = fb.boxTan(self.ptr)
-        return Box.from_ptr(b)
+    def tan(self) -> Box:
+        return box_tan(self)
 
-    def sqrt(self) -> Box: 
-        cdef fb.Box b = fb.boxSqrt(self.ptr)
-        return Box.from_ptr(b)
+    def sqrt(self) -> Box:
+        return box_sqrt(self)
 
-    def sin(self) -> Box: 
-        cdef fb.Box b = fb.boxSin(self.ptr)
-        return Box.from_ptr(b)
+    def sin(self) -> Box:
+        return box_sin(self)
 
-    def rint(self) -> Box: 
-        cdef fb.Box b = fb.boxRint(self.ptr)
-        return Box.from_ptr(b)
+    def rint(self) -> Box:
+        return box_rint(self)
 
-    def round(self) -> Box: 
-        cdef fb.Box b = fb.boxRound(self.ptr)
-        return Box.from_ptr(b)
+    def round(self) -> Box:
+        return box_round(self)
 
-    def log(self) -> Box: 
-        cdef fb.Box b = fb.boxLog(self.ptr)
-        return Box.from_ptr(b)
+    def log(self) -> Box:
+        return box_log(self)
 
-    def log10(self) -> Box: 
-        cdef fb.Box b = fb.boxLog10(self.ptr)
-        return Box.from_ptr(b)
+    def log10(self) -> Box:
+        return box_log10(self)
 
-    def floor(self) -> Box: 
-        cdef fb.Box b = fb.boxFloor(self.ptr)
-        return Box.from_ptr(b)
+    def floor(self) -> Box:
+        return box_floor(self)
 
-    def exp(self) -> Box: 
-        cdef fb.Box b = fb.boxExp(self.ptr)
-        return Box.from_ptr(b)
+    def exp(self) -> Box:
+        return box_exp(self)
 
-    def exp10(self) -> Box: 
-        cdef fb.Box b = fb.boxExp10(self.ptr)
-        return Box.from_ptr(b)
+    def exp10(self) -> Box:
+        return box_exp10(self)
 
-    def cos(self) -> Box: 
-        cdef fb.Box b = fb.boxCos(self.ptr)
-        return Box.from_ptr(b)
+    def cos(self) -> Box:
+        return box_cos(self)
 
-    def ceil(self) -> Box: 
-        cdef fb.Box b = fb.boxCeil(self.ptr)
-        return Box.from_ptr(b)
+    def ceil(self) -> Box:
+        return box_ceil(self)
 
-    def atan(self) -> Box: 
-        cdef fb.Box b = fb.boxAtan(self.ptr)
-        return Box.from_ptr(b)
+    def atan(self) -> Box:
+        return box_atan(self)
 
-    def asin(self) -> Box: 
-        cdef fb.Box b = fb.boxAsin(self.ptr)
-        return Box.from_ptr(b)
+    def asin(self) -> Box:
+        return box_asin(self)
 
-
+    # boolean methods ----------------
 
     def is_nil(self) -> bool:
         """Check if a box is nil."""
-        return fb.isNil(self.ptr)
+        return box_is_nil(self)
 
     def is_abstr(self) -> bool:
-        return fb.isBoxAbstr(self.ptr)
+        return is_box_abstr(self)
 
     def is_appl(self) -> bool:
-        return fb.isBoxAppl(self.ptr)
+        return is_box_appl(self)
 
     def is_button(self) -> bool:
-        return fb.isBoxButton(self.ptr)
+        return is_box_button(self)
 
     def is_case(self) -> bool:
-        return fb.isBoxCase(self.ptr)
+        return is_box_case(self)
 
     def is_checkbox(self) -> bool:
-        return fb.isBoxCheckbox(self.ptr)
+        return is_box_checkbox(self)
 
     def is_cut(self) -> bool:
-        return fb.isBoxCut(self.ptr)
+        return is_box_cut(self)
 
     def is_environment(self) -> bool:
-        return fb.isBoxEnvironment(self.ptr)
+        return is_box_environment(self)
 
     def is_error(self) -> bool:
-        return fb.isBoxError(self.ptr)
+        return is_box_error(self)
 
     def is_f_const(self) -> bool:
-        return fb.isBoxFConst(self.ptr)
+        return is_box_fconst(self)
 
     def is_ffun(self) -> bool:
-        return fb.isBoxFFun(self.ptr)
+        return is_box_ffun(self)
 
     def is_fvar_(self) -> bool:
-        return fb.isBoxFVar(self.ptr)
+        return is_box_fvar(self)
 
     def is_hbargraph(self) -> bool:
-        return fb.isBoxHBargraph(self.ptr)
+        return is_box_hbargraph(self)
 
     def is_hgroup(self) -> bool:
-        return fb.isBoxHGroup(self.ptr)
+        return is_box_hgroup(self)
 
     def is_hslider(self) -> bool:
-        return fb.isBoxHSlider(self.ptr)
+        return is_box_hslider(self)
 
     def is_ident(self) -> bool:
-        return fb.isBoxIdent(self.ptr)
+        return is_box_ident(self)
 
     def is_int(self) -> bool:
-        return fb.isBoxInt(self.ptr)
+        return is_box_int(self)
 
     def is_numentry(self) -> bool:
-        return fb.isBoxNumEntry(self.ptr)
+        return is_box_numentry(self)
 
     def is_prim0(self) -> bool:
-        return fb.isBoxPrim0(self.ptr)
+        return is_box_prim0(self)
 
     def is_prim1(self) -> bool:
-        return fb.isBoxPrim1(self.ptr)
+        return is_box_prim1(self)
 
     def is_prim2(self) -> bool:
-        return fb.isBoxPrim2(self.ptr)
+        return is_box_prim2(self)
 
     def is_prim3(self) -> bool:
-        return fb.isBoxPrim3(self.ptr)
+        return is_box_prim3(self)
 
     def is_prim4(self) -> bool:
-        return fb.isBoxPrim4(self.ptr)
+        return is_box_prim4(self)
 
     def is_prim5(self) -> bool:
-        return fb.isBoxPrim5(self.ptr)
+        return is_box_prim5(self)
 
     def is_real_(self) -> bool:
-        return fb.isBoxReal(self.ptr)
+        return is_box_real(self)
 
     def is_slot(self) -> bool:
-        return fb.isBoxSlot(self.ptr)
+        return is_box_slot(self)
 
     def is_soundfile(self) -> bool:
-        return fb.isBoxSoundfile(self.ptr)
+        return is_box_soundfile(self)
 
     def is_symbolic(self) -> bool:
-        return fb.isBoxSymbolic(self.ptr)
+        return is_box_symbolic(self)
 
     def is_tgroup(self) -> bool:
-        return fb.isBoxTGroup(self.ptr)
+        return is_box_tgroup(self)
 
     def is_vgroup(self) -> bool:
-        return fb.isBoxVGroup(self.ptr)
+        return is_box_vgroup(self)
 
     def is_vslider(self) -> bool:
-        return fb.isBoxVSlider(self.ptr)
+        return is_box_vslider(self)
+
+    def is_hslider(self) -> bool:
+        return is_box_hslider(self)
 
     def is_waveform(self) -> bool:
-        return fb.isBoxWaveform(self.ptr)
+        return is_box_waveform(self)
 
     def is_wire(self) -> bool:
-        return fb.isBoxWire(self.ptr)
+        return is_box_wire(self)
 
 
     def int_cast(self) -> Box:
-        """Create a casted box.
-
-        s - the box to be casted in integer
-
-        returns the casted box.
-        """
-        cdef fb.Box b = fb.boxIntCast(self.ptr)
-        return Box.from_ptr(b)
+        """return an int casted box."""
+        return box_int_cast(self)
 
 
     def float_cast(self) -> Box:
-        """Create a casted box.
-
-        s - the signal to be casted as float/double value (depends of -single or -double compilation parameter)
-
-        returns the casted box.
-        """
-        cdef fb.Box b = fb.boxFloatCast(self.ptr)
-        return Box.from_ptr(b)
+        """return a float/double casted box."""
+        return box_float_cast(self)
 
 
     def seq(self, Box y) -> Box:
@@ -419,8 +381,7 @@ cdef class Box:
 
         returns the seq box.
         """
-        cdef fb.Box b = fb.boxSeq(self.ptr, y.ptr)
-        return Box.from_ptr(b)
+        return box_seq(self, y)
 
     def par(self, Box y) -> Box:
         """The parallel composition of two blocks (e.g., A,B).
@@ -429,8 +390,7 @@ cdef class Box:
 
         returns the par box.
         """
-        cdef fb.Box b = fb.boxPar(self.ptr, y.ptr)
-        return Box.from_ptr(b)
+        return box_par(self, y)
 
 
     def par3(self, Box y, Box z) -> Box:
@@ -440,8 +400,7 @@ cdef class Box:
 
         returns the par box.    
         """
-        cdef fb.Box b = fb.boxPar3(self.ptr, y.ptr, z.ptr)
-        return Box.from_ptr(b)
+        return box_par3(self, y, z)
 
 
     def par4(self, Box b, Box c, Box d) -> Box:
@@ -451,8 +410,7 @@ cdef class Box:
 
         returns the par box.
         """
-        cdef fb.Box p = fb.boxPar4(self.ptr, b.ptr, c.ptr, d.ptr)
-        return Box.from_ptr(p)
+        return box_par4(self, b, c, d)
 
 
     def par5(self, Box b, Box c, Box d, Box e) -> Box:
@@ -462,8 +420,8 @@ cdef class Box:
 
         returns the par box.
         """
-        cdef fb.Box p = fb.boxPar5(self.ptr, b.ptr, c.ptr, d.ptr, e.ptr)
-        return Box.from_ptr(p)
+        return box_par4(self, b, c, d, e)
+
 
     def split(self, Box y) -> Box:
         """The split composition (e.g., A<:B) operator is used to distribute
@@ -474,8 +432,7 @@ cdef class Box:
 
         returns the split box.
         """
-        cdef fb.Box b = fb.boxSplit(self.ptr, y.ptr)
-        return Box.from_ptr(b)
+        return box_split(self, y)
 
 
     def merge(self, Box y) -> Box:
@@ -485,8 +442,7 @@ cdef class Box:
 
         returns the merge box.
         """
-        cdef fb.Box b = fb.boxMerge(self.ptr, y.ptr)
-        return Box.from_ptr(b)
+        return box_merge(self, y)
 
 
     def rec(self, Box y) -> Box:
@@ -497,8 +453,7 @@ cdef class Box:
 
         returns the rec box.
         """
-        cdef fb.Box b = fb.boxRec(self.ptr, y.ptr)
-        return Box.from_ptr(b)
+        return box_rec(self, y)
 
 
     def get_def_name_property(self) -> Box | None:
@@ -521,7 +476,7 @@ cdef class Box:
 
         returns the extracted name
         """
-        return fb.extractName(self.ptr).decode()
+        return extract_name(self)
 
     def delay(self, d: int | Box) -> Box:
         """Create a delayed box.
@@ -535,20 +490,6 @@ cdef class Box:
             return box_delay(self, Box.from_int(d))
         else:
             return box_delay(self, d.ptr)
-
-
-    # def delay(self, int d) -> Box:
-    #     """Create a delayed box.
-
-    #     s - the box to be delayed
-    #     d - the delay box that doesn't have to be fixed but must be bounded and cannot be negative
-
-    #     returns the delayed box.
-    #     """
-    #     cdef fb.Box delay = fb.boxInt(d)
-    #     cdef fb.Box b = fb.boxDelay(self.ptr, delay)
-    #     return Box.from_ptr(b)
-
 
 
 def print_box(Box box, bint shared, int max_size) -> str:
@@ -1136,6 +1077,137 @@ def box_xor(Box b1, Box b2) -> Box:
     cdef fb.Box b = fb.boxXOR(b1.ptr, b2.ptr)
     return Box.from_ptr(b)
 
+
+def box_abs_op() -> Box:
+    cdef fb.Box b = fb.boxAbs()
+    return Box.from_ptr(b)
+
+def box_abs(Box x) -> Box:
+    cdef fb.Box b = fb.boxAbs(x.ptr)
+    return Box.from_ptr(b)
+
+def box_acos_op() -> Box:
+    cdef fb.Box b = fb.boxAcos()
+    return Box.from_ptr(b)
+
+def box_acos(Box x) -> Box:
+    cdef fb.Box b = fb.boxAcos(x.ptr)
+    return Box.from_ptr(b)
+
+def box_tan_op() -> Box:
+    cdef fb.Box b = fb.boxTan()
+    return Box.from_ptr(b)
+
+def box_tan(Box x) -> Box:
+    cdef fb.Box b = fb.boxTan(x.ptr)
+    return Box.from_ptr(b)
+
+def box_sqrt_op() -> Box:
+    cdef fb.Box b = fb.boxSqrt()
+    return Box.from_ptr(b)
+
+def box_sqrt(Box x) -> Box:
+    cdef fb.Box b = fb.boxSqrt(x.ptr)
+    return Box.from_ptr(b)
+
+def box_sin_op() -> Box:
+    cdef fb.Box b = fb.boxSin()
+    return Box.from_ptr(b)
+
+def box_sin(Box x) -> Box:
+    cdef fb.Box b = fb.boxSin(x.ptr)
+    return Box.from_ptr(b)
+
+def box_rint_op() -> Box:
+    cdef fb.Box b = fb.boxRint()
+    return Box.from_ptr(b)
+
+def box_rint(Box x) -> Box:
+    cdef fb.Box b = fb.boxRint(x.ptr)
+    return Box.from_ptr(b)
+
+def box_round_op() -> Box:
+    cdef fb.Box b = fb.boxRound()
+    return Box.from_ptr(b)
+
+def box_round(Box x) -> Box:
+    cdef fb.Box b = fb.boxRound(x.ptr)
+    return Box.from_ptr(b)
+
+def box_log_op() -> Box:
+    cdef fb.Box b = fb.boxLog()
+    return Box.from_ptr(b)
+
+def box_log(Box x) -> Box:
+    cdef fb.Box b = fb.boxLog(x.ptr)
+    return Box.from_ptr(b)
+
+def box_log10_op() -> Box:
+    cdef fb.Box b = fb.boxLog10()
+    return Box.from_ptr(b)
+
+def box_log10(Box x) -> Box:
+    cdef fb.Box b = fb.boxLog10(x.ptr)
+    return Box.from_ptr(b)
+
+def box_floor_op() -> Box:
+    cdef fb.Box b = fb.boxFloor()
+    return Box.from_ptr(b)
+
+def box_floor(Box x) -> Box:
+    cdef fb.Box b = fb.boxFloor(x.ptr)
+    return Box.from_ptr(b)
+
+def box_exp_op() -> Box:
+    cdef fb.Box b = fb.boxExp()
+    return Box.from_ptr(b)
+
+def box_exp(Box x) -> Box:
+    cdef fb.Box b = fb.boxExp(x.ptr)
+    return Box.from_ptr(b)
+
+def box_exp10_op() -> Box:
+    cdef fb.Box b = fb.boxExp10()
+    return Box.from_ptr(b)
+
+def box_exp10(Box x) -> Box:
+    cdef fb.Box b = fb.boxExp10(x.ptr)
+    return Box.from_ptr(b)
+
+def box_cos_op() -> Box:
+    cdef fb.Box b = fb.boxCos()
+    return Box.from_ptr(b)
+
+def box_cos(Box x) -> Box:
+    cdef fb.Box b = fb.boxCos(x.ptr)
+    return Box.from_ptr(b)
+
+def box_ceil_op() -> Box:
+    cdef fb.Box b = fb.boxCeil()
+    return Box.from_ptr(b)
+
+def box_ceil(Box x) -> Box:
+    cdef fb.Box b = fb.boxCeil(x.ptr)
+    return Box.from_ptr(b)
+
+def box_atan_op() -> Box:
+    cdef fb.Box b = fb.boxAtan()
+    return Box.from_ptr(b)
+
+def box_atan(Box x) -> Box:
+    cdef fb.Box b = fb.boxAtan(x.ptr)
+    return Box.from_ptr(b)
+
+def box_asin_op() -> Box:
+    cdef fb.Box b = fb.boxAsin()
+    return Box.from_ptr(b)
+
+def box_asin(Box x) -> Box:
+    cdef fb.Box b = fb.boxAsin(x.ptr)
+    return Box.from_ptr(b)
+
+
+
 def box_remainder_op() -> Box:
     cdef fb.Box b = fb.boxRemainder()
     return Box.from_ptr(b)
@@ -1662,7 +1734,7 @@ def getparams_box_metadata(Box b) -> dict:
     else:
         return {}
 
-def is_box_num_entry(Box b) -> bool:
+def is_box_numentry(Box b) -> bool:
     return fb.isBoxNumEntry(b.ptr)
 
 def getparams_box_num_entry(Box b) -> dict:
@@ -1848,7 +1920,7 @@ def getparams_box_symbolic(Box t) -> dict:
     else:
         return {}
 
-def is_box_t_group(Box b) -> bool:
+def is_box_tgroup(Box b) -> bool:
     return fb.isBoxTGroup(b.ptr)
 
 def getparams_box_tgroup(Box b) -> dict:
@@ -1928,11 +2000,6 @@ def getparams_box_with_local_def(Box t) -> dict:
         )
     else:
         return {}
-
-
-
-
-
 
 
 def dsp_to_boxes(str name_app, str dsp_content, *args) -> Box:
