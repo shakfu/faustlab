@@ -213,51 +213,67 @@ cdef class Box:
         return fb.tree2int(self.ptr).decode()
 
     def abs(self) -> Box:
+        """returns an absolute value box of this instance."""
         return box_abs(self)
 
     def acos(self) -> Box:
+        """returns an arccosine box of this instance."""
         return box_acos(self)
 
     def tan(self) -> Box:
+        """returns a tangent box of this instance."""
         return box_tan(self)
 
     def sqrt(self) -> Box:
+        """returns a sqrt box of this instance."""
         return box_sqrt(self)
 
     def sin(self) -> Box:
+        """returns a sin box of this instance."""
         return box_sin(self)
 
     def rint(self) -> Box:
+        """returns a round to nearest int box of this instance."""
         return box_rint(self)
 
     def round(self) -> Box:
+        """returns a round box of this instance."""
         return box_round(self)
 
     def log(self) -> Box:
+        """returns a log box of this instance."""
         return box_log(self)
 
     def log10(self) -> Box:
+        """returns a log10 box of this instance."""        
         return box_log10(self)
 
     def floor(self) -> Box:
+        """returns a floor box of this instance."""
         return box_floor(self)
 
     def exp(self) -> Box:
+        """returns an exp box of this instance."""
         return box_exp(self)
 
     def exp10(self) -> Box:
+        """returns an exp10 box of this instance."""
         return box_exp10(self)
 
     def cos(self) -> Box:
+        """returns an cosine box of this instance."""
         return box_cos(self)
 
     def ceil(self) -> Box:
+        """returns an ceiling box of this instance."""
         return box_ceil(self)
 
     def atan(self) -> Box:
+        """returns an arc tangent box of this instance."""
         return box_atan(self)
 
     def asin(self) -> Box:
+        """returns an arc sine box of this instance."""
         return box_asin(self)
 
     # boolean methods ----------------
@@ -290,7 +306,7 @@ cdef class Box:
     def is_error(self) -> bool:
         return is_box_error(self)
 
-    def is_f_const(self) -> bool:
+    def is_fconst(self) -> bool:
         return is_box_fconst(self)
 
     def is_ffun(self) -> bool:
@@ -335,7 +351,7 @@ cdef class Box:
     def is_prim5(self) -> bool:
         return is_box_prim5(self)
 
-    def is_real_(self) -> bool:
+    def is_real(self) -> bool:
         return is_box_real(self)
 
     def is_slot(self) -> bool:
@@ -372,12 +388,20 @@ cdef class Box:
 
 
     def float_cast(self) -> Box:
-        """return a float/double casted box."""
+        """return a float/double casted box.""
+
+        s - the signal to be casted as float/double value 
+            (depends of -single or -double compilation parameter)
+
+        returns the casted box.
+        """
         return box_float_cast(self)
 
 
     def seq(self, Box y) -> Box:
-        """The sequential composition of two blocks (e.g., A:B) expects: outputs(A)=inputs(B)
+        """The sequential composition of two blocks (e.g., A:B)
+
+        expects: outputs(A)=inputs(B)
 
         returns the seq box.
         """
@@ -386,7 +410,8 @@ cdef class Box:
     def par(self, Box y) -> Box:
         """The parallel composition of two blocks (e.g., A,B).
 
-        It places the two block-diagrams one on top of the other, without connections.
+        Creates a two block-diagram with one block on top of the other,
+        without connections.
 
         returns the par box.
         """
@@ -396,7 +421,8 @@ cdef class Box:
     def par3(self, Box y, Box z) -> Box:
         """The parallel composition of three blocks (e.g., A,B,C).
         
-        It places the three block-diagrams one on top of the other, without connections.
+        Creates a three block-diagram with one block on top of the other,
+        without connections.
 
         returns the par box.    
         """
@@ -406,7 +432,8 @@ cdef class Box:
     def par4(self, Box b, Box c, Box d) -> Box:
         """The parallel composition of four blocks (e.g., A,B,C,D).
 
-        It places the four block-diagrams one on top of the other, without connections.
+        Creates a four block-diagram with one block on top of the other,
+        without connections.
 
         returns the par box.
         """
@@ -416,7 +443,8 @@ cdef class Box:
     def par5(self, Box b, Box c, Box d, Box e) -> Box:
         """The parallel composition of five blocks (e.g., A,B,C,D,E).
 
-        It places the five block-diagrams one on top of the other, without connections.
+        Creates a five block-diagram with one block on top of the other,
+        without connections.
 
         returns the par box.
         """
@@ -937,7 +965,6 @@ def box_bin_op(fb.SOperator op, Box b1, Box b2) -> Box:
     """
     cdef fb.Box b = fb.boxBinOp(op, b1.ptr, b2.ptr)
     return Box.from_ptr(b)
-
 
 
 
