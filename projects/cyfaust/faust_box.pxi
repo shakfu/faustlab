@@ -76,12 +76,24 @@ cdef class Box:
         return box_cut()
 
     @staticmethod
-    def from_soundfile(label: str, output_channels: Box | int) -> Box:
-        """Create a soundfile box."""
-        if isinstance(output_channels, int):
-            return box_soundfile(label, Box.from_int(output_channels))
+    def from_soundfile(str label, chan: Box | int, part: Box | None, ridx: Box | int | None) -> Box:
+        """Create a soundfile block.
+
+        label - of form "label[url:{'path1';'path2';'path3'}]" to describe a list of soundfiles
+        chan - the number of outputs channels, a constant numerical expression (see [1])
+
+        (box_soundfile2 parameters)
+        part - in the [0..255] range to select a given sound number, a constant numerical expression (see [1])
+        ridx - the read index (an integer between 0 and the selected sound length)
+
+        returns the soundfile box.
+        """
+        _chan = box_or_int(chan)
+        if part and ridx:
+            _ridx = box_or_int(ridx)
+            return box_soundfile2(label.encode('utf8'), _chan, part, _ridx)
         else:
-            return box_soundfile(label, output_channels.ptr)
+            return box_soundfile(label, _chan)
 
     @staticmethod
     def from_readonly_table(n: Box | int, Box init, ridx: Box | int) -> Box:
@@ -96,6 +108,57 @@ cdef class Box:
         _n = box_or_int(n)
         _ridx = box_or_int(ridx)
         return box_readonly_table(_n, init, _ridx)
+
+    @staticmethod
+    def from_write_read_table(n: Box | int, Box init, widx: Box | int, Box wsig, ridx: Box | int) -> Box:
+        """Create a read/write table.
+
+        n - the table size, a constant numerical expression (see [1])
+        init - the table content
+        widx - the write index (an integer between 0 and n-1)
+        wsig - the input of the table
+        ridx - the read index (an integer between 0 and n-1)
+
+        returns the table box.
+        """
+        _n = box_or_int(n)
+        _ridx = box_or_int(ridx)
+        _widx = box_or_int(widx)
+        return box_write_read_table(_n, init, _widx, wsig, _ridx)
+
+    @staticmethod
+    def from_waveform(SignalVector wf) -> Box:
+        """Create a waveform.
+
+        wf - the content of the waveform as a vector of boxInt or boxDouble boxes
+
+        returns the waveform box.
+        """
+        return box_waveform(wf)
+ 
+    @staticmethod
+    def from_fconst(fb.SType type, str name, str file) -> Box:
+        """Create a foreign constant box.
+
+        type - the foreign constant type of SType
+        name - the foreign constant name
+        file - the include file where the foreign constant is defined
+
+        returns the foreign constant box.
+        """
+        return box_fconst(type, name, file)
+
+    @staticmethod
+    def from_fvar(fb.SType type, str name, str file) -> Box:
+        """Create a foreign variable box.
+
+        type - the foreign variable type of SType
+        name - the foreign variable name
+        file - the include file where the foreign variable is defined
+
+        returns the foreign variable box.
+        """
+        return box_fvar(type, name, file)
 
     @property
     def is_valid(self) -> bool:
@@ -466,7 +529,8 @@ cdef class Box:
     def merge(self, Box y) -> Box:
         """The merge composition (e.g., A:>B) is the dual of the split composition.
 
-        The number of outputs of A must be a multiple of the number of inputs of B: outputs(A)=k.inputs(B)
+        The number of outputs of A must be a multiple of the number of inputs of B:
+        outputs(A)=k.inputs(B)
 
         returns the merge box.
         """
@@ -474,10 +538,11 @@ cdef class Box:
 
 
     def rec(self, Box y) -> Box:
-        """The recursive composition (e.g., A~B) is used to create cycles in the block-diagram
-        in order to express recursive computations.
+        """The recursive composition (e.g., A~B) is used to create cycles in the
+        block-diagram in order to express recursive computations.
 
-        It is the most complex operation in terms of connections: outputs(A)≥inputs(B) and inputs(A)≥outputs(B)
+        It is the most complex operation in terms of connections:
+        outputs(A)≥inputs(B) and inputs(A)≥outputs(B)
 
         returns the rec box.
         """
@@ -510,7 +575,8 @@ cdef class Box:
         """Create a delayed box.
 
         s - the box to be delayed
-        d - the delay box that doesn't have to be fixed but must be bounded and cannot be negative
+        d - the delay box that doesn't have to be fixed but must be bounded
+            and cannot be negative
 
         returns the delayed box.
         """
@@ -519,13 +585,39 @@ cdef class Box:
         else:
             return box_delay(self, d.ptr)
 
+    def select2(self, Box b1, Box b2) -> Box:
+        """return a selector between two boxes.
+
+        selector - when 0 at time t returns s1[t], otherwise returns s2[t]
+        s1 - first box to be selected
+        s2 - second box to be selected
+
+        returns the selected box depending of the selector value at each time t.
+        """
+        return box_select2(self, b1, b2)
+
+
+    def select3(self, Box b1, Box b2, Box b3) -> Box:
+        """return a selector between three boxes.
+
+        selector - when 0 at time t returns s1[t], when 1 at time t returns s2[t],
+                   otherwise returns s3[t]
+        s1 - first box to be selected
+        s2 - second box to be selected
+        s3 - third box to be selected
+
+        returns the selected box depending of the selector value at each time t.
+        """
+        return box_select3(self, b1, b2, b3)
+
 
 def print_box(Box box, bint shared, int max_size) -> str:
     """Print the box.
 
     box - the box to be printed
     shared - whether the identical sub boxes are printed as identifiers
-    max_size - the maximum number of characters to be printed (possibly needed for big expressions in non shared mode)
+    max_size - the maximum number of characters to be printed (possibly 
+               needed for big expressions in non shared mode)
 
     returns the printed box as a string
     """
@@ -647,7 +739,8 @@ def box_cut() -> Box:
 
 
 def box_seq(Box x, Box y) -> Box:
-    """The sequential composition of two blocks (e.g., A:B) expects: outputs(A)=inputs(B)
+    """The sequential composition of two blocks (e.g., A:B)
+    expects: outputs(A)=inputs(B)
 
     returns the seq box.
     """
@@ -658,7 +751,8 @@ def box_seq(Box x, Box y) -> Box:
 def box_par(Box x, Box y) -> Box:
     """The parallel composition of two blocks (e.g., A,B).
 
-    It places the two block-diagrams one on top of the other, without connections.
+    It places the two block-diagrams one on top of the other,
+    without connections.
 
     returns the par box.
     """
@@ -669,7 +763,8 @@ def box_par(Box x, Box y) -> Box:
 def box_par3(Box x, Box y, Box z) -> Box:
     """The parallel composition of three blocks (e.g., A,B,C).
     
-    It places the three block-diagrams one on top of the other, without connections.
+    It places the three block-diagrams one on top of the other,
+    without connections.
 
     returns the par box.    
     """
@@ -680,7 +775,8 @@ def box_par3(Box x, Box y, Box z) -> Box:
 def box_par4(Box a, Box b, Box c, Box d) -> Box:
     """The parallel composition of four blocks (e.g., A,B,C,D).
 
-    It places the four block-diagrams one on top of the other, without connections.
+    It places the four block-diagrams one on top of the other,
+    without connections.
 
     returns the par box.
     """
@@ -691,7 +787,8 @@ def box_par4(Box a, Box b, Box c, Box d) -> Box:
 def box_par5(Box a, Box b, Box c, Box d, Box e) -> Box:
     """The parallel composition of five blocks (e.g., A,B,C,D,E).
 
-    It places the five block-diagrams one on top of the other, without connections.
+    It places the five block-diagrams one on top of the other,
+    without connections.
 
     returns the par box.
     """
@@ -703,7 +800,8 @@ def box_split(Box x, Box y) -> Box:
     the outputs of A to the inputs of B.
 
     For the operation to be valid, the number of inputs of B
-    must be a multiple of the number of outputs of A: outputs(A).k=inputs(B)
+    must be a multiple of the number of outputs of A:
+    outputs(A).k=inputs(B)
 
     returns the split box.
     """
@@ -714,7 +812,8 @@ def box_split(Box x, Box y) -> Box:
 def box_merge(Box x, Box y) -> Box:
     """The merge composition (e.g., A:>B) is the dual of the split composition.
 
-    The number of outputs of A must be a multiple of the number of inputs of B: outputs(A)=k.inputs(B)
+    The number of outputs of A must be a multiple of the number of inputs of B:
+    outputs(A)=k.inputs(B)
 
     returns the merge box.
     """
@@ -723,10 +822,11 @@ def box_merge(Box x, Box y) -> Box:
 
 
 def box_rec(Box x, Box y) -> Box:
-    """The recursive composition (e.g., A~B) is used to create cycles in the block-diagram
-    in order to express recursive computations.
+    """The recursive composition (e.g., A~B) is used to create cycles
+    in the block-diagram in order to express recursive computations.
 
-    It is the most complex operation in terms of connections: outputs(A)≥inputs(B) and inputs(A)≥outputs(B)
+    It is the most complex operation in terms of connections:
+    outputs(A)≥inputs(B) and inputs(A)≥outputs(B)
 
     returns the rec box.
     """
@@ -736,11 +836,13 @@ def box_rec(Box x, Box y) -> Box:
 def box_route(Box n, Box m, Box r) -> Box:
     """The route primitive facilitates the routing of signals in Faust.
 
-    It has the following syntax: route(A,B,a,b,c,d,...) or route(A,B,(a,b),(c,d),...)
+    It has the following syntax:
+    route(A,B,a,b,c,d,...) or route(A,B,(a,b),(c,d),...)
 
-    n -  the number of input signals
-    m -  the number of output signals
-    r - the routing description, a 'par' expression of a,b / (a,b) input/output pairs
+    n - the number of input signals
+    m - the number of output signals
+    r - the routing description, a 'par' expression of
+        a,b / (a,b) input/output pairs
 
     returns the route box.
     """
@@ -761,7 +863,8 @@ def box_delay(Box b, Box d) -> Box:
     """Create a delayed box.
 
     s - the box to be delayed
-    d - the delay box that doesn't have to be fixed but must be bounded and cannot be negative
+    d - the delay box that doesn't have to be fixed but must be bounded
+        and cannot be negative
 
     returns the delayed box.
     """
@@ -798,7 +901,8 @@ def box_float_cast_op() -> Box:
 def box_float_cast(Box b) -> Box:
     """Create a casted box.
 
-    s - the signal to be casted as float/double value (depends of -single or -double compilation parameter)
+    s - the signal to be casted as float/double value (depends of 
+        -single or -double compilation parameter)
 
     returns the casted box.
     """
@@ -912,7 +1016,8 @@ def box_select2_op() -> Box:
 def box_select3(Box selector, Box b1, Box b2, Box b3) -> Box:
     """Create a selector between three boxes.
 
-    selector - when 0 at time t returns s1[t], when 1 at time t returns s2[t], otherwise returns s3[t]
+    selector - when 0 at time t returns s1[t], when 1 at time t returns s2[t], 
+               otherwise returns s3[t]
     s1 - first box to be selected
     s2 - second box to be selected
     s3 - third box to be selected
