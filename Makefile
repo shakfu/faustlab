@@ -6,17 +6,17 @@ MIN_OSX_VER := -mmacosx-version-min=13.6
 FAUST_STATICLIB := ./lib/libfaust.a
 INTERP_TESTS := tests/test_faust_interp
 
-.PHONY: cmake clean setup_py setup_py_inplace
+.PHONY: cmake clean setup setup_inplace
 
 all: cmake
 
 cmake:
 	@mkdir -p build && cd build && cmake .. && make
 
-setup_py:
+setup:
 	@python3 setup.py build
 
-setup_py_inplace:
+setup_inplace:
 	@python3 setup.py build_ext --inplace
 	@rm -rf build
 

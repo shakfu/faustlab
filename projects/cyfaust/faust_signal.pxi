@@ -54,9 +54,13 @@ cdef class SignalVector:
         """Create source code in a target language from a signal expression."""
         return create_source_from_signals(name_app, self, lang, *args)
 
-    def simplify_to_normal_form(self):
-        """Simplify a signal list to its normal form."""
-        return simplify_to_normal_form(self)
+    def simplify_to_normal_form(self) -> SignalVector:
+        """Simplify a signal list to its normal form.
+
+        returns the signal vector in normal form.
+        """
+        return simplify_to_normal_form2(self)
+
 
 
 cdef class Interval:
@@ -201,22 +205,7 @@ cdef class Signal:
 
     def create_source(self, name_app: str, lang, *args) -> str:
         """Create source code in a target language from a signal expression."""
-        cdef fs.tvec signals
-        cdef string error_msg
-        error_msg.reserve(4096)
-        signals.push_back(self.ptr)
-        cdef ParamArray params = ParamArray(args)
-        cdef string src = fs.createSourceFromSignals(
-            name_app,
-            signals,
-            lang,
-            params.argc,
-            params.argv,
-            error_msg)
-        if error_msg.empty():
-            print(error_msg.decode())
-            return
-        return src.decode()
+        return create_source_from_signals(name_app, lang, *args)
 
     def simplify_to_normal_form(self) -> Signal:
         """Simplify a signal to its normal form."""
@@ -270,6 +259,95 @@ cdef class Signal:
         _min = sig_or_float(min)
         _max = sig_or_float(max)
         return sig_hbargraph(label, _min, _max, self)
+
+    def int_cast(self) -> Signal:
+        """Create a casted signal.
+
+        s - the signal to be casted in integer
+
+        returns the casted signal.
+        """
+        return sig_int_cast(self)
+
+
+    def float_cast(self) -> Signal:
+        """Create a casted signal.
+
+        s - the signal to be casted as float/double value (depends of -single or -double compilation parameter)
+
+        returns the casted signal.
+        """
+        return sig_float_cast(self)
+
+
+    def select2(self, Signal s1, Signal s2) -> Signal:
+        """Create a selector between two signals.
+
+        selector - when 0 at time t returns s1[t], otherwise returns s2[t]
+        (selector is automatically wrapped with sigIntCast)
+        s1 - first signal to be selected
+        s2 - second signal to be selected
+
+        returns the selected signal depending of the selector value at each time t.
+        """
+        return sig_select2(self, s1, s2)
+
+
+    def select3(self, Signal s1, Signal s2, Signal s3) -> Signal:
+        """Create a selector between three signals.
+
+        selector - when 0 at time t returns s1[t], when 1 at time t returns s2[t], otherwise returns s3[t]
+        (selector is automatically wrapped with sigIntCast)
+        s1 - first signal to be selected
+        s2 - second signal to be selected
+        s3 - third signal to be selected
+
+        returns the selected signal depending of the selector value at each time t.
+        """
+        return sig_select3(self, s1, s2, s3)
+
+
+    def recursion(self) -> Signal:
+        """Create a recursive signal. 
+
+        Use sigSelf() to refer to the recursive signal inside 
+        the sigRecursion expression.
+        
+        s - the signal to recurse on.
+        
+        returns the signal with a recursion.
+        """
+        return sig_recursion(self)
+
+
+    def self_rec(self) -> Signal:
+        """Create a recursive signal inside the sigRecursion expression.
+
+        returns the recursive signal.
+        """
+        return sig_self()
+
+    def self_n(self, int id) -> Signal:
+        """Create a recursive signal inside the sigRecursionN expression.
+
+        id - the recursive signal index (starting from 0, up to the number of outputs signals in the recursive block)
+
+        returns the recursive signal.
+        """
+        return sig_self_n(id)
+
+    def recursion_n(self, SignalVector rf) -> SignalVector:
+        """Create a recursive block of signals. 
+
+        Use sigSelfN() to refer to the recursive signal inside 
+        the sigRecursionN expression.
+
+        rf - the list of signals to recurse on.
+
+        returns the list of signals with recursions.
+        """
+        return sig_self_n(rf)
+
 
     def __add__(self, Signal other) -> Signal:
         """Add this signal to another."""
@@ -352,6 +430,8 @@ cdef class Signal:
         """bitwise right-shift"""
         return sig_lrightshift(self, other)
 
+    # nullary funcs
+
     def abs(self) -> Signal:
         return sig_abs(self)
 
@@ -397,18 +477,12 @@ cdef class Signal:
     def asin(self) -> Signal:
         return sig_asin(self)
 
+
+    # binary funcs
+
     def delay(self, d: Signal | int) -> Signal:
         _d = sig_or_int(d)
-        return sig_delay(self, d)
-
-    def int_cast(self) -> Signal:
-        return sig_int_cast(self)
-
-    def float_cast(self) -> Signal:
-        return sig_float_cast(self)
-
-    def recursion(self) -> Signal:
-        return sig_recursion(self)
+        return sig_delay(self, _d)
 
     def remainder(self, Signal y) -> Signal:
         return sig_remainder(self, y)
@@ -425,9 +499,10 @@ cdef class Signal:
     def fmod(self, Signal y) -> Signal:
         return sig_fmod(self, y)
 
-    def atan(self, Signal y) -> Signal:
-        cdef fs.Signal s = fs.sigAtan2(self.ptr, y.ptr)        
-        return Signal.from_ptr(s)
+
+
+    # boolean funcs ---------------------
+
 
     def is_int(self) -> bool:
         cdef int i
@@ -1858,7 +1933,7 @@ def simplify_to_normal_form(Signal s) -> Signal:
 
 
 
-def  simplify_to_normal_form2(SignalVector vec) -> SignalVector:
+def simplify_to_normal_form2(SignalVector vec) -> SignalVector:
     """Simplify a signal list to its normal form, where:
      
      - all possible optimisations, simplications, and compile time computations have been done
