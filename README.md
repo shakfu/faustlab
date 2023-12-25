@@ -4,13 +4,15 @@ An exploratory project to wrap the [Faust](https://github.com/grame-cncm/faust) 
 
 The objective is to end up with a minimal, self-contained, cross-platform extension.
 
-To get there, there will be several implementations using different wrapping frameworks (cython, pybind11, and nanobind) which can eventually be compared for code size, binary size, performance, etc.
+## Implementation Strategy
 
-## Current Status
+To get there, the plan *was* to have several implementations using different wrapping frameworks ([cython](https://github.com/cython/cython), [pybind11](https://github.com/pybind/pybind11), and [nanobind](https://github.com/wjakob/nanobind)) which could eventually be compared for code size, binary size, performance, etc.
+
+This led to the current implementation status:
 
 | subproject   | framework  | api   |  audio test | interp api    | box api    | signal api |
 | :---         | :---       | :---: |     :---:   |    :---:      | :---:      | :---:      |
-| cyfaust      | cython     | c++   |      yes    |     98%       | 85%        | 850%        |
+| cyfaust      | cython     | c++   |      yes    |     98%       | 85%        | 85%        |
 | cfaust       | cython     | c     |      yes    |     80%       |            |            |
 | nanofaust    | nanobind   | c++   |      yes    |     80%       |            |            |
 | pyfaust      | pybind11   | c++   |      yes    |     80%       |            |            |
@@ -18,7 +20,9 @@ To get there, there will be several implementations using different wrapping fra
 
 All of the above implementations pass a minimal functional test which produces audio given a faust dsp file (`noise.dsp`).
 
-The `cyfaust` implementation also includes `faust_box.pxd`, `faust_signal.pxd` and an attempt to wrap both the faust box api and the faust signal api using a dual object-oriented and functional approach. (This will likely evolve with actual usage). There are a couple of basic tests for the box api in the `tests` directory.
+The `cyfaust` implementation is more fleshed out: it includes `faust_box.pxd`, `faust_signal.pxd` and wraps both the faust box api and the faust signal api using a dual object-oriented and functional approach. (This will likely evolve with actual usage). There are a couple of basic tests for the box api in the `tests` directory.
+
+The current thinking is to exclusively focus on refining and testing the `cyfaust` cpp implementation as the [DawDreamer](https://github.com/DBraun/DawDreamer) project already has a mature pybind11-based faust implementation, `nanobind` still needs a bit of time to mature, and the faust c api feels a bit like a second-class citizen compared to the c++ api
 
 NOTE: this project's code is currently only at a proof of concept stage and is likely to contain a variety of bugs, memory leaks and other irritants...
 
@@ -59,6 +63,8 @@ Developed and tested only on macOS x86_64 and arm64 for the time being.
 **Isn't it redundant to do the same thing four different ways?**
 
 Probably, but it proved to be a nice way to learn the faust interpreter api and also learn about the idiosyncracies, strengths and weaknesses of each wrapper framework.
+
+Current focus will be on the `cyfaust-c++` implementation.
 
 
 **What else did you learn?**

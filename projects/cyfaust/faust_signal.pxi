@@ -1,4 +1,21 @@
 
+def sig_or_float(var):
+    if isinstance(var, float):
+        return Signal.from_real(var)
+    elif isinstance(var, Signal):
+        assert is_sig_real(var), "signal is not a float Signal"
+        return var
+    raise TypeError("argument must be an float or a sigReal")
+
+def sig_or_int(var):
+    if isinstance(var, int):
+        return Signal.from_int(var)
+    elif isinstance(var, Signal):
+        assert is_sig_int(var), "signal is not an int Signal"
+        return var
+    raise TypeError("argument must be an int")
+
+
 class signal_context:
     def __enter__(self):
         # Create global compilation context, has to be done first.
@@ -35,25 +52,11 @@ cdef class SignalVector:
 
     def create_source(self, name_app: str, lang, *args) -> str:
         """Create source code in a target language from a signal expression."""
-        cdef string error_msg
-        error_msg.reserve(4096)
-        cdef ParamArray params = ParamArray(args)
-        cdef string src = fs.createSourceFromSignals(
-            name_app,
-            self.ptr,
-            lang,
-            params.argc,
-            params.argv,
-            error_msg)
-        if error_msg.empty():
-            print(error_msg.decode())
-            return
-        return src.decode()
+        return create_source_from_signals(name_app, self, lang, *args)
 
     def simplify_to_normal_form(self):
         """Simplify a signal list to its normal form."""
-        cdef fs.tvec sv = fs.simplifyToNormalForm2(self.ptr)
-        return SignalVector.from_ptr(sv)
+        return simplify_to_normal_form(self)
 
 
 cdef class Interval:
@@ -105,74 +108,67 @@ cdef class Signal:
     @staticmethod
     def from_input(int idx) -> Signal:
         """Create signal from int"""
-        cdef fs.Signal s = fs.sigInput(idx)
-        return Signal.from_ptr(s)
+        return sig_input(idx)
 
     @staticmethod
     def from_int(int value) -> Signal:
         """Create signal from int"""
-        cdef fs.Signal s = fs.sigInt(value)
-        return Signal.from_ptr(s)
+        return sig_int(value)
 
     @staticmethod
     def from_float(float value) -> Signal:
         """Create signal from float"""
-        cdef fs.Signal s = fs.sigReal(value)
-        return Signal.from_ptr(s)
+        return sig_real(value)
+
+    from_real = from_float
 
     @staticmethod
     def from_soundfile(str label) -> Signal:
         """Create signal from soundfile."""
-        cdef fs.Signal s = fs.sigSoundfile(label.encode("utf8"))
-        return Signal.from_ptr(s)
+        return sig_soundfile(label)
 
     @staticmethod
     def from_button(str label) -> Signal:
         """Create a button signal."""
-        cdef fs.Signal s = fs.sigButton(label.encode('utf8'))
-        return Signal.from_ptr(s)
+        return sig_button(label)
 
     @staticmethod
     def from_checkbox(str label) -> Signal:
         """Create a checkbox signal."""
-        cdef fs.Signal s = fs.sigCheckbox(label.encode('utf8'))
-        return Signal.from_ptr(s)
+        return sig_checkbox(label)
 
     @staticmethod
-    def from_vslider(str label, float init, float min, float max, float step) -> Signal:
+    def from_vslider(str label, init: float | Signal, min: float | Signal, 
+                                max: float | Signal, step: float | Signal) -> Signal:
         """Create a vertical slider signal."""
-        cdef fs.Signal s = fs.sigVSlider(
-            label.encode('utf8'), 
-            fs.sigReal(init), 
-            fs.sigReal(min),
-            fs.sigReal(max), 
-            fs.sigReal(step))
-        return Signal.from_ptr(s)
+        _init = sig_or_float(init)
+        _min = sig_or_float(min)
+        _max = sig_or_float(max)
+        _step = sig_or_float(step)
+        return sig_vslider(label, _init, _min, _max, _step)
 
     @staticmethod
-    def from_hslider(str label, float init, float min, float max, float step) -> Signal:
+    def from_hslider(str label, init: float | Signal, min: float | Signal, 
+                                max: float | Signal, step: float | Signal) -> Signal:
         """Create a horizontal slider signal."""
-        cdef fs.Signal s = fs.sigHSlider(
-            label.encode('utf8'), 
-            fs.sigReal(init), 
-            fs.sigReal(min),
-            fs.sigReal(max), 
-            fs.sigReal(step))
-        return Signal.from_ptr(s)
+        _init = sig_or_float(init)
+        _min = sig_or_float(min)
+        _max = sig_or_float(max)
+        _step = sig_or_float(step)
+        return sig_hslider(label, _init, _min, _max, _step)
 
     @staticmethod
-    def from_numentry(str label, float init, float min, float max, float step) -> Signal:
+    def from_numentry(str label, init: float | Signal, min: float | Signal, 
+                                max: float | Signal, step: float | Signal) -> Signal:
         """Create a num entry signal."""
-        cdef fs.Signal s = fs.sigNumEntry(
-            label.encode('utf8'), 
-            fs.sigReal(init), 
-            fs.sigReal(min),
-            fs.sigReal(max), 
-            fs.sigReal(step))
-        return Signal.from_ptr(s)
+        _init = sig_or_float(init)
+        _min = sig_or_float(min)
+        _max = sig_or_float(max)
+        _step = sig_or_float(step)
+        return sig_numentry(label, _init, _min, _max, _step)
 
     @staticmethod
-    def from_read_only_table(int n, Signal init, int ridx):
+    def from_read_only_table(n: int | Signal, Signal init, ridx: int | Signal):
         """Create a read-only table.
 
         n - the table size, a constant numerical expression (see [1])
@@ -181,11 +177,9 @@ cdef class Signal:
      
         returns the table signal.
         """
-        cdef fs.Signal s = fs.sigReadOnlyTable(
-            fs.sigInt(n),
-            init.ptr, 
-            fs.sigInt(init))
-        return Signal.from_ptr(s)
+        _n = sig_or_int(n)
+        _ridx = sig_or_int(ridx)
+        return sig_readonly_table(_n, init, _ridx)
 
     @staticmethod
     def from_write_read_table(int n, Signal init, int widx, Signal wsig, int ridx):
@@ -199,14 +193,11 @@ cdef class Signal:
      
         returns the table signal.
         """
-        cdef fs.Signal s = fs.sigWriteReadTable(
-            fs.sigInt(n),
-            init.ptr,
-            fs.sigInt(widx),
-            wsig.ptr,
-            fs.sigInt(ridx),
-        )
-        return Signal.from_ptr(s)
+        _n = sig_or_int(n)
+        _widx = sig_or_int(widx)
+        _ridx = sig_or_int(ridx)
+        return sig_write_read_table(_n, init, _widx, wsig, _ridx)
+
 
     def create_source(self, name_app: str, lang, *args) -> str:
         """Create source code in a target language from a signal expression."""
@@ -232,22 +223,26 @@ cdef class Signal:
         cdef fs.Signal s = fs.simplifyToNormalForm(self.ptr)
         return Signal.from_ptr(s)
 
+    def to_string(self, shared: bool = False, max_size: int = 256) -> str:
+        """retur this signal printed as a string."""
+        return print_signal(self, shared, max_size)
+
     def print(self, shared: bool = False, max_size: int = 256):
         """Print this signal."""
-        print(fs.printSignal(self.ptr, shared, max_size).decode())
+        print(print_signal(self, shared, max_size))
 
-    def ffname(self, Signal s) -> str:
+    def ffname(self) -> str:
         """Return the name parameter of a foreign function."""
-        return fs.ffname(self.ptr).decode()
+        return ffname(self)
 
-    def ffarity(self, Signal s) -> int:
+    def ffarity(self) -> int:
         """Return the arity of a foreign function."""
-        return fs.ffarity(self.ptr)
+        return ffarity(self)
 
     # def get_interval(self) -> Interval:
     #     """Get the signal interval."""
-    #     cdef fs.Interval ival = <fs.Interval>fs.getSigInterval(self.ptr)
-    #     return Interval.from_ptr(&ival)
+    #     cdef fs.Interval *ival = <fs.Interval*>fs.getSigInterval(self.ptr)
+    #     return Interval.from_ptr(ival)
 
     # def set_interval(self, Interval iv):
     #     """Set the signal interval."""
@@ -262,230 +257,173 @@ cdef class Signal:
         The role of attach is to force the other input signal to be 
         compiled with this one.
         """
-        cdef fs.Signal s = fs.sigAttach(self.ptr, other.ptr)
-        return Signal.from_ptr(s)
+        return sig_attach(self, other)
 
-    def vbargraph(self, str label, float min, float max) -> Signal:
+    def vbargraph(self, str label, min: float | Signal, max: float | Signal) -> Signal:
         """Create a vertical bargraph signal from this signal"""
-        cdef fs.Signal s = fs.sigVBargraph(
-            label.encode('utf8'), 
-            fs.sigReal(min),
-            fs.sigReal(max), 
-            self.ptr)
-        return Signal.from_ptr(s)
+        _min = sig_or_float(min)
+        _max = sig_or_float(max)
+        return sig_vbargraph(label, _min, _max, self)
 
-    def hbargraph(self, str label, float min, float max) -> Signal:
+    def hbargraph(self, str label, min: float | Signal, max: float | Signal) -> Signal:
         """Create a horizontal bargraph signal from this signal"""
-        cdef fs.Signal s = fs.sigHBargraph(
-            label.encode('utf8'), 
-            fs.sigReal(min),
-            fs.sigReal(max), 
-            self.ptr)
-        return Signal.from_ptr(s)
+        _min = sig_or_float(min)
+        _max = sig_or_float(max)
+        return sig_hbargraph(label, _min, _max, self)
 
     def __add__(self, Signal other) -> Signal:
         """Add this signal to another."""
-        cdef fs.Signal b = fs.sigAdd(self.ptr, other.ptr)
-        return Signal.from_ptr(b)
+        return sig_add(self, other)
 
     def __radd__(self, Signal other) -> Signal:
         """Reverse add this signal to another."""
-        cdef fs.Signal b = fs.sigAdd(self.ptr, other.ptr)
-        return Signal.from_ptr(b)
+        return sig_add(self, other)
 
     def __sub__(self, Signal other) -> Signal:
         """Subtract this box from another."""
-        cdef fs.Signal s = fs.sigSub(self.ptr, other.ptr)
-        return Signal.from_ptr(s)
+        return sig_sub(self, other)
 
     def __rsub__(self, Signal other) -> Signal:
         """Subtract this box from another."""
-        cdef fs.Signal s = fs.sigSub(self.ptr, other.ptr)
-        return Signal.from_ptr(s)
+        return sig_sub(self, other)
 
     def __mul__(self, Signal other) -> Signal:
         """Multiply this box with another."""
-        cdef fs.Signal s = fs.sigMul(self.ptr, other.ptr)
-        return Signal.from_ptr(s)
+        return sig_mul(self, other)
 
     def __rmul__(self, Signal other) -> Signal:
         """Reverse multiply this box with another."""
-        cdef fs.Signal s = fs.sigMul(self.ptr, other.ptr)
-        return Signal.from_ptr(s)
+        return sig_mul(self, other)
 
     def __div__(self, Signal other) -> Signal:
         """Divide this box with another."""
-        cdef fs.Signal s = fs.sigDiv(self.ptr, other.ptr)
-        return Signal.from_ptr(s)
+        return sig_div(self, other)
 
     def __rdiv__(self, Signal other) -> Signal:
         """Reverse divide this box with another."""
-        cdef fs.Signal s = fs.sigDiv(self.ptr, other.ptr)
-        return Signal.from_ptr(s)
+        return sig_div(self, other)
 
     def __eq__(self, Signal other):
         """Compare for equality with another signal."""
-        cdef fs.Signal s = fs.sigEQ(self.ptr, other.ptr)
-        return Signal.from_ptr(s)
+        return sig_eq(self, other)
 
     def __ne__(self, Signal other):
         """Assert this box is not equal with another signal."""
-        cdef fs.Signal s = fs.sigNE(self.ptr, other.ptr)
-        return Signal.from_ptr(s)
+        return sig_ne(self, other)
 
     def __gt__(self, Signal other):
         """Is this box greater than another signal."""
-        cdef fs.Signal s = fs.sigGT(self.ptr, other.ptr)
-        return Signal.from_ptr(s)
+        return sig_gt(self, other)
 
     def __ge__(self, Signal other):
         """Is this box greater than or equal from another signal."""
-        cdef fs.Signal s = fs.sigGE(self.ptr, other.ptr)
-        return Signal.from_ptr(s)
+        return sig_ge(self, other)
 
     def __lt__(self, Signal other):
         """Is this box lesser than another signal."""
-        cdef fs.Signal s = fs.sigLT(self.ptr, other.ptr)
-        return Signal.from_ptr(s)
+        return sig_lt(self, other)
 
     def __le__(self, Signal other):
         """Is this box lesser than or equal from another signal."""
-        cdef fs.Signal s = fs.sigLE(self.ptr, other.ptr)
-        return Signal.from_ptr(s)
+        return sig_le(self, other)
 
     def __and__(self, Signal other):
         """logical and with another signal."""
-        cdef fs.Signal s = fs.sigAND(self.ptr, other.ptr)
-        return Signal.from_ptr(s)
+        return sig_and(self, other)
 
     def __or__(self, Signal other):
         """logical or with another signal."""
-        cdef fs.Signal s = fs.sigOR(self.ptr, other.ptr)
-        return Signal.from_ptr(s)
+        return sig_or(self, other)
 
     def __xor__(self, Signal other):
         """logical xor with another signal."""
-        cdef fs.Signal s = fs.sigXOR(self.ptr, other.ptr)
-        return Signal.from_ptr(s)
+        return sig_xor(self, other)
 
     # TODO: check sigRem = modulo if this is correct
     def __mod__(self, Signal other):
         """modulo of other Signal"""
-        cdef fs.Signal s = fs.sigRem(self.ptr, other.ptr)
-        return Signal.from_ptr(s)
-
-    # cdef fs.Signal sig_rem(fs.Signal x, fs.Signal y):
-    #     return fs.sigRem(x, y)
+        return sig_rem(self, other)
 
     def __lshift__(self, Signal other):
         """bitwise left-shift"""
-        cdef fs.Signal s = fs.sigLeftShift(self.ptr, other.ptr)
-        return Signal.from_ptr(s)
+        return sig_leftshift(self, other)
 
     def __rshift__(self, Signal other):
         """bitwise right-shift"""
-        cdef fs.Signal s = fs.sigLRightShift(self.ptr, other.ptr)
-        return Signal.from_ptr(s)
+        return sig_lrightshift(self, other)
 
     def abs(self) -> Signal:
-        cdef fs.Signal s = fs.sigAbs(self.ptr)
-        return Signal.from_ptr(s)
+        return sig_abs(self)
 
     def acos(self) -> Signal:
-        cdef fs.Signal s = fs.sigAcos(self.ptr)
-        return Signal.from_ptr(s)
+        return sig_acos(self)
 
     def tan(self) -> Signal:
-        cdef fs.Signal s = fs.sigTan(self.ptr)
-        return Signal.from_ptr(s)
+        return sig_tan(self)
 
     def sqrt(self) -> Signal:
-        cdef fs.Signal s = fs.sigSqrt(self.ptr)
-        return Signal.from_ptr(s)
+        return sig_sqrt(self)
 
     def sin(self) -> Signal:
-        cdef fs.Signal s = fs.sigSin(self.ptr)
-        return Signal.from_ptr(s)
+        return sig_sin(self)
 
     def rint(self) -> Signal:
-        cdef fs.Signal s = fs.sigRint(self.ptr)
-        return Signal.from_ptr(s)
+        return sig_rint(self)
 
     def log(self) -> Signal:
-        cdef fs.Signal s = fs.sigLog(self.ptr)
-        return Signal.from_ptr(s)
+        return sig_log(self)
 
     def log10(self) -> Signal:
-        cdef fs.Signal s = fs.sigLog10(self.ptr)
-        return Signal.from_ptr(s)
+        return sig_log10(self)
 
     def floor(self) -> Signal:
-        cdef fs.Signal s = fs.sigFloor(self.ptr)
-        return Signal.from_ptr(s)
+        return sig_floor(self)
 
     def exp(self) -> Signal:
-        cdef fs.Signal s = fs.sigExp(self.ptr)
-        return Signal.from_ptr(s)
+        return sig_exp(self)
 
     def exp10(self) -> Signal:
-        cdef fs.Signal s = fs.sigExp10(self.ptr)
-        return Signal.from_ptr(s)
+        return sig_exp10(self)
 
     def cos(self) -> Signal:
-        cdef fs.Signal s = fs.sigCos(self.ptr)
-        return Signal.from_ptr(s)
+        return sig_cos(self)
 
     def ceil(self) -> Signal:
-        cdef fs.Signal s = fs.sigCeil(self.ptr)
-        return Signal.from_ptr(s)
+        return sig_ceil(self)
 
     def atan(self) -> Signal:
-        cdef fs.Signal s = fs.sigAtan(self.ptr)
-        return Signal.from_ptr(s)
+        return sig_atan(self)
 
     def asin(self) -> Signal:
-        cdef fs.Signal s = fs.sigAsin(self.ptr)
-        return Signal.from_ptr(s)
+        return sig_asin(self)
 
-    def delay(self, int d) -> Signal:
-        cdef fs.Signal s = fs.sigDelay(self.ptr, fs.sigInt(d))
-        return Signal.from_ptr(s)
-
-    # def delay(self, Signal d) -> Signal:
-    #     cdef fs.Signal s = fs.sigDelay(self.ptr, d.ptr)
-    #     return Signal.from_ptr(s)
+    def delay(self, d: Signal | int) -> Signal:
+        _d = sig_or_int(d)
+        return sig_delay(self, d)
 
     def int_cast(self) -> Signal:
-        cdef fs.Signal s = fs.sigIntCast(self.ptr)
-        return Signal.from_ptr(s)
+        return sig_int_cast(self)
 
     def float_cast(self) -> Signal:
-        cdef fs.Signal s = fs.sigFloatCast(self.ptr)
-        return Signal.from_ptr(s)
+        return sig_float_cast(self)
 
     def recursion(self) -> Signal:
-        cdef fs.Signal s = fs.sigRecursion(self.ptr)
-        return Signal.from_ptr(s)
+        return sig_recursion(self)
 
     def remainder(self, Signal y) -> Signal:
-        cdef fs.Signal s = fs.sigRemainder(self.ptr, y.ptr)        
-        return Signal.from_ptr(s)
+        return sig_remainder(self, y)
 
     def pow(self, Signal y) -> Signal:
-        cdef fs.Signal s = fs.sigPow(self.ptr, y.ptr)        
-        return Signal.from_ptr(s)
+        return sig_pow(self, y)
 
     def min(self, Signal y) -> Signal:
-        cdef fs.Signal s = fs.sigMin(self.ptr, y.ptr)        
-        return Signal.from_ptr(s)
+        return sig_min(self, y)
 
     def max(self, Signal y) -> Signal:
-        cdef fs.Signal s = fs.sigMax(self.ptr, y.ptr)        
-        return Signal.from_ptr(s)
+        return sig_max(self, y)
 
     def fmod(self, Signal y) -> Signal:
-        cdef fs.Signal s = fs.sigFmod(self.ptr, y.ptr)        
-        return Signal.from_ptr(s)
+        return sig_fmod(self, y)
 
     def atan(self, Signal y) -> Signal:
         cdef fs.Signal s = fs.sigAtan2(self.ptr, y.ptr)        
@@ -1446,6 +1384,8 @@ def is_sig_float(Signal t) -> dict:
     else:
         return {}
 
+is_sig_real = is_sig_float
+
 def is_sig_input(Signal t) -> dict:
     cdef int i = 0
     if fs.isSigInput(t.ptr, &i):
@@ -1939,11 +1879,11 @@ def create_source_from_signals(str name_app, SignalVector osigs, str lang, *args
     """Create source code in a target language from a vector of output signals.
 
     name_app - the name of the Faust program
-    osigs - the vector of output signals (that will internally be converted in normal form,
-    see simplifyToNormalForm)
-    lang - the target source code's language which can be one of 'c',
-    'cpp', 'cmajor', 'codebox', 'csharp', 'dlang', 'fir', 'interp', 'java', 'jax',
-    'jsfx', 'julia', 'ocpp', 'rust' or 'wast'
+    osigs - the vector of output signals (that will internally be converted 
+            in normal form (see simplifyToNormalForm)
+    lang -  the target source code's language which can be one of 'c',
+            'cpp', 'cmajor', 'codebox', 'csharp', 'dlang', 'fir', 'interp', 'java', 'jax',
+            'jsfx', 'julia', 'ocpp', 'rust' or 'wast'
     (depending of which of the corresponding backends are compiled in libfaust)
     argc - the number of parameters in argv array
     argv - the array of parameters
