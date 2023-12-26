@@ -1,12 +1,14 @@
 CWD=`pwd`
 ROOT=build/faust/root
 FAUST_STDLIB="${ROOT}/share/faust/*.lib"
+FAUST_VERSION="2.69.3"
+
 
 get_faust() {
 	echo "update from faust main repo"
 	mkdir -p build && \
 		cd build && \
-		git clone --recursive https://github.com/grame-cncm/faust.git && \
+		git clone --depth 1 --branch ${FAUST_VERSION} https://github.com/grame-cncm/faust.git && \
 		mkdir -p faust/build/faustdir && \
 		cp ../scripts/faust.mk ./faust/Makefile && \
 		cp ../scripts/interp_plus_backend.cmake ./faust/build/backends/interp_plus.cmake && \
@@ -41,6 +43,12 @@ copy_headers() {
 	cp -rf "${ROOT}/include/faust" ./include/faust	
 }
 
+copy_sharedlib() {
+	echo "copy_sharedlib"
+	mkdir -p lib && \
+	cp "${ROOT}/lib/libfaust.2.dylib" ./lib/libfaust.2.dylib
+}
+
 copy_staticlib() {
 	echo "copy staticlib"
 	mkdir -p lib && \
@@ -72,10 +80,10 @@ main() {
 	copy_executables && \
 	copy_headers && \
 	copy_staticlib && \
+	copy_sharedlib	&& \
 	copy_stdlib && \
 	copy_examples
 }
-
 
 main
 

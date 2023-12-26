@@ -88,6 +88,6 @@ target_link_libraries(
     ${Python_LIBRARIES}
     "$<$<PLATFORM_ID:Darwin>:-ldl>"
     ${RTAUDIO_LINK_LIBS}
-    ${FAUST_STATICLIB}
+    $<IF:$<BOOL:${FAUST_SHAREDLIB}>,-lfaust.2,${FAUST_STATICLIB}>
 )
     

@@ -1,17 +1,19 @@
 # set path so `faust` be queried for the path to stdlib
 export PATH := $(PWD)/bin:$(PATH)
 
+WITH_DYLIB=1
+
 MIN_OSX_VER := -mmacosx-version-min=13.6
 
 FAUST_STATICLIB := ./lib/libfaust.a
 INTERP_TESTS := tests/test_faust_interp
 
-.PHONY: cmake clean setup setup_inplace
+.PHONY: cmake clean setup setup_inplace wheel
 
 all: cmake
 
 cmake:
-	@mkdir -p build && cd build && cmake .. && make
+	@mkdir -p build && cd build && cmake .. -DFAUST_SHAREDLIB=$(WITH_DYLIB) && make
 
 setup:
 	@python3 setup.py build
@@ -20,6 +22,12 @@ setup_inplace:
 	@python3 setup.py build_ext --inplace
 	@rm -rf build
 
+wheel:
+	@echo "WITH_DYLIB=$(WITH_DYLIB)"
+	@python3 setup.py bdist_wheel
+ifeq ($(WITH_DYLIB),1)
+	delocate-wheel -v dist/*.whl 
+endif
 
 .PHONY: test test_cpp test_c test_audio test_cyfaust test_cfaust test_pyfaust test_nanofaust
 
@@ -75,6 +83,5 @@ test_nanofaust: cmake prep_tests
 	@python3 tests/test_nanofaust.py
 
 clean:
-	@rm projects/cyfaust/cyfaust.cpp
-	@rm -rf cyfaust.*.so build
+	@rm -rf build dist
 
