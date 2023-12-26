@@ -83,5 +83,5 @@ test_nanofaust: cmake prep_tests
 	@python3 tests/test_nanofaust.py
 
 clean:
-	@rm -rf build dist
+	@rm -rf build dist *.egg-info
 
