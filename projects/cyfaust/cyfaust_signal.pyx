@@ -1,3 +1,13 @@
+# distutils: language = c++
+
+from libcpp.string cimport string
+# from libcpp.vector cimport vector
+
+cimport faust_signal as fs
+
+from cyfaust_common cimport ParamArray
+from cyfaust_common import ParamArray
+
 
 def sig_or_float(var):
     if isinstance(var, float):
@@ -27,8 +37,8 @@ class signal_context:
 
 cdef class SignalVector:
     """wraps tvec: a std::vector<CTree*>"""
-    cdef vector[fs.Signal] ptr
-    cdef bint ptr_owner
+    # cdef vector[fs.Signal] ptr
+    # cdef bint ptr_owner
 
     def __cinit__(self):
         self.ptr_owner = False
@@ -97,7 +107,7 @@ cdef class Interval:
 cdef class Signal:
     """faust Signal wrapper.
     """
-    cdef fs.Signal ptr
+    # cdef fs.Signal ptr
 
     def __cinit__(self):
         self.ptr = NULL

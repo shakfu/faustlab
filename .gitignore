@@ -7,8 +7,8 @@ bin/faustpath
 lib/libfaust.a
 share/faust
 projects/faustpy
-projects/cyfaust/cyfaust.cpp
-projects/cfaust/cfaust.cpp
+projects/cyfaust/*.cpp
+projects/cfaust/*.cpp
 
 .DS_Store
 

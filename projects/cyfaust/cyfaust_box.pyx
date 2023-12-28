@@ -1,3 +1,17 @@
+# distutils: language = c++
+
+from libc.stdlib cimport malloc, free
+from libcpp.string cimport string
+
+cimport faust_box as fb
+cimport faust_signal as fs
+
+from cyfaust_signal cimport SignalVector
+from cyfaust_signal import SignalVector
+
+from cyfaust_common cimport ParamArray
+from cyfaust_common import ParamArray
+
 
 ## ---------------------------------------------------------------------------
 ## faust/dsp/libfaust-box
@@ -29,9 +43,9 @@ class box_context:
 cdef class Box:
     """faust Box wrapper.
     """
-    cdef fb.Box ptr
-    cdef public int inputs
-    cdef public int outputs
+    # cdef fb.Box ptr
+    # cdef public int inputs
+    # cdef public int outputs
 
     def __cinit__(self):
         self.ptr = NULL

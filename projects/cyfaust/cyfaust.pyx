@@ -1,44 +1,19 @@
 # distutils: language = c++
 
-from libc.stdlib cimport malloc, free
 from libcpp.string cimport string
-from libcpp.vector cimport vector
 
 cimport faust_interp as fi
 cimport faust_box as fb
 cimport faust_signal as fs
 
+from cyfaust_common cimport ParamArray
+from cyfaust_common import ParamArray
 
-## ---------------------------------------------------------------------------
-## python c-api functions
-##
+from cyfaust_box cimport Box
+from cyfaust_box import Box
 
-cdef extern from "Python.h":
-    char* PyUnicode_AsUTF8(object unicode)
-
-## ---------------------------------------------------------------------------
-## common utility classes / functions
-##
-
-cdef class ParamArray:
-    """wrapper classs around faust paramater array"""
-    cdef const char ** argv
-    cdef int argc
-
-    def __cinit__(self, tuple ptuple):
-        self.argc = len(ptuple)
-        self.argv = <const char **>malloc(self.argc * sizeof(char *))
-        for i in range(self.argc):
-            self.argv[i] = PyUnicode_AsUTF8(ptuple[i])
-
-    def dump(self):
-        if self.argv:
-            for i in range(self.argc):
-                print(self.argv[i].decode())
-
-    def __dealloc__(self):
-        if self.argv:
-            free(self.argv)
+from cyfaust_signal cimport SignalVector
+from cyfaust_signal import SignalVector
 
 
 
@@ -524,7 +499,7 @@ def create_interpreter_dsp_factory_from_boxes(str name_app, Box box, *args) -> I
 ## faust/dsp/libfaust-box
 ##
 
-include "faust_box.pxi"
+# include "faust_box.pxi"
 
 
 
@@ -532,6 +507,6 @@ include "faust_box.pxi"
 ## faust/dsp/libfaust-signal
 ##
 
-include "faust_signal.pxi"
+# include "faust_signal.pxi"
 
 

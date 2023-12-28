@@ -46,6 +46,45 @@ extensions = [
         extra_compile_args = ['-std=c++11'],
         extra_link_args = EXTRA_LINK_ARGS,
     ),
+    Extension("cyfaust_common", 
+        [
+            "projects/cyfaust/cyfaust_common.pyx", 
+        ],
+        define_macros = [
+        ],
+        include_dirs = INCLUDE_DIRS,
+        libraries = LIBRARIES,
+        library_dirs = LIBRARY_DIRS,
+        extra_objects = EXTRA_OBJECTS,
+        extra_compile_args = ['-std=c++11'],
+        extra_link_args = EXTRA_LINK_ARGS,
+    ),
+    Extension("cyfaust_signal", 
+        [
+            "projects/cyfaust/cyfaust_signal.pyx", 
+        ],
+        define_macros = [
+        ],
+        include_dirs = INCLUDE_DIRS,
+        libraries = LIBRARIES,
+        library_dirs = LIBRARY_DIRS,
+        extra_objects = EXTRA_OBJECTS,
+        extra_compile_args = ['-std=c++11'],
+        extra_link_args = EXTRA_LINK_ARGS,
+    ),
+    Extension("cyfaust_box", 
+        [
+            "projects/cyfaust/cyfaust_box.pyx", 
+        ],
+        define_macros = [
+        ],
+        include_dirs = INCLUDE_DIRS,
+        libraries = LIBRARIES,
+        library_dirs = LIBRARY_DIRS,
+        extra_objects = EXTRA_OBJECTS,
+        extra_compile_args = ['-std=c++11'],
+        extra_link_args = EXTRA_LINK_ARGS,
+    ),
 ]
 
 setup(
