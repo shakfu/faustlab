@@ -1,4 +1,4 @@
-cimport faust_box as fb
+from . cimport faust_box as fb
 
 
 cdef class Box:

@@ -1,7 +1,7 @@
 from libcpp.string cimport string
 from libcpp.vector cimport vector
 
-cimport faust_signal as fs
+from . cimport faust_signal as fs
 
 
 cdef class SignalVector:

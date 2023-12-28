@@ -3,10 +3,10 @@
 from libcpp.string cimport string
 # from libcpp.vector cimport vector
 
-cimport faust_signal as fs
+from . cimport faust_signal as fs
 
-from cyfaust_common cimport ParamArray
-from cyfaust_common import ParamArray
+from .common cimport ParamArray
+from .common import ParamArray
 
 
 def sig_or_float(var):

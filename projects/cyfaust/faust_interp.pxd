@@ -1,7 +1,7 @@
 from libcpp.string cimport string
 from libcpp.vector cimport vector
 
-from faust_box cimport Box, Signal, tvec
+from .faust_box cimport Box, Signal, tvec
 
 cdef extern from "faust/gui/CInterface.h":
     ctypedef float FAUSTFLOAT

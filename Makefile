@@ -16,7 +16,7 @@ cmake:
 	@mkdir -p build && cd build && cmake .. -DFAUST_SHAREDLIB=$(WITH_DYLIB) && make
 
 setup:
-	@python3 setup.py build
+	@WITH_DYLIB=$(WITH_DYLIB) python3 setup.py build
 
 setup_inplace:
 	@python3 setup.py build_ext --inplace

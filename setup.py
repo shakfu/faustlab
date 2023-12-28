@@ -1,6 +1,6 @@
 import os
 import platform
-from setuptools import Extension, setup
+from setuptools import Extension, setup, find_packages
 from Cython.Build import cythonize
 
 WITH_DYLIB = os.getenv("WITH_DYLIB", False)
@@ -29,9 +29,9 @@ os.environ['LDFLAGS'] = '-framework CoreFoundation -framework CoreAudio'
 
 
 extensions = [
-    Extension("cyfaust", 
+    Extension("cyfaust.interp", 
         [
-            "projects/cyfaust/cyfaust.pyx", 
+            "projects/cyfaust/interp.pyx", 
             "include/rtaudio/RtAudio.cpp",
             "include/rtaudio/rtaudio_c.cpp",
         ],
@@ -46,9 +46,9 @@ extensions = [
         extra_compile_args = ['-std=c++11'],
         extra_link_args = EXTRA_LINK_ARGS,
     ),
-    Extension("cyfaust_common", 
+    Extension("cyfaust.common", 
         [
-            "projects/cyfaust/cyfaust_common.pyx", 
+            "projects/cyfaust/common.pyx", 
         ],
         define_macros = [
         ],
@@ -59,9 +59,9 @@ extensions = [
         extra_compile_args = ['-std=c++11'],
         extra_link_args = EXTRA_LINK_ARGS,
     ),
-    Extension("cyfaust_signal", 
+    Extension("cyfaust.signal", 
         [
-            "projects/cyfaust/cyfaust_signal.pyx", 
+            "projects/cyfaust/signal.pyx", 
         ],
         define_macros = [
         ],
@@ -72,9 +72,9 @@ extensions = [
         extra_compile_args = ['-std=c++11'],
         extra_link_args = EXTRA_LINK_ARGS,
     ),
-    Extension("cyfaust_box", 
+    Extension("cyfaust.box", 
         [
-            "projects/cyfaust/cyfaust_box.pyx", 
+            "projects/cyfaust/box.pyx", 
         ],
         define_macros = [
         ],
@@ -89,8 +89,11 @@ extensions = [
 
 setup(
     name='cyfaust',
+    version='0.0.1',
     ext_modules=cythonize(
         extensions,
         language_level="3str",
     ),
+    package_dir = {"cyfaust": "projects/cyfaust"},
+    packages=['cyfaust']
 )

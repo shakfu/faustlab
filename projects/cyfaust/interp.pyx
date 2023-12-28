@@ -2,18 +2,18 @@
 
 from libcpp.string cimport string
 
-cimport faust_interp as fi
-cimport faust_box as fb
-cimport faust_signal as fs
+from . cimport faust_interp as fi
+from . cimport faust_box as fb
+from . cimport faust_signal as fs
 
-from cyfaust_common cimport ParamArray
-from cyfaust_common import ParamArray
+from .common cimport ParamArray
+from .common import ParamArray
 
-from cyfaust_box cimport Box
-from cyfaust_box import Box
+from .box cimport Box
+from .box import Box
 
-from cyfaust_signal cimport SignalVector
-from cyfaust_signal import SignalVector
+from .signal cimport SignalVector
+from .signal import SignalVector
 
 
 
