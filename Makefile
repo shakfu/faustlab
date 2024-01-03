@@ -1,7 +1,7 @@
 # set path so `faust` be queried for the path to stdlib
 export PATH := $(PWD)/bin:$(PATH)
 
-WITH_DYLIB=1
+WITH_DYLIB=0
 
 MIN_OSX_VER := -mmacosx-version-min=13.6
 
