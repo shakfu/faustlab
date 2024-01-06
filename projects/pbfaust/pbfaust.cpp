@@ -31,9 +31,9 @@ struct CTree {};
 // };
 
 
-PYBIND11_MODULE(pyfaust, m)
+PYBIND11_MODULE(pbfaust, m)
 {
-    m.doc() = "pyfaust: a pybind11 wrapper around the faust interpreter.";
+    m.doc() = "pbfaust: a pybind11 wrapper around the faust interpreter.";
     m.attr("__version__") = "0.0.1";
 
     // -----------------------------------------------------------------------

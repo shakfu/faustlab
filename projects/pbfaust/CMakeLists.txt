@@ -1,6 +1,6 @@
-set(PROJECT_NAME pyfaust)
+set(PROJECT_NAME pbfaust)
 
-set(PROJECT_SRC ${CMAKE_CURRENT_SOURCE_DIR}/pyfaust.cpp)
+set(PROJECT_SRC ${CMAKE_CURRENT_SOURCE_DIR}/pbfaust.cpp)
 
 # Detect the installed pybind11 package and import it into CMake
 execute_process(

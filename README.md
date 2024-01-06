@@ -2,29 +2,26 @@
 
 An exploratory project to wrap the [Faust](https://github.com/grame-cncm/faust) *interpreter* and the [RtAudio](https://github.com/thestk/rtaudio) cross-platform audio driver for use by python code.
 
-The objective is to end up with a minimal, self-contained, cross-platform extension.
-
 ## Implementation Strategy
 
 To get there, the plan *was* to experiment with several implementations using different wrapping frameworks ([cython](https://github.com/cython/cython), [pybind11](https://github.com/pybind/pybind11), and [nanobind](https://github.com/wjakob/nanobind)) which could eventually be compared for code size, binary size, performance, etc.
 
 This led to the current implementation status:
 
-| subproject   | framework  | api   |  audio test | interp api    | box api    | signal api |
-| :---         | :---       | :---: |     :---:   |    :---:      | :---:      | :---:      |
-| cyfaust      | cython     | c++   |      yes    |     95%       | 95%        | 95%        |
-| cfaust       | cython     | c     |      yes    |     80%       |            |            |
-| nanofaust    | nanobind   | c++   |      yes    |     80%       |            |            |
-| pyfaust      | pybind11   | c++   |      yes    |     80%       |            |            |
-
+| subproject   | framework  | api   |  audio test | interp api    |
+| :---         | :---       | :---: |     :---:   |    :---:      |
+| cyfaust      | cython     | c++   |      yes    |     95%       |
+| cfaust       | cython     | c     |      yes    |     80%       |            
+| nanofaust    | nanobind   | c++   |      yes    |     80%       |
+| pbfaust      | pybind11   | c++   |      yes    |     80%       |
 
 All of the above implementations pass a minimal functional test which produces audio given a faust dsp file (`noise.dsp`).
 
-The `cyfaust` implementation is more fleshed out and wraps both the faust box api and the faust signal api using a dual object-oriented and functional approach. (This will likely evolve with actual usage). This subproject, consists of a static-linked single-module, has 'graduated' to its own [github project](https://github.com/shakfu/cyfaust) with a more modular package organization and additional tests.
+The `cyfaust` implementation has 'graduated' to its own [github project](https://github.com/shakfu/cyfaust) with support for the box and signal api and a more modular package organization and additional tests.
 
-The current thinking is to exclusively focus on refining and testing the `cyfaust` cpp implementation as the [DawDreamer](https://github.com/DBraun/DawDreamer) project already has a mature pybind11-based faust implementation, `nanobind` still needs a bit of time to mature, and the faust c api feels a bit like a second-class citizen compared to the c++ api
+The current thinking is not develop the extensions in this project further and to exclusively focus on refining the `cyfaust` cpp implementation as the [DawDreamer](https://github.com/DBraun/DawDreamer) project already has a mature and full featured pybind11-based faust implementation, `nanobind` still needs a bit of time to mature, and the faust c api feels a bit like a second-class citizen compared to the c++ api
 
-Other variants may be revisited in the future.
+So in summary, this project will not be developed further from now on. You can visit the [cyfaust](https://github.com/shakfu/cyfaust) project for further work on the faust interpreter and the [DawDreamer] project for a more practical python faust implementation with with Daw-like features.
 
 ## Usage
 
